@@ -2,19 +2,32 @@
 /*
  *
  * Copyright (c) 2012 Heyday
- * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license
+ * Licensed under the MIT (http://heyday.mit-license.org/) license
  *
  */
 
 /**
+ * Cache Include
  *
+ * @category SilverStripe_Module
+ * @package  Heyday
+ * @author   Cam Spiers <cameron@heyday.co.nz>
+ * @license  http://heyday.mit-license.org/ MIT
+ * @link     http://heyday.co.nz
+ * @version  1.1
+ */
+
+/**
  * This class provides the ability to cache includes in templates
- * This can be very useful in areas like footers and headers where the content requires a lot of database calls.
+ * This can be very useful in areas like footers and headers where the content
+ * requires a lot of database calls.
  *
- * @name     cache-include
- * @version  0.1
- * @author   Cam Spiers (cameron [at] heyday [dot] co [dot] nz)
- *
+ * @category SilverStripe_Module
+ * @package  Heyday
+ * @author   Cam Spiers <cameron@heyday.co.nz>
+ * @license  http://heyday.mit-license.org/ MIT
+ * @link     http://heyday.co.nz
+ * @version  1.1
  */
 class CacheIncludeExtension extends Extension
 {
@@ -24,8 +37,6 @@ class CacheIncludeExtension extends Extension
     private static $_context_instance = false;
 
     private static $_controller = false;
-
-    private static $_auto_clear = false;
 
     private static $_enabled = true;
 
@@ -74,13 +85,6 @@ class CacheIncludeExtension extends Extension
             user_error($class . ' must implement CacheIncludeContextInterface', E_USER_ERROR);
 
         }
-
-    }
-
-    public static function setAutoClear($value)
-    {
-
-        self::$_auto_clear = $value;
 
     }
 
@@ -367,8 +371,10 @@ class CacheIncludeExtension extends Extension
 
     }
     /**
-     * Called from templates to display the incude. Receives config from the self::$config rules at the top.
+     * Called from templates to display the include. Receives config from the
+     * self::$config rules at the top.
      * @param  string $template
+     * @param  boolean|string $function
      * @return string
      */
     public function CacheInclude($template, $function = false)
@@ -376,34 +382,23 @@ class CacheIncludeExtension extends Extension
 
         if (!self::$_enabled || self::is_admin()) {
 
-            if ($function && $this->owner->hasMethod($template)) {
-
-                $result = $this->owner->$template();
-
-                if ($result instanceof ViewableData) {
-
-                    return $result->forTemplate();
-
-                } else {
-
-                    return $result;
-
-                }
-
-            }
-
-            return $this->owner->renderWith($template);
+            return $this->cacheContent($template, $function);
 
         }
 
-        //Get the config for this template
-        $config = isset(self::$_config[$template])
-            ?
-            array_merge(self::$_default_config, self::$_config[$template])
-            :
-            self::$_default_config;
+        $config = self::$_default_config;
 
-        $keyParts = self::getContextInstance()->context($template, self::getController(), $config);
+        if (isset(self::$_config[$template])) {
+
+            $config = self::$_config[$template] + $config;
+
+        }
+
+        $keyParts = self::getContextInstance()->context(
+            $template,
+            self::getController(),
+            $config
+        );
 
         //Get path to file
 
@@ -421,29 +416,39 @@ class CacheIncludeExtension extends Extension
 
             }
 
-            if ($function && $this->owner->hasMethod($template)) {
-
-                $result = $this->owner->$template();
-
-                if ($result instanceof ViewableData) {
-
-                    return self::write($path, $result->forTemplate());
-
-                } else {
-
-                    return self::write($path, $result);
-
-                }
-
-            }
-
-            return self::write($path, $this->owner->renderWith($template));
+            return self::write(
+                $path,
+                $this->cacheContent($template, $function)
+            );
 
         } else {
             //Read the file off disk
             return self::read($path);
 
         }
+
+    }
+
+    protected function cacheContent($template, $function = false)
+    {
+
+        if ($function && $this->owner->hasMethod($template)) {
+
+            $result = $this->owner->$template();
+
+            if ($result instanceof ViewableData) {
+
+                return $result->forTemplate();
+
+            } else {
+
+                return $result;
+
+            }
+
+        }
+
+        return $this->owner->renderWith($template);
 
     }
 
@@ -464,14 +469,6 @@ class CacheIncludeExtension extends Extension
     public function onChange()
     {
 
-        if (self::$_auto_clear) {
-
-            self::clearAll();
-
-            return;
-
-        }
-
         if (!isset(self::$_run[$this->owner->ClassName])) {
 
             self::$_run[$this->owner->ClassName] = true;
@@ -480,7 +477,11 @@ class CacheIncludeExtension extends Extension
 
             foreach (self::$_config as $template => $config) {
 
-                if (isset($config['contains']) && is_array($config['contains'])) {
+                if (
+                    isset($config['contains'])
+                    &&
+                    is_array($config['contains'])
+                ) {
 
                     foreach ($config['contains'] as $class) {
 
