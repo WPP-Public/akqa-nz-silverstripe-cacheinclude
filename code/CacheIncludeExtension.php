@@ -373,7 +373,7 @@ class CacheIncludeExtension extends Extension
     /**
      * Called from templates to display the include. Receives config from the
      * self::$config rules at the top.
-     * @param  string $template
+     * @param  string         $template
      * @param  boolean|string $function
      * @return string
      */
