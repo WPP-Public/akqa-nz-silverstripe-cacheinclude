@@ -1,7 +1,7 @@
 <?php
 /*
  *
- * Copyright (c) 2009 Heyday
+ * Copyright (c) 2012 Heyday
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license
  *
  */
@@ -19,503 +19,501 @@
 class CacheIncludeExtension extends Extension
 {
 
-	private static $_context_class = 'CacheIncludeContext';
+    private static $_context_class = 'CacheIncludeContext';
 
-	private static $_context_instance = false;
+    private static $_context_instance = false;
 
-	private static $_controller = false;
+    private static $_controller = false;
 
-	private static $_auto_clear = false;
+    private static $_auto_clear = false;
 
-	private static $_enabled = true;
+    private static $_enabled = true;
 
-	private static $_config = array();
+    private static $_config = array();
 
-	private static $_directory = '../heyday-cacheinclude/cache';
+    private static $_directory = '../heyday-cacheinclude/cache';
 
-	private static $_run = array();
+    private static $_run = array();
 
-	private static $_default_config = array(
-		'context' => 0,
-		'member' => false,
-		'expires' => false
-	);
+    private static $_default_config = array(
+        'context' => 0,
+        'member' => false,
+        'expires' => false
+    );
 
-	private static $_is_admin_checked = false;
+    private static $_is_admin_checked = false;
 
-	private static $_is_admin = false;
+    private static $_is_admin = false;
 
-	private static $_delayed_processing = false;
+    private static $_delayed_processing = false;
 
-	private static $_extra_memory = false;
+    private static $_extra_memory = false;
 
-	private static $_extra_memory_given = false;
+    private static $_extra_memory_given = false;
 
-	public static function get_instance($owner)
-	{
+    public static function getInstance($owner)
+    {
 
-		$instance = new self;
+        $instance = new self;
 
-		$instance->owner = $owner;
+        $instance->owner = $owner;
 
-		return $instance;
+        return $instance;
 
-	}
+    }
 
-	public static function set_context_class($class)
-	{
+    public static function setContextClass($class)
+    {
 
-		if (ClassInfo::classImplements($class, 'CacheIncludeContextInterface')) {
+        if (ClassInfo::classImplements($class, 'CacheIncludeContextInterface')) {
 
-			self::$_context_class = $class;
+            self::$_context_class = $class;
 
-		} else {
+        } else {
 
-			user_error($class . ' must implement CacheIncludeContextInterface', E_USER_ERROR);
+            user_error($class . ' must implement CacheIncludeContextInterface', E_USER_ERROR);
 
-		}
+        }
 
-	}
+    }
 
-	public static function set_auto_clear($value)
-	{
+    public static function setAutoClear($value)
+    {
 
-		self::$_auto_clear = $value;
+        self::$_auto_clear = $value;
 
-	}
+    }
 
-	public static function set_delayed_processing($enabled)
-	{
-		self::$_delayed_processing = (boolean) $enabled;
-	}
+    public static function setDelayedProcessing($enabled)
+    {
+        self::$_delayed_processing = (boolean) $enabled;
+    }
 
-	/**
-	 * Turn off an on caching
-	 * @param boolean $enabled
-	 */
-	public static function set_enabled($enabled)
-	{
-		self::$_enabled = (boolean) $enabled;
-	}
-	/**
-	 * Set config
-	 * @param array $config
-	 */
-	public static function set_config($config)
-	{
+    /**
+     * Turn off an on caching
+     * @param boolean $enabled
+     */
+    public static function setEnabled($enabled)
+    {
+        self::$_enabled = (boolean) $enabled;
+    }
+    /**
+     * Set config
+     * @param array $config
+     */
+    public static function setConfig($config)
+    {
 
-		self::$_config = array_merge(self::$_config, $config);
+        self::$_config = array_merge(self::$_config, $config);
 
-	}
-	/**
-	 * Takes a yaml file and loads it into the config
-	 * @param string $file
-	 */
-	public static function load_config($file)
-	{
+    }
+    /**
+     * Takes a yaml file and loads it into the config
+     * @param string $file
+     */
+    public static function loadConfig($file)
+    {
 
-		$cachefile = $file . '.cache';
+        $cachefile = $file . '.cache';
 
-		if (file_exists($cachefile) && !isset($_GET['flush'])) {
+        if (file_exists($cachefile) && !isset($_GET['flush'])) {
 
-			$yaml = unserialize(file_get_contents($cachefile));
+            $yaml = unserialize(file_get_contents($cachefile));
 
-		}
+        }
 
-		if (!isset($yaml) || !is_array($yaml)) {
+        if (!isset($yaml) || !is_array($yaml)) {
 
-			require_once 'thirdparty/spyc/spyc.php';
+            require_once 'thirdparty/spyc/spyc.php';
 
-			$yaml = Spyc::YAMLLoad($file);
+            $yaml = Spyc::YAMLLoad($file);
 
-			file_put_contents($cachefile, serialize($yaml));
+            file_put_contents($cachefile, serialize($yaml));
 
-		}
+        }
 
-		self::set_config($yaml);
+        self::set_config($yaml);
 
-	}
-	/**
-	 * Add a config array based on the template name
-	 * @param string $template
-	 * @param array $config
-	 */
-	public static function add_config($template, $config)
-	{
-		//Add config for template
-		self::$_config[$template] = $config;
+    }
+    /**
+     * Add a config array based on the template name
+     * @param string $template
+     * @param array  $config
+     */
+    public static function addConfig($template, $config)
+    {
+        //Add config for template
+        self::$_config[$template] = $config;
 
-	}
-	/**
-	 * Set default config
-	 * @param string $template
-	 * @param array $expires
-	 */
-	public static function set_default_config($config)
-	{
+    }
+    /**
+     * Set default config
+     * @param string $template
+     * @param array  $expires
+     */
+    public static function setDefaultConfig($config)
+    {
 
-		self::$_default_config = $config;
+        self::$_default_config = $config;
 
-	}
-	/**
-	 * Set the directory to save the cache into
-	 * @param string $directory
-	 */
-	public static function set_directory($directory)
-	{
+    }
+    /**
+     * Set the directory to save the cache into
+     * @param string $directory
+     */
+    public static function setDirectory($directory)
+    {
 
-		self::$_directory = $directory;
+        self::$_directory = $directory;
 
-	}
+    }
 
-	public static function get_extra_memory()
-	{
+    public static function getExtraMemory()
+    {
 
-		return self::$_extra_memory;
+        return self::$_extra_memory;
 
-	}
+    }
 
-	public static function set_extra_memory($extra_memory)
-	{
+    public static function setExtraMemory($extra_memory)
+    {
 
-		self::$_extra_memory = $extra_memory;
+        self::$_extra_memory = $extra_memory;
 
-	}
+    }
 
-	public static function ensure_extra_memory()
-	{
+    public static function ensureExtraMemory()
+    {
 
-		increase_memory_limit_to(self::$_extra_memory);
+        increase_memory_limit_to(self::$_extra_memory);
 
-	}
-	/**
-	 * Determines in the path has expired
-	 * @param string $path
-	 * @param int $expires
-	 * @return boolean
-	 */
-	protected static function expired($path, $expires = false)
-	{
+    }
+    /**
+     * Determines in the path has expired
+     * @param  string  $path
+     * @param  int     $expires
+     * @return boolean
+     */
+    protected static function expired($path, $expires = false)
+    {
 
-		//If the file doesn't exist or flush is called the the file needs to be written.
-		if (!file_exists($path) || isset($_GET['flush'])) {
+        //If the file doesn't exist or flush is called the the file needs to be written.
+        if (!file_exists($path) || isset($_GET['flush'])) {
 
-			return true;
+            return true;
 
-		}
+        }
 
-		//If the file does not have an expiry time then it should never expire
-		if (!$expires) {
+        //If the file does not have an expiry time then it should never expire
+        if (!$expires) {
 
-			return false;
+            return false;
 
-		}
-		//If the file is older the the expiry time the it needs to be written
-		return (date('U') - filemtime($path)) >= $expires;
+        }
+        //If the file is older the the expiry time the it needs to be written
+        return (date('U') - filemtime($path)) >= $expires;
 
-	}
+    }
 
-	protected static function is_admin()
-	{
+    protected static function isAdmin()
+    {
 
-		if (!self::$_is_admin_checked) {
+        if (!self::$_is_admin_checked) {
 
-			self::$_is_admin_checked = true;
+            self::$_is_admin_checked = true;
 
-			self::$_is_admin = Member::currentUserID() && Member::currentUser()->isAdmin();
+            self::$_is_admin = Member::currentUserID() && Member::currentUser()->isAdmin();
 
-		}
+        }
 
-		return self::$_is_admin;
+        return self::$_is_admin;
 
-	}
-	/**
-	 * Writes the content to the path
-	 * @param string $path
-	 * @param string $content
-	 * @return string
-	 */
-	protected static function write($path, $content)
-	{
+    }
+    /**
+     * Writes the content to the path
+     * @param  string $path
+     * @param  string $content
+     * @return string
+     */
+    protected static function write($path, $content)
+    {
 
-		//check member, we don't want to write the cache with an admin logged in.
+        //check member, we don't want to write the cache with an admin logged in.
 
-		if (self::is_admin()) {
+        if (self::is_admin()) {
 
-			return $content;
+            return $content;
 
-		}
+        }
 
-		if (!is_dir(dirname($path))) {
+        if (!is_dir(dirname($path))) {
 
-			mkdir(dirname($path), 0777, true);
+            mkdir(dirname($path), 0777, true);
 
-		}
+        }
 
-		//Write the file to the disk
-		file_put_contents($path, $content);
+        //Write the file to the disk
+        file_put_contents($path, $content);
 
-		//Return the contents
-		return $content;
+        //Return the contents
+        return $content;
 
-	}
+    }
 
-	/**
-	 * Reads the cache
-	 * @param string $path
-	 * @return string
-	 */
-	protected static function read($path)
-	{
-		//Read file from disk
+    /**
+     * Reads the cache
+     * @param  string $path
+     * @return string
+     */
+    protected static function read($path)
+    {
+        //Read file from disk
 
-		return file_get_contents($path);
+        return file_get_contents($path);
 
-	}
-	/**
-	 * based on the key returns the path to the file
-	 * @param string $key
-	 * @return string
-	 */
-	protected static function path($key)
-	{
-		//Return the path to the html file
-		return realpath(self::$_directory) . '/' . $key . '.cache';
+    }
+    /**
+     * based on the key returns the path to the file
+     * @param  string $key
+     * @return string
+     */
+    protected static function path($key)
+    {
+        //Return the path to the html file
+        return realpath(self::$_directory) . '/' . $key . '.cache';
 
-	}
-	/**
-	 * Deletes all cache files
-	 */
-	public static function clearAll()
-	{
+    }
+    /**
+     * Deletes all cache files
+     */
+    public static function clearAll()
+    {
 
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(self::$_directory)) as $file) {
-			unlink($file);
-		}
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(self::$_directory)) as $file) {
+            unlink($file);
+        }
 
-	}
-	/**
-	 * Clears all cache files for a particular template
-	 * @param string $template
-	 */
-	public static function clearTemplate($template, $force = false)
-	{
+    }
+    /**
+     * Clears all cache files for a particular template
+     * @param string $template
+     */
+    public static function clearTemplate($template, $force = false)
+    {
 
-		if (self::$_delayed_processing && !$force) {
+        if (self::$_delayed_processing && !$force) {
 
-			CacheIncludeQueueItem::add($template);
+            CacheIncludeQueueItem::add($template);
 
-		} else {
+        } else {
 
-			foreach (glob(self::path('*' . $template)) as $file) {
+            foreach (glob(self::path('*' . $template)) as $file) {
 
-				unlink($file);
+                unlink($file);
 
-			}
+            }
 
-		}
+        }
 
-	}
+    }
 
-	public static function clearMember($memberId)
-	{
+    public static function clearMember($memberId)
+    {
 
-		foreach (glob(self::$_directory . '/Members_' . $memberId . '*.cache') as $file) {
+        foreach (glob(self::$_directory . '/Members_' . $memberId . '*.cache') as $file) {
 
-			unlink($file);
+            unlink($file);
 
-		}
+        }
 
-	}
+    }
 
-	public static function clearFolder($folder = '')
-	{
+    public static function clearFolder($folder = '')
+    {
 
-		if (is_dir(self::$directory . '/' . $folder)) {
+        if (is_dir(self::$directory . '/' . $folder)) {
 
-			foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(self::$_directory . '/' . $folder)) as $path => $file) {
-				unlink($file);
-			}
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(self::$_directory . '/' . $folder)) as $file) {
+                unlink($file);
+            }
 
-		}
+        }
 
-	}
+    }
 
-	public static function get_controller()
-	{
+    public static function getController()
+    {
 
-		if (!self::$_controller) {
+        if (!self::$_controller) {
 
-			self::$_controller = Controller::curr();
+            self::$_controller = Controller::curr();
 
-		}
+        }
 
-		return self::$_controller;
+        return self::$_controller;
 
-	}
+    }
 
-	public static function get_context_instance()
-	{
+    public static function getContextInstance()
+    {
 
-		if (!self::$_context_instance) {
+        if (!self::$_context_instance) {
 
-			self::$_context_instance = new self::$_context_class;
+            self::$_context_instance = new self::$_context_class;
 
-		}
+        }
 
-		return self::$_context_instance;
+        return self::$_context_instance;
 
-	}
-	/**
-	 * Called from templates to display the incude. Receives config from the self::$config rules at the top.
-	 * @param string $template
-	 * @return string
-	 */
-	public function CacheInclude($template, $function = false)
-	{
+    }
+    /**
+     * Called from templates to display the incude. Receives config from the self::$config rules at the top.
+     * @param  string $template
+     * @return string
+     */
+    public function CacheInclude($template, $function = false)
+    {
 
-		if (!self::$_enabled || self::is_admin()) {
+        if (!self::$_enabled || self::is_admin()) {
 
-			if ($function && $this->owner->hasMethod($template)) {
+            if ($function && $this->owner->hasMethod($template)) {
 
-				$result = $this->owner->$template();
+                $result = $this->owner->$template();
 
-				if ($result instanceof ViewableData) {
+                if ($result instanceof ViewableData) {
 
-					return $result->forTemplate();
+                    return $result->forTemplate();
 
-				} else {
+                } else {
 
-					return $result;
+                    return $result;
 
-				}
+                }
 
-			}
+            }
 
-			return $this->owner->renderWith($template);
+            return $this->owner->renderWith($template);
 
-		}
+        }
 
-		//Get the config for this template
-		$config = isset(self::$_config[$template])
-			?
-			array_merge(self::$_default_config, self::$_config[$template])
-			:
-			self::$_default_config;
+        //Get the config for this template
+        $config = isset(self::$_config[$template])
+            ?
+            array_merge(self::$_default_config, self::$_config[$template])
+            :
+            self::$_default_config;
 
-		$keyParts = self::get_context_instance()->context($template, self::get_controller(), $config);
+        $keyParts = self::getContextInstance()->context($template, self::getController(), $config);
 
-		//Get path to file
+        //Get path to file
 
-		$key = implode('_', (array) $keyParts);
-		$key = strlen($key) > 100 ? md5($key) : $key;
-		$path = self::path($key . '_' . $template);
+        $key = implode('_', (array) $keyParts);
+        $key = strlen($key) > 100 ? md5($key) : $key;
+        $path = self::path($key . '_' . $template);
 
-		//If the file is expired
-		if (self::expired($path, $config['expires'])) {
-			//Write a new file with the rendered template
+        //If the file is expired
+        if (self::expired($path, $config['expires'])) {
+            //Write a new file with the rendered template
 
-			if (self::$_extra_memory && !self::$_extra_memory_given) {
+            if (self::$_extra_memory && !self::$_extra_memory_given) {
 
-				self::ensure_extra_memory();
+                self::ensureExtraMemory();
 
-			}
+            }
 
-			if ($function && $this->owner->hasMethod($template)) {
+            if ($function && $this->owner->hasMethod($template)) {
 
-				$result = $this->owner->$template();
+                $result = $this->owner->$template();
 
-				if ($result instanceof ViewableData) {
+                if ($result instanceof ViewableData) {
 
-					return self::write($path, $result->forTemplate());
+                    return self::write($path, $result->forTemplate());
 
-				} else {
+                } else {
 
-					return self::write($path, $result);
+                    return self::write($path, $result);
 
-				}
+                }
 
+            }
 
+            return self::write($path, $this->owner->renderWith($template));
 
-			}
+        } else {
+            //Read the file off disk
+            return self::read($path);
 
-			return self::write($path, $this->owner->renderWith($template));
+        }
 
-		} else {
-			//Read the file off disk
-			return self::read($path);
+    }
 
-		}
+    public function onAfterWrite()
+    {
 
-	}
+        $this->onChange();
 
-	public function onAfterWrite()
-	{
+    }
 
-		$this->onChange();
+    public function onAfterDelete()
+    {
 
-	}
+        $this->onChange();
 
-	public function onAfterDelete()
-	{
+    }
 
-		$this->onChange();
+    public function onChange()
+    {
 
-	}
+        if (self::$_auto_clear) {
 
-	public function onChange()
-	{
+            self::clearAll();
 
-		if (self::$_auto_clear) {
+            return;
 
-			self::clearAll();
+        }
 
-			return;
+        if (!isset(self::$_run[$this->owner->ClassName])) {
 
-		}
+            self::$_run[$this->owner->ClassName] = true;
 
-		if (!isset(self::$_run[$this->owner->ClassName])) {
+            $templates = array();
 
-			self::$_run[$this->owner->ClassName] = true;
+            foreach (self::$_config as $template => $config) {
 
-			$templates = array();
+                if (isset($config['contains']) && is_array($config['contains'])) {
 
-			foreach (self::$_config as $template => $config) {
+                    foreach ($config['contains'] as $class) {
 
-				if (isset($config['contains']) && is_array($config['contains'])) {
+                        if ($this->owner instanceof $class) {
 
-					foreach ($config['contains'] as $class) {
+                            $templates[] = $template;
 
-						if ($this->owner instanceof $class) {
+                            break;
 
-							$templates[] = $template;
+                        }
+                    }
 
-							break;
+                }
 
-						}
-					}
+            }
 
-				}
+            if (count($templates) > 0) {
 
-			}
+                foreach ($templates as $template) {
 
-			if (count($templates) > 0) {
+                    self::clearTemplate($template);
 
-				foreach ($templates as $template) {
+                }
 
-					self::clearTemplate($template);
+            }
 
-				}
+        }
 
-			}
+    }
 
-		}
+    public function extraStatics()
+    {
 
-	}
-
-	public function extraStatics()
-	{
-
-	}
+    }
 
 }

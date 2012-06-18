@@ -3,7 +3,7 @@
 class CacheIncludeQueueItem extends DataObject
 {
 
-    static $db = array(
+    public static $db = array(
         'Template' => 'Varchar(255)'
     );
 

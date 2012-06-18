@@ -18,46 +18,46 @@
 class CacheIncludeController extends Controller
 {
 
-	public function init()
-	{
+    public function init()
+    {
 
-		if (!defined('STDIN')) {
+        if (!defined('STDIN')) {
 
-			exit;
+            exit;
 
-		}
+        }
 
-		parent::init();
+        parent::init();
 
-	}
+    }
 
-	public function clearAll()
-	{
+    public function clearAll()
+    {
 
-		CacheIncludeExtension::clearAll();
+        CacheIncludeExtension::clearAll();
 
-	}
+    }
 
-	public function clearTemplate()
-	{
+    public function clearTemplate()
+    {
 
-		if (isset($_GET['args'][0])) {
+        if (isset($_GET['args'][0])) {
 
-			CacheIncludeExtension::clearTemplate($_GET['args'][0], true);
+            CacheIncludeExtension::clearTemplate($_GET['args'][0], true);
 
-		}
+        }
 
-	}
+    }
 
-	public function clearFolder()
-	{
-		
-		if (isset($_GET['args'][0])) {
+    public function clearFolder()
+    {
 
-			CacheIncludeExtension::clearFolder($_GET['args'][0]);
+        if (isset($_GET['args'][0])) {
 
-		}
+            CacheIncludeExtension::clearFolder($_GET['args'][0]);
 
-	}
+        }
+
+    }
 
 }
