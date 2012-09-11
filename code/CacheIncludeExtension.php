@@ -214,8 +214,10 @@ class CacheIncludeExtension extends Extension
             return false;
 
         }
-        //If the file is older the the expiry time the it needs to be written
-        return (date('U') - filemtime($path)) >= $expires;
+        
+        $date = date('U');
+        //If the file is older then the expiry time the it needs to be written
+        return ($date - filemtime($path)) >= (ctype_digit($expires) ? $expires : (strtotime($expires) - $date));
 
     }
 
@@ -244,7 +246,7 @@ class CacheIncludeExtension extends Extension
 
         //check member, we don't want to write the cache with an admin logged in.
 
-        if (self::is_admin()) {
+        if (self::isAdmin()) {
 
             return $content;
 
@@ -380,7 +382,7 @@ class CacheIncludeExtension extends Extension
     public function CacheInclude($template, $function = false)
     {
 
-        if (!self::$_enabled || self::is_admin()) {
+        if (!self::$_enabled || self::isAdmin()) {
 
             return $this->cacheContent($template, $function);
 

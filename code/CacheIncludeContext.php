@@ -6,7 +6,9 @@ class CacheIncludeContext implements CacheIncludeContextInterface
     public function context($template, $controller, $config)
     {
 
-        $keyParts = array();
+        $keyParts = array(
+            SSViewer::current_theme()
+        );
 
         //If member context matters get the members id
         if ($config['member']) {
