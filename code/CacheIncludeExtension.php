@@ -438,14 +438,16 @@ class CacheIncludeExtension extends Extension
             '{{',
             '}}',
             '{|',
-            '|}'
+            '|}',
+            '{%c%}'
         ), array(
             '<%',
             '%>',
             '$',
             '',
             '(',
-            ')'
+            ')',
+            ','
         ), $template)));
     }
 
