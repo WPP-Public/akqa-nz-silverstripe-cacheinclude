@@ -11,6 +11,21 @@ To install drop the `heyday-cacheinclude` directory into your SilverStripe root 
 
 ##How to use
 
+###Templates
+
+    $CacheInclude(TemplateName)
+
+###Partials
+
+
+    $CacheIncludePartial(
+        PartialName,
+        <ul class=\"nav\">
+        {# control Menu{|1|} #}
+            <li>{{Title}}</li>
+        {# end_control #}
+        </ul>
+    )
 
 
 ##Configuration

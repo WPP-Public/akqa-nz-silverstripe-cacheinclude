@@ -214,7 +214,7 @@ class CacheIncludeExtension extends Extension
             return false;
 
         }
-        
+
         $date = date('U');
         //If the file is older then the expiry time the it needs to be written
         return ($date - filemtime($path)) >= (ctype_digit($expires) ? $expires : (strtotime($expires) - $date));
@@ -538,4 +538,3 @@ class CacheIncludeExtension extends Extension
     }
 
 }
-
