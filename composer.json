@@ -1,0 +1,8 @@
+{
+    "name": "heyday/silverstripe-cacheinclude",
+    "type": "silverstripe-module",
+    "require": {
+        "composer/installers": "*"
+    },
+    "minimum-stability": "dev"
+}
