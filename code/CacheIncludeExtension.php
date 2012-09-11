@@ -384,7 +384,7 @@ class CacheIncludeExtension extends Extension
 
         if (!self::$_enabled || self::isAdmin()) {
 
-            return $this->cacheContent($template, $function);
+            return $this->cacheContent($template ? $template : $name, $function);
 
         }
 
