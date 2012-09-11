@@ -379,7 +379,7 @@ class CacheIncludeExtension extends Extension
      * @param  boolean|string $function
      * @return string
      */
-    public function CacheInclude($template, $function = false)
+    public function CacheInclude($name, $function = false, $template = false)
     {
 
         if (!self::$_enabled || self::isAdmin()) {
@@ -390,14 +390,13 @@ class CacheIncludeExtension extends Extension
 
         $config = self::$_default_config;
 
-        if (isset(self::$_config[$template])) {
+        if (isset(self::$_config[$name])) {
 
-            $config = self::$_config[$template] + $config;
+            $config = self::$_config[$name] + $config;
 
         }
 
         $keyParts = self::getContextInstance()->context(
-            $template,
             self::getController(),
             $config
         );
@@ -406,7 +405,7 @@ class CacheIncludeExtension extends Extension
 
         $key = implode('_', (array) $keyParts);
         $key = strlen($key) > 100 ? md5($key) : $key;
-        $path = self::path($key . '_' . $template);
+        $path = self::path($key . '_' . $name);
 
         //If the file is expired
         if (self::expired($path, $config['expires'])) {
@@ -420,7 +419,7 @@ class CacheIncludeExtension extends Extension
 
             return self::write(
                 $path,
-                $this->cacheContent($template, $function)
+                $this->cacheContent($template ? $template : $name, $function)
             );
 
         } else {
@@ -431,10 +430,29 @@ class CacheIncludeExtension extends Extension
 
     }
 
+    public function CacheIncludePartial($name, $template)
+    {
+        return $this->CacheInclude(trim($name), false, new SSViewer_FromString(str_replace(array(
+            '{#',
+            '#}',
+            '{{',
+            '}}',
+            '[',
+            ']'
+        ), array(
+            '<%',
+            '%>',
+            '$',
+            '',
+            '(',
+            ')'
+        ), $template)));
+    }
+
     protected function cacheContent($template, $function = false)
     {
 
-        if ($function && $this->owner->hasMethod($template)) {
+        if ($function && is_string($template) && $this->owner->hasMethod($template)) {
 
             $result = $this->owner->$template();
 
@@ -520,3 +538,4 @@ class CacheIncludeExtension extends Extension
     }
 
 }
+

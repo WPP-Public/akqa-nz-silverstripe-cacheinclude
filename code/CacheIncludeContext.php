@@ -3,7 +3,7 @@
 class CacheIncludeContext implements CacheIncludeContextInterface
 {
 
-    public function context($template, $controller, $config)
+    public function context($controller, $config)
     {
 
         $keyParts = array(
