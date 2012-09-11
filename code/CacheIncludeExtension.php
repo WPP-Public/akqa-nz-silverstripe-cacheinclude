@@ -437,8 +437,8 @@ class CacheIncludeExtension extends Extension
             '#}',
             '{{',
             '}}',
-            '[',
-            ']'
+            '{|',
+            '|}'
         ), array(
             '<%',
             '%>',
