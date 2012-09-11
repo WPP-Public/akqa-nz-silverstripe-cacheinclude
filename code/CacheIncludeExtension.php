@@ -136,7 +136,7 @@ class CacheIncludeExtension extends Extension
 
         }
 
-        self::set_config($yaml);
+        self::setConfig($yaml);
 
     }
     /**
