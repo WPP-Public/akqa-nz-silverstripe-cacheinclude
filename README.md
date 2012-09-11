@@ -27,6 +27,43 @@ To install drop the `heyday-cacheinclude` directory into your SilverStripe root 
         </ul>
     )
 
+In order to use partials, SilverStripes templating syntax has to be changed within the partial. The following characters or character combinations will cause errors in your partial:
+
+* <%
+* %>
+* )
+* ,
+* $
+* "
+
+The following are the replacements to use.
+
+<table>
+  <tr>
+    <th>Original</th><th>Replacement</th>
+  </tr>
+  <tr>
+    <td>&lt;%</td><td>{#</td>
+  </tr>
+  <tr>
+    <td>%&gt;</td><td>#}</td>
+  </tr>
+  <tr>
+    <td>(</td><td>{|</td>
+  </tr>
+  <tr>
+    <td>)</td><td>|}</td>
+  </tr>
+  <tr>
+    <td>$</td><td>{{</td>
+  </tr>
+  <tr>
+    <td>,</td><td>{%c%}</td>
+  </tr>
+  <tr>
+    <td>"</td><td>\"</td>
+  </tr>
+</table>
 
 ##Configuration
 
