@@ -42,7 +42,7 @@ class CacheIncludeExtension extends Extension
 
     private static $_config = array();
 
-    private static $_directory = '../heyday-cacheinclude/cache';
+    private static $_directory = '../silverstripe-cacheinclude/cache';
 
     private static $_run = array();
 
