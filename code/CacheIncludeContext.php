@@ -7,7 +7,8 @@ class CacheIncludeContext implements CacheIncludeContextInterface
     {
 
         $keyParts = array(
-            SSViewer::current_theme()
+            SSViewer::current_theme(),
+            Versioned::current_stage()
         );
 
         //If member context matters get the members id
@@ -24,7 +25,9 @@ class CacheIncludeContext implements CacheIncludeContextInterface
             case 0: //No Context
                 break;
             case 1: //Page Context
-                $keyParts[] = $controller->URLSegment;
+                $keyParts[] = $controller->FullLink 
+                    ? array_merge($keyparts, explode("\\", $controller->FullLink))
+                    : $controller->URLSegment;
                 break;
             case 2: //Action Context
                 $keyParts = array_merge($keyParts, array_filter($controller->getURLParams()));

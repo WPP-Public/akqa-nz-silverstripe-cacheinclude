@@ -52,10 +52,6 @@ class CacheIncludeExtension extends Extension
         'expires' => false
     );
 
-    private static $_is_admin_checked = false;
-
-    private static $_is_admin = false;
-
     private static $_delayed_processing = false;
 
     private static $_extra_memory = false;
@@ -221,20 +217,6 @@ class CacheIncludeExtension extends Extension
 
     }
 
-    protected static function isAdmin()
-    {
-
-        if (!self::$_is_admin_checked) {
-
-            self::$_is_admin_checked = true;
-
-            self::$_is_admin = Member::currentUserID() && Member::currentUser()->isAdmin();
-
-        }
-
-        return self::$_is_admin;
-
-    }
     /**
      * Writes the content to the path
      * @param  string $path
@@ -243,14 +225,6 @@ class CacheIncludeExtension extends Extension
      */
     protected static function write($path, $content)
     {
-
-        //check member, we don't want to write the cache with an admin logged in.
-
-        if (self::isAdmin()) {
-
-            return $content;
-
-        }
 
         if (!is_dir(dirname($path))) {
 
@@ -382,7 +356,7 @@ class CacheIncludeExtension extends Extension
     public function CacheInclude($name, $function = false, $template = false)
     {
 
-        if (!self::$_enabled || self::isAdmin()) {
+        if (!self::$_enabled) {
 
             return $this->cacheContent($template ? $template : $name, $function);
 
