@@ -24,11 +24,9 @@ class CacheIncludeContext implements CacheIncludeContextInterface
         switch ($config['context']) {
             case 0: //No Context
                 break;
-            case 1: //Page Context
-                if (!$keyparts) $keyparts = array();
-                
+            case 1: //Page Context                
                 $keyParts[] = $controller->FullLink 
-                    ? array_merge($keyparts, explode("\\", $controller->FullLink))
+                    ? array_merge($keyParts, explode("/", $controller->FullLink))
                     : $controller->URLSegment;
                 break;
             case 2: //Action Context
