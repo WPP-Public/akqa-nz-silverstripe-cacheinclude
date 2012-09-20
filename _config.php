@@ -1,5 +1,6 @@
 <?php
 
+Object::add_extension('SiteTree', 'CacheIncludeSiteTreeDecorator');
 Object::add_extension('DataObject', 'CacheIncludeExtension');
 Object::add_extension('ContentController', 'CacheIncludeExtension');
 
