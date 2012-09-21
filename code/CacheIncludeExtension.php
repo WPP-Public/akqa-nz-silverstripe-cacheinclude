@@ -287,10 +287,16 @@ class CacheIncludeExtension extends Extension
 
         } else {
 
-            foreach (glob(self::path('*' . $template)) as $file) {
+            $templates = glob(self::path('*' . $template));
+            
+            if (is_array($templates) && count($templates) > 0) {
+                
+                foreach ($templates as $file) {
 
-                unlink($file);
+                    unlink($file);
 
+                }
+                
             }
 
         }
