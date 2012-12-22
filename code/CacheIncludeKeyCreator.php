@@ -1,9 +1,9 @@
 <?php
 
-class CacheIncludeContext implements CacheIncludeContextInterface
+class CacheIncludeKeyCreator implements CacheIncludeKeyCreatorInterface
 {
 
-    public function context($controller, $config)
+    public function getKeyParts(Controller $controller, $config)
     {
 
         $keyParts = array(
@@ -22,37 +22,46 @@ class CacheIncludeContext implements CacheIncludeContextInterface
 
         //Determine the context
         switch ($config['context']) {
-            case 0: //No Context
+            //No Context
+            case 0:
+            case 'no':
                 break;
-            case 1: //Page Context                
+            //Page Context
+            case 1:  
+            case 'page':           
                 $keyParts = $controller->FullLink 
-                    ? array_merge($keyParts, explode("/", $controller->FullLink))
+                    ? array_merge($keyParts, explode('/', $controller->FullLink))
                     : array_merge($keyParts, array($controller->URLSegment));
                 break;
-            case 2: //Action Context
+            //Action Context
+            case 2:
+            case 'action':
                 $keyParts = array_merge($keyParts, array_filter($controller->getURLParams()));
                 break;
-            case 3: //Full Page Context
+            //Full Page Context
+            case 3:
+            case 'full-page':
                 $data = $controller->getRequest()->requestVars();
-
                 if (array_key_exists('flush', $data)) {
-
                     unset($data['flush']);
-
                 }
-
                 $keyParts = array_merge($keyParts, array_filter($controller->getURLParams()));
-
                 $keyParts[] = md5(http_build_query($data));
                 break;
-            case 4: //Controller Context
+            //Controller Context
+            case 4:
+            case 'controller':
                 $keyParts[] = $controller->class;
                 break;
-            case 5: //Full Controller Context
+            //Full Controller Context
+            case 5:
+            case 'full-controller':
                 $keyParts[] = $controller->class;
                 $keyParts = array_merge($keyParts, array_filter($controller->getURLParams()));
                 break;
-            case 6: //Custom Controller Context
+            //Custom Controller Context
+            case 6:
+            case 'custom':
                 $keyParts = $controller->CacheContext($keyParts);
                 break;
         }

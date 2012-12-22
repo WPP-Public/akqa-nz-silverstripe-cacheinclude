@@ -2,6 +2,9 @@
     "name": "heyday/silverstripe-cacheinclude",
     "type": "silverstripe-module",
     "require": {
-        "composer/installers": "1.0.0"
-    }
+        "composer/installers": "1.0.0",
+        "maximebf/cachecache": "*",
+        "pimple/pimple": "1.0.*"
+    },
+    "minimum-stability": "dev"
 }
