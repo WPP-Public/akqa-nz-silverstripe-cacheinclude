@@ -2,5 +2,5 @@
 
 interface CacheIncludeProcessorInterface
 {
-	public function __invoke($name, \ViewableData $context, \Controller $controller);
+	public function __invoke($name);
 }

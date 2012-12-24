@@ -4,7 +4,8 @@
     "require": {
         "composer/installers": "1.0.0",
         "maximebf/cachecache": "*",
-        "pimple/pimple": "1.0.*"
+        "pimple/pimple": "1.0.*",
+        "symfony/yaml": "2.1.*"
     },
     "minimum-stability": "dev"
 }

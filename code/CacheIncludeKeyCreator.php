@@ -2,8 +2,7 @@
 
 class CacheIncludeKeyCreator implements CacheIncludeKeyCreatorInterface
 {
-
-    public function getKeyParts(Controller $controller, $config)
+    public function getKey($name, Controller $controller, $config)
     {
 
         $keyParts = array(
@@ -66,8 +65,12 @@ class CacheIncludeKeyCreator implements CacheIncludeKeyCreatorInterface
                 break;
         }
 
-        return $keyParts;
+        $keyParts[] = $name;
+
+        return implode(
+            '_',
+            (array) $keyParts
+        );
 
     }
-
 }

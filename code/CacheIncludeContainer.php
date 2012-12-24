@@ -6,7 +6,7 @@ class CacheIncludeContainer extends Pimple
      * Default config of properties
      * @var array
      */
-    protected $config = array(
+    protected static $config = array(
         //CacheCache
         'cachecache.class'                        => '\CacheCache\Cache',
         'cachecache.options.namespace'            => 'cacheinclude',
@@ -17,13 +17,16 @@ class CacheIncludeContainer extends Pimple
         'cachecache_backend.class'                => '\CacheCache\Backends\File',
 
         //CacheInclude
-        'cacheinclude.class'                      => 'CacheInclude'
+        'cacheinclude.class'                      => 'CacheInclude',
         'cacheinclude.options.delayed_processing' => false,
         'cacheinclude.options.enabled'            => true,
-        'cacheinclude.options.config'             => array(),
         'cacheinclude.options.force_expire'       => false,
 
-        //CacheIncludeContext
+        //CacheIncludeConfig
+        'cacheinclude_config.class'               => 'CacheIncludeArrayConfig',
+        'cacheinclude_config.config'              => array(),
+
+        //CacheIncludeKeyCreator
         'cacheinclude_key_creator.class'          => 'CacheIncludeKeyCreator',
 
         //CacheIncludeProcessor
@@ -71,7 +74,7 @@ class CacheIncludeContainer extends Pimple
             $cacheinclude = new $c['cacheinclude.class'](
                 $c['cachecache'],
                 $c['cacheinclude_key_creator'],
-                $c['cacheinclude.options.config'],
+                $c['cacheinclude_config'],
                 $c['cacheinclude.options.force_expire']
             );
             if ($c->offsetExists('cacheinclude.options.delayed_processing')) {
@@ -97,6 +100,11 @@ class CacheIncludeContainer extends Pimple
         //CacheIncludeProcessor
         $this['cacheinclude_processor'] = $this->share(function ($c) {
             return new $c['cacheinclude_processor.class'];
+        });
+
+        //CacheIncludeConfig
+        $this['cacheinclude_config'] = $this->share(function ($c) {
+            return new $c['cacheinclude_config.class']($c['cacheinclude_config.config']);
         });
 
         //Default config

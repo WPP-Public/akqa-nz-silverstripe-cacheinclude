@@ -2,5 +2,5 @@
 
 interface CacheIncludeKeyCreatorInterface
 {
-    public function getKeyParts($controller, $config);
+    public function getKey($name, Controller $controller, $config);
 }

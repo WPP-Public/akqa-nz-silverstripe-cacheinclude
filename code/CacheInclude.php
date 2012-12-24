@@ -6,12 +6,12 @@ class CacheInclude
     //DI services
     protected $keyCreator;
     protected $cache;
+    protected $config;
 
     //Configuration props
     protected $delayedProcessing = false;
     protected $enabled = true;
     protected $extraMemory = array();
-    protected $config = array();
     protected $forceExpire = false;
     protected $defaultConfig = array(
         'context' => 'no',
@@ -22,13 +22,13 @@ class CacheInclude
     public function __construct(
         \CacheCache\Cache $cache,
         CacheIncludeKeyCreatorInterface $keyCreator,
-        $config,
+        CacheIncludeConfigInterface $config,
         $forceExpire = false
     )
     {
         $this->cache = $cache;
         $this->keyCreator = $keyCreator;
-        $this->setConfig($config);
+        $this->config = $config;
         $this->forceExpire = $forceExpire;
     }
 
@@ -40,11 +40,6 @@ class CacheInclude
     public function setEnabled($enabled)
     {
         $this->enabled = (boolean) $enabled;
-    }
-
-    public function setConfig($config)
-    {
-        $this->config = array_merge($this->config, $config);
     }
 
     public function setDefaultConfig($config)
@@ -78,27 +73,66 @@ class CacheInclude
 
         $config = $this->getCombinedConfig($name);
 
-        $key = implode(
-            '_',
-            (array) $this->keyCreator->getKeyParts(
-                $controller,
-                $config
-            )
+        $key = $this->keyCreator->getKey(
+            $name,
+            $controller,
+            $config
         );
 
-        if (($result = $this->cache->get($key)) === null || $this->forceExpire) {
+        if (($result = $this->cache->get($key)) === null) {
 
             // $this->ensureExtraMemory();
+            // 
+            if ($this->forceExpire) {
+                $expires = 0;
+            } elseif (isset($config['expires'])) {
+                $expires = strtotime($expires) - date('U');
+            } else {
+                $expires = null;
+            }
 
             $this->cache->set(
                 $key,
                 $result = $processor($name),
-                isset($config['expires']) ? strtotime($expires) - date('U') : null
+                $expires
             );
+
+            $this->addStoredKey($name, $key);
 
         }
 
+        $this->flushByName($name);
+
         return $result;
+    }
+
+    protected function addStoredKey($name, $key)
+    {
+        $keys = $this->getStoredKeys($name);
+        if (!is_array($keys)) {
+            $keys = array();
+        }
+        if (!isset($keys[$key])) {
+            $keys[$key] = true;
+            $this->cache->set($name, $keys);
+        }
+    }
+
+    protected function getStoredKeys($name)
+    {
+        return $this->cache->get($name);
+    }
+
+    public function flushByName($name)
+    {
+        foreach ((array) $this->getStoredKeys($name) as $key => $value) {
+            $this->cache->delete($key);
+        }
+    }
+
+    public function flushAll()
+    {
+        $this->cache->flushAll();
     }
 
 }

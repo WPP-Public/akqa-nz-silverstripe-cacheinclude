@@ -3,36 +3,112 @@
 class CacheIncludeExtension extends Extension
 {
 
-    private static $_run = array();
+    private static $run = array();
 
-    /**
-     * Takes a yaml file and loads it into the config
-     * @param string $file
-     */
-    public static function loadConfig($file)
+    public function __get($name)
+    {
+        if ($name == 'dic') {
+            return $this->dic = new CacheIncludeContainer;
+        } else {
+            return parent::__get($name);
+        }
+    }
+        
+    public function CacheInclude($name)
+    {
+        return $this->dic['cacheinclude']->process(
+            $name,
+            $this->dic['cacheinclude_processor']->setContext($this->owner),
+            $this->owner instanceof Controller ? $this->owner : Controller::curr()
+        );
+    }
+
+    public function onAfterWrite()
+    {
+        $this->onChange();
+    }
+
+    public function onAfterDelete()
+    {
+        $this->onChange();
+    }
+
+    public function onChange()
+    {
+        if (!isset(self::$run[$this->owner->ClassName])) {
+
+            self::$run[$this->owner->ClassName] = true;
+
+            $names = array();
+
+            $cacheinclude = $this->dic['cacheinclude'];
+
+            foreach ((array) $cacheinclude->getConfig() as $name => $config) {
+
+                if ( isset($config['contains']) && is_array($config['contains'])) {
+
+                    foreach ($config['contains'] as $class) {
+
+                        if ($this->owner instanceof $class) {
+
+                            $names[] = $name;
+
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            if (count($names) > 0) {
+
+                foreach ($names as $name) {
+
+                    $cacheinclude->flushByName($name);
+
+                }
+
+            }
+
+        }
+    }
+
+    public function extraStatics()
     {
 
-        $cachefile = $file . '.cache';
-
-        if (file_exists($cachefile) && !isset($_GET['flush'])) {
-
-            $yaml = unserialize(file_get_contents($cachefile));
-
-        }
-
-        if (!isset($yaml) || !is_array($yaml)) {
-
-            require_once 'thirdparty/spyc/spyc.php';
-
-            $yaml = Spyc::YAMLLoad($file);
-
-            file_put_contents($cachefile, serialize($yaml));
-
-        }
-
-        self::setConfig($yaml);
-
     }
+
+    // /**
+    //  * Takes a yaml file and loads it into the config
+    //  * @param string $file
+    //  */
+    // public static function loadConfig($file)
+    // {
+
+    //     $cachefile = $file . '.cache';
+
+    //     if (file_exists($cachefile) && !isset($_GET['flush'])) {
+
+    //         $yaml = unserialize(file_get_contents($cachefile));
+
+    //     }
+
+    //     if (!isset($yaml) || !is_array($yaml)) {
+
+    //         
+
+    //         $yaml = Spyc::YAMLLoad($file);
+
+    //         file_put_contents($cachefile, serialize($yaml));
+
+    //     }
+
+    //     self::setConfig($yaml);
+
+    // }
     /**
      * Deletes all cache files
      */
@@ -110,123 +186,48 @@ class CacheIncludeExtension extends Extension
 
     // }
 
-    public function CacheInclude($name)
-    {
-        $this->dic['cacheinclude']->process(
-            $name,
-            $this->dic['cacheinclude_processor']->setContext($this->owner),
-            $this->owner instanceof Controller ? $this->owner : Controller::curr()
-        );
-    }
+    // public function CacheIncludePartial($name, $template)
+    // {
+    //     return $this->CacheInclude(trim($name), false, new SSViewer_FromString(str_replace(array(
+    //         '{#',
+    //         '#}',
+    //         '{{',
+    //         '}}',
+    //         '{|',
+    //         '|}',
+    //         '{%c%}'
+    //     ), array(
+    //         '<%',
+    //         '%>',
+    //         '$',
+    //         '',
+    //         '(',
+    //         ')',
+    //         ','
+    //     ), $template)));
+    // }
 
+    // protected function cacheContent($template, $function = false)
+    // {
 
-    public function CacheIncludePartial($name, $template)
-    {
-        return $this->CacheInclude(trim($name), false, new SSViewer_FromString(str_replace(array(
-            '{#',
-            '#}',
-            '{{',
-            '}}',
-            '{|',
-            '|}',
-            '{%c%}'
-        ), array(
-            '<%',
-            '%>',
-            '$',
-            '',
-            '(',
-            ')',
-            ','
-        ), $template)));
-    }
+    //     if ($function && is_string($template) && $this->owner->hasMethod($template)) {
 
-    protected function cacheContent($template, $function = false)
-    {
+    //         $result = $this->owner->$template();
 
-        if ($function && is_string($template) && $this->owner->hasMethod($template)) {
+    //         if ($result instanceof ViewableData) {
 
-            $result = $this->owner->$template();
+    //             return $result->forTemplate();
 
-            if ($result instanceof ViewableData) {
+    //         } else {
 
-                return $result->forTemplate();
+    //             return $result;
 
-            } else {
+    //         }
 
-                return $result;
+    //     }
 
-            }
+    //     return $this->owner->renderWith($template);
 
-        }
-
-        return $this->owner->renderWith($template);
-
-    }
-
-    public function onAfterWrite()
-    {
-
-        $this->onChange();
-
-    }
-
-    public function onAfterDelete()
-    {
-
-        $this->onChange();
-
-    }
-
-    public function onChange()
-    {
-
-        if (!isset(self::$_run[$this->owner->ClassName])) {
-
-            self::$_run[$this->owner->ClassName] = true;
-
-            $templates = array();
-
-            foreach (self::$_config as $template => $config) {
-
-                if (
-                    isset($config['contains'])
-                    &&
-                    is_array($config['contains'])
-                ) {
-
-                    foreach ($config['contains'] as $class) {
-
-                        if ($this->owner instanceof $class) {
-
-                            $templates[] = $template;
-
-                            break;
-
-                        }
-                    }
-
-                }
-
-            }
-
-            if (count($templates) > 0) {
-
-                foreach ($templates as $template) {
-
-                    self::clearTemplate($template);
-
-                }
-
-            }
-
-        }
-
-    }
-
-    public function extraStatics()
-    {
-
-    }
+    // }
 
 }
