@@ -101,8 +101,6 @@ class CacheInclude
 
         }
 
-        $this->flushByName($name);
-
         return $result;
     }
 
