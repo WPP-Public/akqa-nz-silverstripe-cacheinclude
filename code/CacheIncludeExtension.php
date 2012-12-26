@@ -43,9 +43,9 @@ class CacheIncludeExtension extends Extension
 
             $cacheinclude = $this->dic['cacheinclude'];
 
-            foreach ((array) $cacheinclude->getConfig() as $name => $config) {
+            foreach ($cacheinclude->getConfig() as $name => $config) {
 
-                if ( isset($config['contains']) && is_array($config['contains'])) {
+                if (isset($config['contains']) && is_array($config['contains'])) {
 
                     foreach ($config['contains'] as $class) {
 
