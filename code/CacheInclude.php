@@ -52,6 +52,11 @@ class CacheInclude
         $this->extraMemory = $extraMemory;
     }
 
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
     protected function getCombinedConfig($name)
     {
         $config = $this->defaultConfig;
