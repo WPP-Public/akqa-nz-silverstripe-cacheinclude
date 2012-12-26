@@ -81,11 +81,10 @@ class CacheInclude
 
         if (($result = $this->cache->get($key)) === null) {
 
-            // $this->ensureExtraMemory();
-            // 
+
             if ($this->forceExpire) {
                 $expires = 0;
-            } elseif (isset($config['expires'])) {
+            } elseif (isset($config['expires']) && is_string($config['expires'])) {
                 $expires = strtotime($expires) - date('U');
             } else {
                 $expires = null;

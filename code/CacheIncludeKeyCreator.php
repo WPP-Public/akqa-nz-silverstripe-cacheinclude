@@ -68,7 +68,7 @@ class CacheIncludeKeyCreator implements CacheIncludeKeyCreatorInterface
         $keyParts[] = $name;
 
         return implode(
-            '_',
+            '.',
             (array) $keyParts
         );
 
