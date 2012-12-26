@@ -86,7 +86,6 @@ class CacheInclude
 
         if (($result = $this->cache->get($key)) === null) {
 
-
             if ($this->forceExpire) {
                 $expires = 0;
             } elseif (isset($config['expires']) && is_string($config['expires'])) {
@@ -120,6 +119,11 @@ class CacheInclude
         }
     }
 
+    protected function resetStoredKeys($name)
+    {
+        $this->cache->set($name, array());
+    }
+
     protected function getStoredKeys($name)
     {
         return $this->cache->get($name);
@@ -130,11 +134,15 @@ class CacheInclude
         foreach ((array) $this->getStoredKeys($name) as $key => $value) {
             $this->cache->delete($key);
         }
+        $this->resetStoredKeys($name);
     }
 
     public function flushAll()
     {
         $this->cache->flushAll();
+        foreach ($this->cache as $name => $config) {
+            $this->resetStoredKeys($name);
+        }
     }
 
 }
