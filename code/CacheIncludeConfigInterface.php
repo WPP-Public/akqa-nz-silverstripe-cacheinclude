@@ -1,5 +1,5 @@
 <?php
 
-interface CacheIncludeConfigInterface extends ArrayAccess
+interface CacheIncludeConfigInterface extends ArrayAccess, IteratorAggregate
 {
 }

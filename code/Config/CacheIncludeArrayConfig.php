@@ -31,4 +31,10 @@ class CacheIncludeArrayConfig implements CacheIncludeConfigInterface
     {
         unset($this->config[$id]);
     }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->config);
+    }
+
 }
