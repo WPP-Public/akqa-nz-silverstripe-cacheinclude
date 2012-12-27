@@ -72,7 +72,7 @@ class Container extends \Pimple
         });
 
         $this['cachecache_backend.options'] = array(
-            'dir'            => __DIR__ . '/../cache',
+            'dir'            => __DIR__ . '/../../../cache',
             'file_extension' => '.cache'
         );
 
