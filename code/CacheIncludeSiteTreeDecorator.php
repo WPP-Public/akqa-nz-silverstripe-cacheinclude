@@ -2,7 +2,7 @@
 
 class CacheIncludeSiteTreeDecorator extends DataObjectDecorator
 {
-    
+
     public function extraStatics()
     {
         return array(
@@ -11,12 +11,12 @@ class CacheIncludeSiteTreeDecorator extends DataObjectDecorator
             )
         );
     }
-  
+
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        
+
         $this->owner->FullLink = $this->owner->RelativeLink();
     }
-    
+
 }

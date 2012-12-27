@@ -1,17 +1,9 @@
 <?php
-/*
- *
- * Copyright (c) 2009 Heyday
- * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license
- *
- */
-
 /**
  *
  * Provides ability to clear cache from sake
  *
  * @name     cache-include
- * @version  0.1
  * @author   Cam Spiers (cameron [at] heyday [dot] co [dot] nz)
  *
  */

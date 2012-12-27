@@ -1,7 +1,14 @@
 <?php
 
-class CacheIncludeContainer extends Pimple
+namespace Heyday\CacheInclude;
+
+class Container extends Pimple
 {
+    /**
+     * Holds an instance of the container
+     * @var \Heyday\CacheInclude\Container
+     */
+    protected static $instance;
     /**
      * Default config of properties
      * @var array
@@ -17,20 +24,20 @@ class CacheIncludeContainer extends Pimple
         'cachecache_backend.class'                => '\CacheCache\Backends\File',
 
         //CacheInclude
-        'cacheinclude.class'                      => 'CacheInclude',
+        'cacheinclude.class'                      => '\Heyday\CacheInclude\CacheInclude',
         'cacheinclude.options.delayed_processing' => false,
         'cacheinclude.options.enabled'            => true,
         'cacheinclude.options.force_expire'       => false,
 
-        //CacheIncludeConfig
-        'cacheinclude_config.class'               => 'CacheIncludeArrayConfig',
+        //ArrayConfig
+        'cacheinclude_config.class'               => '\Heyday\CacheInclude\Configs\ArrayConfig',
         'cacheinclude_config.config'              => array(),
 
-        //CacheIncludeKeyCreator
-        'cacheinclude_key_creator.class'          => 'CacheIncludeKeyCreator',
+        //KeyCreator
+        'cacheinclude_key_creator.class'          => '\Heyday\CacheInclude\KeyCreators\KeyCreator',
 
-        //CacheIncludeProcessor
-        'cacheinclude_processor.class'            => 'CacheIncludeProcessor'
+        //Processor
+        'cacheinclude_processor.class'            => '\Heyday\CacheInclude\Processors\Processor'
 
     );
     /**
@@ -89,6 +96,7 @@ class CacheIncludeContainer extends Pimple
             if ($c->offsetExists('cacheinclude.options.default_config')) {
                 $cacheinclude->setDefaultConfig($c['cacheinclude.options.default_config']);
             }
+
             return $cacheinclude;
         });
 
@@ -126,6 +134,18 @@ class CacheIncludeContainer extends Pimple
             }
         }
 
+    }
+    /**
+     * Returns and instance of the container
+     * @return \Heyday\CacheInclude\Container Cache Include Container
+     */
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
     /**
      * Alows the extending of already defined services by the user

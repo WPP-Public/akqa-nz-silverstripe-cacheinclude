@@ -1,18 +1,21 @@
 <?php
 
-class CacheIncludeKeyCreator implements CacheIncludeKeyCreatorInterface
-{
-    public function getKey($name, Controller $controller, $config)
-    {
+namespace Heyday\CacheInclude\KeyCreators;
 
+use Heyday\CacheInclude\KeyCreatorInterface;
+
+class KeyCreator implements KeyCreatorInterface
+{
+    public function getKey($name, \Controller $controller, $config)
+    {
         $keyParts = array(
-            SSViewer::current_theme(),
-            Versioned::current_stage()
+            \SSViewer::current_theme(),
+            \Versioned::current_stage()
         );
 
         //If member context matters get the members id
         if ($config['member']) {
-            $memberID = Member::currentUserID();
+            $memberID = \Member::currentUserID();
             if ($memberID) {
                 $keyParts[] = 'Members';
                 $keyParts[] = $memberID;
@@ -26,9 +29,9 @@ class CacheIncludeKeyCreator implements CacheIncludeKeyCreatorInterface
             case 'no':
                 break;
             //Page Context
-            case 1:  
-            case 'page':           
-                $keyParts = $controller->FullLink 
+            case 1:
+            case 'page':
+                $keyParts = $controller->FullLink
                     ? array_merge($keyParts, explode('/', $controller->FullLink))
                     : array_merge($keyParts, array($controller->URLSegment));
                 break;

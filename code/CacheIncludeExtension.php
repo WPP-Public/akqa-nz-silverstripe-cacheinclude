@@ -8,12 +8,12 @@ class CacheIncludeExtension extends Extension
     public function __get($name)
     {
         if ($name == 'dic') {
-            return $this->dic = new CacheIncludeContainer;
+            return $this->dic = \Heyday\CacheInclude\Container::getInstance();
         } else {
             return parent::__get($name);
         }
     }
-        
+
     public function CacheInclude($name)
     {
         return $this->dic['cacheinclude']->process(
@@ -98,7 +98,7 @@ class CacheIncludeExtension extends Extension
 
     //     if (!isset($yaml) || !is_array($yaml)) {
 
-    //         
+    //
 
     //         $yaml = Spyc::YAMLLoad($file);
 
@@ -134,15 +134,15 @@ class CacheIncludeExtension extends Extension
     //     } else {
 
     //         $templates = glob(self::path('*' . $template));
-            
+
     //         if (is_array($templates) && count($templates) > 0) {
-                
+
     //             foreach ($templates as $file) {
 
     //                 unlink($file);
 
     //             }
-                
+
     //         }
 
     //     }

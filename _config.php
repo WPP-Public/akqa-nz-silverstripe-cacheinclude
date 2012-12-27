@@ -8,6 +8,6 @@ Object::add_extension('ContentController', 'CacheIncludeExtension');
 //     'cache-include//$Action' => 'CacheIncludeController'
 // ));
 
-CacheIncludeContainer::extendConfig(array(
-	'cacheinclude.options.force_expire' => isset($_GET['flush']) && $_GET['flush']
+Heyday\CacheInclude\Container::extendConfig(array(
+    'cacheinclude.options.force_expire' => isset($_GET['flush']) && $_GET['flush']
 ));

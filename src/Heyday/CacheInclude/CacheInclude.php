@@ -1,5 +1,12 @@
 <?php
 
+namespace Heyday\CacheInclude;
+
+use CacheCache\Cache;
+use Heyday\CacheInclude\KeyCreatorInterface;
+use Heyday\CacheInclude\ConfigInterface;
+use Heyday\CacheInclude\ProcessorInterface;
+
 class CacheInclude
 {
 
@@ -20,9 +27,9 @@ class CacheInclude
     );
 
     public function __construct(
-        \CacheCache\Cache $cache,
-        CacheIncludeKeyCreatorInterface $keyCreator,
-        CacheIncludeConfigInterface $config,
+        Cache $cache,
+        KeyCreatorInterface $keyCreator,
+        ConfigInterface $config,
         $forceExpire = false
     )
     {
@@ -63,13 +70,14 @@ class CacheInclude
         if (isset($this->config[$name]) && is_array($this->config[$name])) {
             $config = $this->config[$name] + $config;
         }
+
         return $config;
     }
 
-    public function process($name, $processor, Controller $controller)
-    {        
-        if (!$processor instanceof CacheIncludeProcessorInterface && !is_callable($processor)) {
-            throw new InvalidArgumentException('The argument $processor must be an instance of CacheIncludeProcessorInterface or a callable');
+    public function process($name, $processor, \Controller $controller)
+    {
+        if (!$processor instanceof ProcessorInterface && !is_callable($processor)) {
+            throw new \InvalidArgumentException('The argument $processor must be an instance of ProcessorInterface or a callable');
         }
 
         if (!$this->enabled) {

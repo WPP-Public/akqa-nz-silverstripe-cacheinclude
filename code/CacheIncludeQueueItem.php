@@ -36,7 +36,6 @@ class CacheIncludeQueueItem extends DataObject
 
     public static function getAll()
     {
-
          return DB::query("SELECT `Template` FROM `CacheIncludeQueueItem`");
 
     }
