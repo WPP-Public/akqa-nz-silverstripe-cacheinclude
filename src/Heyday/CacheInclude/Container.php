@@ -2,7 +2,7 @@
 
 namespace Heyday\CacheInclude;
 
-class Container extends Pimple
+class Container extends \Pimple
 {
     /**
      * Holds an instance of the container
