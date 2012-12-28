@@ -42,9 +42,19 @@ class CacheInclude
         $this->enabled = (boolean) $enabled;
     }
 
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
     public function setDefaultConfig($config)
     {
-        $this->defaultConfig = $defaultConfig;
+        $this->defaultConfig = $config;
+    }
+
+    public function getDefaultConfig()
+    {
+        return $this->defaultConfig;
     }
 
     public function getConfig()
@@ -52,7 +62,7 @@ class CacheInclude
         return $this->config;
     }
 
-    protected function getCombinedConfig($name)
+    public function getCombinedConfig($name)
     {
         $config = $this->defaultConfig;
         if (isset($this->config[$name]) && is_array($this->config[$name])) {
