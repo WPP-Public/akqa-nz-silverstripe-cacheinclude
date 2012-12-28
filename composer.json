@@ -9,7 +9,8 @@
         "symfony/yaml": "2.1.*"
     },
     "require-dev": {
-        "silverstripe/framework": "2.4.*"
+        "silverstripe/framework": "2.4.*",
+        "composer/composer": "1.0.0-alpha6"
     },
     "autoload": {
         "psr-0": { "Heyday\\CacheInclude": "src/" }
