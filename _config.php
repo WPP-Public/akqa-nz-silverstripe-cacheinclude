@@ -1,5 +1,9 @@
 <?php
 
+if (file_exists(__DIR__ . '../vendor/autoload.php')) {
+	require_once __DIR__ . '../vendor/autoload.php';
+}
+
 Object::add_extension('SiteTree', 'CacheIncludeSiteTreeDecorator');
 Object::add_extension('DataObject', 'CacheIncludeExtension');
 Object::add_extension('ContentController', 'CacheIncludeExtension');
