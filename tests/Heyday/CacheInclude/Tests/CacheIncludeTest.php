@@ -62,9 +62,74 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
         $this->cacheinclude->process('test', array(), new \Controller);
     }
 
+    public function testProcessDisabled()
+    {
+        $this->cacheinclude->setEnabled(false);
+        $this->assertEquals('hello', $this->cacheinclude->process(
+            'test',
+            function () {
+                return 'hello';
+            },
+            new \Controller
+        ));
+    }
+
     public function testProcess()
     {
+        $i = 0;
 
+        $i = $this->cacheinclude->process(
+            'test',
+            function ($name) use ($i) {
+                $i++;
+                return $i;
+            },
+            new \Controller
+        );
+
+        $this->assertEquals(1, $i);
+
+        $i = $this->cacheinclude->process(
+            'test',
+            function ($name) use ($i) {
+                $i++;
+                return $i;
+            },
+            new \Controller
+        );
+
+        $this->assertEquals(1, $i);
+
+        $this->cacheinclude->setForceExpire(true);
+
+        $i = $this->cacheinclude->process(
+            'test',
+            function ($name) use ($i) {
+                $i++;
+                return $i;
+            },
+            new \Controller
+        );
+
+        $this->assertEquals(2, $i);
+
+        $i = $this->cacheinclude->process(
+            'test',
+            function ($name) use ($i) {
+                $i++;
+                return $i;
+            },
+            new \Controller
+        );
+
+        $this->assertEquals(3, $i);
+
+    }
+
+    public function testForceExpire()
+    {
+        $this->cacheinclude->setForceExpire(true);
+        $this->assertTrue($this->cacheinclude->getForceExpire());
     }
 }
 

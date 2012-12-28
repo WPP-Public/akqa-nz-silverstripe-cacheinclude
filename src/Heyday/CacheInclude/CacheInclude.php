@@ -62,6 +62,16 @@ class CacheInclude
         return $this->config;
     }
 
+    public function setForceExpire($forceExpire)
+    {
+        $this->forceExpire = (boolean) $forceExpire;
+    }
+
+    public function getForceExpire()
+    {
+        return $this->forceExpire;
+    }
+
     public function getCombinedConfig($name)
     {
         $config = $this->defaultConfig;
@@ -90,12 +100,10 @@ class CacheInclude
             $config
         );
 
-        if (($result = $this->cache->get($key)) === null) {
+        if ($this->forceExpire || ($result = $this->cache->get($key)) === null) {
 
-            if ($this->forceExpire) {
-                $expires = 0;
-            } elseif (isset($config['expires']) && is_string($config['expires'])) {
-                $expires = strtotime($expires) - date('U');
+            if (isset($config['expires']) && is_string($config['expires'])) {
+                $expires = strtotime($config['expires']) - date('U');
             } else {
                 $expires = null;
             }
