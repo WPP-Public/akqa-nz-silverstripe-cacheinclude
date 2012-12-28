@@ -16,9 +16,7 @@ class CacheInclude
     protected $config;
 
     //Configuration props
-    protected $delayedProcessing = false;
     protected $enabled = true;
-    protected $extraMemory = array();
     protected $forceExpire = false;
     protected $defaultConfig = array(
         'context' => 'no',
@@ -39,11 +37,6 @@ class CacheInclude
         $this->forceExpire = $forceExpire;
     }
 
-    public function setDelayedProcessing($enabled)
-    {
-        $this->delayedProcessing = (boolean) $enabled;
-    }
-
     public function setEnabled($enabled)
     {
         $this->enabled = (boolean) $enabled;
@@ -52,11 +45,6 @@ class CacheInclude
     public function setDefaultConfig($config)
     {
         $this->defaultConfig = $defaultConfig;
-    }
-
-    public function setExtraMemory($extraMemory)
-    {
-        $this->extraMemory = $extraMemory;
     }
 
     public function getConfig()
