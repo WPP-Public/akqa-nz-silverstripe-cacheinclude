@@ -25,7 +25,6 @@ class Container extends \Pimple
 
         //CacheInclude
         'cacheinclude.class'                      => '\Heyday\CacheInclude\CacheInclude',
-        'cacheinclude.options.delayed_processing' => false,
         'cacheinclude.options.enabled'            => true,
         'cacheinclude.options.force_expire'       => false,
 
@@ -84,14 +83,8 @@ class Container extends \Pimple
                 $c['cacheinclude_config'],
                 $c['cacheinclude.options.force_expire']
             );
-            if ($c->offsetExists('cacheinclude.options.delayed_processing')) {
-                $cacheinclude->setDelayedProcessing($c['cacheinclude.options.delayed_processing']);
-            }
             if ($c->offsetExists('cacheinclude.options.enabled')) {
                 $cacheinclude->setEnabled($c['cacheinclude.options.enabled']);
-            }
-            if ($c->offsetExists('cacheinclude.options.extra_memory')) {
-                $cacheinclude->setExtraMemory($c['cacheinclude.options.extra_memory']);
             }
             if ($c->offsetExists('cacheinclude.options.default_config')) {
                 $cacheinclude->setDefaultConfig($c['cacheinclude.options.default_config']);

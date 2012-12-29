@@ -14,7 +14,7 @@ class KeyCreator implements KeyCreatorInterface
         );
 
         //If member context matters get the members id
-        if ($config['member']) {
+        if (isset($config['member']) && $config['member']) {
             $memberID = \Member::currentUserID();
             if ($memberID) {
                 $keyParts[] = 'Members';
