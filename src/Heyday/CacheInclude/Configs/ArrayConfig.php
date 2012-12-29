@@ -15,7 +15,7 @@ class ArrayConfig implements ConfigInterface
 
     public function offsetSet($id, $value)
     {
-        $this->config[$id] = $value;
+        throw new \Exception('Configs are immutable');
     }
 
     public function offsetGet($id)
@@ -34,7 +34,7 @@ class ArrayConfig implements ConfigInterface
 
     public function offsetUnset($id)
     {
-        unset($this->config[$id]);
+        throw new \Exception('Configs are immutable');
     }
 
     public function getIterator()

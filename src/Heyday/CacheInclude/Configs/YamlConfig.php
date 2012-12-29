@@ -7,17 +7,14 @@ use CacheCache\Cache;
 
 class YamlConfig extends ArrayConfig
 {
-    public function __construct($file, Cache $cache = null)
+    public function __construct($yaml, Cache $cache = null)
     {
-        if (!is_readable($file)) {
-            throw new \InvalidArgumentException("$file is not readable");
-        }
         if ($cache instanceof Cache) {
-            if (!($result = $cache->load($file))) {
-                $cache->save($result = Yaml::parse($file));
+            if (!($result = $cache->load(md5($yaml)))) {
+                $cache->save($result = Yaml::parse($yaml));
             }
         } else {
-            $result = Yaml::parse($file);
+            $result = Yaml::parse($yaml);
         }
         parent::__construct($result);
     }

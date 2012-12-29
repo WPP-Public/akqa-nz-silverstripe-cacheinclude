@@ -25,6 +25,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $this->cacheinclude = null;
+        $this->cache = null;
     }
 
     public function testEnabled()
@@ -82,6 +83,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
+
                 return $i;
             },
             new \Controller
@@ -93,6 +95,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
+
                 return $i;
             },
             new \Controller
@@ -106,6 +109,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
+
                 return $i;
             },
             new \Controller
@@ -117,6 +121,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
+
                 return $i;
             },
             new \Controller
