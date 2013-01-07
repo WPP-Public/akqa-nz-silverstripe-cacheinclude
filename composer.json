@@ -17,7 +17,6 @@
     "require-dev": {
         "silverstripe/framework": "2.4.*",
         "composer/composer": "1.0.0-alpha6",
-        "phpunit/phpunit": "3.7.*",
         "squizlabs/php_codesniffer": "1.4.*",
         "phpmd/phpmd": "1.4.*",
         "phploc/phploc": "dev-master",
