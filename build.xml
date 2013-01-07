@@ -2,7 +2,7 @@
 
 <project name="name-of-project" default="build">
  <target name="build"
-   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpunit,phpcb"/>
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpdoc,phpunit,phpcb"/>
 
  <target name="build-parallel"
    depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -130,4 +130,11 @@
    <arg path="${basedir}/build/code-browser" />
   </exec>
  </target>
+
+  <target name="phpdoc" description="Generate API documentation">
+    <exec executable="phpdoc">
+      <arg line="-d ${basedir}/src,${basedir}/code -t ${basedir}/build/api" />
+    </exec>
+  </target>
+
 </project>
