@@ -133,7 +133,7 @@
 
   <target name="phpdoc" description="Generate API documentation">
     <exec executable="phpdoc">
-      <arg line="-d ${basedir}/src,${basedir}/code -t ${basedir}/build/api" />
+      <arg line="run -d ${basedir}/src,${basedir}/code -t ${basedir}/build/api" />
     </exec>
   </target>
 
