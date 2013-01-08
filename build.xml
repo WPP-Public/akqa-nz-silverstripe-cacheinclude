@@ -65,7 +65,8 @@
   <exec executable="${basedir}/vendor/bin/phploc">
    <arg value="--log-csv" />
    <arg value="${basedir}/build/logs/phploc.csv" />
-   <arg path="${basedir}/code ${basedir}/src" />
+   <arg value="code" />
+   <arg value="src" />
   </exec>
  </target>
 
@@ -135,9 +136,9 @@
     <exec executable="phpdoc">
       <arg value="run" />
       <arg value="-d" />
-      <arg path="${basedir}/src,${basedir}/code" />
+      <arg value="${basedir}/src,${basedir}/code" />
       <arg value="-t" />
-      <arg path="${basedir}/build/api" />
+      <arg value="${basedir}/build/api" />
     </exec>
   </target>
 
