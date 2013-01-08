@@ -20,8 +20,7 @@
         "squizlabs/php_codesniffer": "1.4.*",
         "phpmd/phpmd": "1.4.*",
         "phploc/phploc": "dev-master",
-        "pdepend/pdepend": "1.1.*",
-        "sami/sami": "dev-master"
+        "pdepend/pdepend": "1.1.*"
     },
     "autoload": {
         "psr-0": { "Heyday\\CacheInclude": "src/" }
