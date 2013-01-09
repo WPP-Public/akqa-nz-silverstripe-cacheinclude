@@ -1,0 +1,19 @@
+<?php
+
+use Sami\Sami;
+use Symfony\Component\Finder\Finder;
+
+$iterator = Finder::create()
+    ->files()
+    ->name('*.php')
+    ->exclude('build')
+    ->exclude('vendor')
+    ->exclude('tests')
+    ->exclude('framework')
+    ->in(__DIR__);
+
+return new Sami($iterator, array(
+    'title'                => 'Cache Include API',
+    'build_dir'            => __DIR__ . '/build/api',
+    'cache_dir'            => __DIR__ . '/build/apicache'
+));

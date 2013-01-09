@@ -2,10 +2,10 @@
 
 <project name="name-of-project" default="build">
  <target name="build"
-   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpdoc,phpunit,phpcb"/>
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpdoc,phpunit"/>
 
  <target name="build-parallel"
-   depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
+   depends="prepare,lint,tools-parallel,phpunit"/>
 
  <target name="tools-parallel" description="Run tools in parallel">
   <parallel threadCount="2">
@@ -20,7 +20,6 @@
 
  <target name="clean" description="Cleanup build artifacts">
   <delete dir="${basedir}/build/api"/>
-  <delete dir="${basedir}/build/code-browser"/>
   <delete dir="${basedir}/build/coverage"/>
   <delete dir="${basedir}/build/logs"/>
   <delete dir="${basedir}/build/pdepend"/>
@@ -28,7 +27,6 @@
 
  <target name="prepare" depends="clean" description="Prepare for build">
   <mkdir dir="${basedir}/build/api"/>
-  <mkdir dir="${basedir}/build/code-browser"/>
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>
   <mkdir dir="${basedir}/build/pdepend"/>
@@ -120,26 +118,19 @@
   <exec executable="phpunit" failonerror="true"/>
  </target>
 
- <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-  <exec executable="phpcb">
-   <arg value="--log" />
-   <arg path="${basedir}/build/logs" />
-   <arg value="--source" />
-   <arg value="${basedir}/src" />
-   <arg value="--source" />
-   <arg value="${basedir}/code" />
-   <arg value="--output" />
-   <arg path="${basedir}/build/code-browser" />
-  </exec>
- </target>
-
   <target name="phpdoc" description="Generate API documentation">
     <exec executable="phpdoc">
-      <arg value="run" />
       <arg value="-d" />
       <arg value="${basedir}/src,${basedir}/code" />
       <arg value="-t" />
       <arg value="${basedir}/build/api" />
+    </exec>
+  </target>
+
+  <target name="sami" description="Generate API documentation">
+    <exec executable="${basedir}/vendor/bin/sami.php">
+      <arg value="update" />
+      <arg value="${basedir}/.sami" />
     </exec>
   </target>
 
