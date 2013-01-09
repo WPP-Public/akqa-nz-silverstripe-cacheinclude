@@ -1,12 +1,5 @@
 <?php
-/**
- *
- * Provides ability to clear cache from sake
- *
- * @name     cache-include
- * @author   Cam Spiers (cameron [at] heyday [dot] co [dot] nz)
- *
- */
+
 class CacheIncludeController extends Controller
 {
 
@@ -26,7 +19,9 @@ class CacheIncludeController extends Controller
     public function clearAll()
     {
 
-        CacheIncludeExtension::clearAll();
+        $dic = Heyday\CacheInclude\Container::getInstance();
+
+        $dic['cacheinclude']->flushAll();
 
     }
 
@@ -35,18 +30,9 @@ class CacheIncludeController extends Controller
 
         if (isset($_GET['args'][0])) {
 
-            CacheIncludeExtension::clearTemplate($_GET['args'][0], true);
+            $dic = Heyday\CacheInclude\Container::getInstance();
 
-        }
-
-    }
-
-    public function clearFolder()
-    {
-
-        if (isset($_GET['args'][0])) {
-
-            CacheIncludeExtension::clearFolder($_GET['args'][0]);
+            $dic['cacheinclude']->flushByName($_GET['args'][0]);
 
         }
 
