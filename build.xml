@@ -2,7 +2,7 @@
 
 <project name="name-of-project" default="build">
  <target name="build"
-   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpdoc,phpunit"/>
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,sami,phpunit"/>
 
  <target name="build-parallel"
    depends="prepare,lint,tools-parallel,phpunit"/>
@@ -99,14 +99,14 @@
 
  <target name="phpcs"
          description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-  <exec executable="${basedir}/vendor/bin/phpcs">
+  <exec executable="phpcs">
    <arg value="--standard=PSR2" />
    <arg path="${basedir}/src" />
   </exec>
  </target>
 
  <target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-  <exec executable="${basedir}/vendor/bin/phpcs" output="/dev/null">
+  <exec executable="phpcs" output="/dev/null">
    <arg value="--report=checkstyle" />
    <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
    <arg value="--standard=PSR2" />
