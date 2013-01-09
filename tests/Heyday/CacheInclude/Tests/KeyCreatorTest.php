@@ -117,6 +117,7 @@ class TestController extends \Controller
     public function CacheContext($parts)
     {
         $parts[] = 'new';
+
         return $parts;
     }
 }

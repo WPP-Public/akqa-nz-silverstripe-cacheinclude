@@ -15,7 +15,7 @@
         "symfony/yaml": "2.1.*"
     },
     "require-dev": {
-        "silverstripe/framework": "2.4.*",
+        "silverstripe/framework": "2.4.9",
         "composer/composer": "1.0.0-alpha6",
         "squizlabs/php_codesniffer": "1.4.*",
         "phpmd/phpmd": "1.4.*",
