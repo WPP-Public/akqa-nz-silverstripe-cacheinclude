@@ -9,7 +9,6 @@ use Heyday\CacheInclude\ProcessorInterface;
 
 class CacheInclude
 {
-
     //DI services
     protected $keyCreator;
     protected $cache;
@@ -108,13 +107,24 @@ class CacheInclude
                 $expires = null;
             }
 
-            $this->cache->set(
-                $key,
-                $result = $processor($name),
-                $expires
-            );
+            $result = $result = $processor($name);
 
-            $this->addStoredKey($name, $key);
+            if ($this->forceExpire) {
+
+                $this->cache->delete($key);
+                $this->removeStoredKey($name, $key);
+
+            } else {
+
+                $this->cache->set(
+                    $key,
+                    $result,
+                    $expires
+                );
+
+                $this->addStoredKey($name, $key);
+
+            }
 
         }
 
@@ -129,6 +139,18 @@ class CacheInclude
         }
         if (!isset($keys[$key])) {
             $keys[$key] = true;
+            $this->cache->set($name, $keys);
+        }
+    }
+
+    protected function removeStoredKey($name, $key)
+    {
+        $keys = $this->getStoredKeys($name);
+        if (!is_array($keys)) {
+            $keys = array();
+        }
+        if (!isset($keys[$key])) {
+            unset($keys[$key]);
             $this->cache->set($name, $keys);
         }
     }
@@ -158,5 +180,4 @@ class CacheInclude
             $this->resetStoredKeys($name);
         }
     }
-
 }

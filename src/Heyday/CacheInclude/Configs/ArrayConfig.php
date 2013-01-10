@@ -41,5 +41,4 @@ class ArrayConfig implements ConfigInterface
     {
         return new \ArrayIterator($this->config);
     }
-
 }

@@ -129,6 +129,32 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(3, $i);
 
+        $this->cacheinclude->setForceExpire(false);
+
+        $i = $this->cacheinclude->process(
+            'test',
+            function ($name) use ($i) {
+                $i++;
+
+                return $i;
+            },
+            new \Controller
+        );
+
+        $this->assertEquals(4, $i);
+
+        $i = $this->cacheinclude->process(
+            'test',
+            function ($name) use ($i) {
+                $i++;
+
+                return $i;
+            },
+            new \Controller
+        );
+
+        $this->assertEquals(4, $i);
+
     }
 
     public function testForceExpire()
