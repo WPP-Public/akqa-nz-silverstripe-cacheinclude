@@ -28,8 +28,7 @@ class CacheInclude
         KeyCreatorInterface $keyCreator,
         ConfigInterface $config,
         $forceExpire = false
-    )
-    {
+    ) {
         $this->cache = $cache;
         $this->keyCreator = $keyCreator;
         $this->config = $config;
