@@ -56,19 +56,23 @@ class Container extends \Pimple
     {
 
         //CacheCache
-        $this['cachecache'] = $this->share(function ($c) {
-            return new $c['cachecache.class'](
-                $c['cachecache_backend'],
-                $c['cachecache.options.namespace'],
-                $c['cachecache.options.default_ttl'],
-                $c['cachecache.options.ttl_variation']
-            );
-        });
+        $this['cachecache'] = $this->share(
+            function ($c) {
+                return new $c['cachecache.class'](
+                    $c['cachecache_backend'],
+                    $c['cachecache.options.namespace'],
+                    $c['cachecache.options.default_ttl'],
+                    $c['cachecache.options.ttl_variation']
+                );
+            }
+        );
 
         //CacheCache backend
-        $this['cachecache_backend'] = $this->share(function ($c) {
-            return new $c['cachecache_backend.class']($c['cachecache_backend.options']);
-        });
+        $this['cachecache_backend'] = $this->share(
+            function ($c) {
+                return new $c['cachecache_backend.class']($c['cachecache_backend.options']);
+            }
+        );
 
         $this['cachecache_backend.options'] = array(
             'dir'            => __DIR__ . '/../../../cache',
@@ -76,37 +80,45 @@ class Container extends \Pimple
         );
 
         //CacheInclude
-        $this['cacheinclude'] = $this->share(function ($c) {
-            $cacheinclude = new $c['cacheinclude.class'](
-                $c['cachecache'],
-                $c['cacheinclude_key_creator'],
-                $c['cacheinclude_config'],
-                $c['cacheinclude.options.force_expire']
-            );
-            if ($c->offsetExists('cacheinclude.options.enabled')) {
-                $cacheinclude->setEnabled($c['cacheinclude.options.enabled']);
-            }
-            if ($c->offsetExists('cacheinclude.options.default_config')) {
-                $cacheinclude->setDefaultConfig($c['cacheinclude.options.default_config']);
-            }
+        $this['cacheinclude'] = $this->share(
+            function ($c) {
+                $cacheinclude = new $c['cacheinclude.class'](
+                    $c['cachecache'],
+                    $c['cacheinclude_key_creator'],
+                    $c['cacheinclude_config'],
+                    $c['cacheinclude.options.force_expire']
+                );
+                if ($c->offsetExists('cacheinclude.options.enabled')) {
+                    $cacheinclude->setEnabled($c['cacheinclude.options.enabled']);
+                }
+                if ($c->offsetExists('cacheinclude.options.default_config')) {
+                    $cacheinclude->setDefaultConfig($c['cacheinclude.options.default_config']);
+                }
 
-            return $cacheinclude;
-        });
+                return $cacheinclude;
+            }
+        );
 
         //CacheIncludeKeyCreator
-        $this['cacheinclude_key_creator'] = $this->share(function ($c) {
-            return new $c['cacheinclude_key_creator.class'];
-        });
+        $this['cacheinclude_key_creator'] = $this->share(
+            function ($c) {
+                return new $c['cacheinclude_key_creator.class'];
+            }
+        );
 
         //CacheIncludeProcessor
-        $this['cacheinclude_processor'] = $this->share(function ($c) {
-            return new $c['cacheinclude_processor.class'];
-        });
+        $this['cacheinclude_processor'] = $this->share(
+            function ($c) {
+                return new $c['cacheinclude_processor.class'];
+            }
+        );
 
         //CacheIncludeConfig
-        $this['cacheinclude_config'] = $this->share(function ($c) {
-            return new $c['cacheinclude_config.class']($c['cacheinclude_config.config']);
-        });
+        $this['cacheinclude_config'] = $this->share(
+            function ($c) {
+                return new $c['cacheinclude_config.class']($c['cacheinclude_config.config']);
+            }
+        );
 
         //Default config
         foreach (self::$config as $key => $value) {
@@ -168,5 +180,4 @@ class Container extends \Pimple
             self::$config = array_merge(self::$config, $config);
         }
     }
-
 }
