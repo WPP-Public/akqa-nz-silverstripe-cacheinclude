@@ -41,7 +41,7 @@ use Heyday\CacheInclude;
 CacheInclude\Container::addShared(
     'cacheinclude_config',
     function ($c) {
-        return new CacheInclude\YamlConfig(__DIR__ . '/cache_config.yml');
+        return new CacheInclude\Configs\YamlConfig(__DIR__ . '/cache_config.yml');
     }
 );
 ```
