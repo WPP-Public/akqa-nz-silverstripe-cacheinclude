@@ -6,6 +6,7 @@ use CacheCache\Cache;
 use Heyday\CacheInclude\KeyCreatorInterface;
 use Heyday\CacheInclude\ConfigInterface;
 use Heyday\CacheInclude\ProcessorInterface;
+use RuntimeException;
 
 class CacheInclude
 {
@@ -75,6 +76,8 @@ class CacheInclude
         $config = $this->defaultConfig;
         if (isset($this->config[$name]) && is_array($this->config[$name])) {
             $config = $this->config[$name] + $config;
+        } else {
+            throw new RuntimeException("Config '$name' doesn't exist, please check your config");
         }
 
         return $config;

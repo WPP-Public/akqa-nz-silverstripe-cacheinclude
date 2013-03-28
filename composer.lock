@@ -1,5 +1,5 @@
 {
-    "hash": "8da28cf4c519967f7653bb6d48d46fe9",
+    "hash": "926b6221517e769b66f398b68299dfc1",
     "packages": [
         {
             "name": "composer/installers",
@@ -11,7 +11,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/composer/installers/zipball/v1.0.0",
+                "url": "https://github.com/composer/installers/archive/v1.0.0.zip",
                 "reference": "v1.0.0",
                 "shasum": ""
             },
@@ -21,12 +21,10 @@
             "require-dev": {
                 "composer/composer": "1.0.*@dev"
             },
-            "time": "2012-09-07 21:17:33",
             "type": "composer-installer",
             "extra": {
                 "class": "Composer\\Installers\\Installer"
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Composer\\Installers\\": "src/"
@@ -47,24 +45,25 @@
             "description": "A multi-framework Composer library installer",
             "homepage": "http://composer.github.com/installers/",
             "keywords": [
-                "symfony",
-                "installer",
-                "zend",
-                "wordpress",
                 "cakephp",
                 "codeigniter",
-                "fuelphp",
                 "drupal",
-                "lithium",
-                "li3",
+                "fuelphp",
+                "installer",
                 "joomla",
+                "kohana",
                 "laravel",
+                "li3",
+                "lithium",
+                "mako",
                 "phpbb",
                 "ppi",
                 "silverstripe",
-                "kohana",
-                "mako"
-            ]
+                "symfony",
+                "wordpress",
+                "zend"
+            ],
+            "time": "2012-09-08 04:17:33"
         },
         {
             "name": "maximebf/cachecache",
@@ -83,9 +82,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-08-18 09:01:44",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "CacheCache": "src/"
@@ -106,33 +103,32 @@
             "homepage": "https://github.com/maximebf/CacheCache",
             "keywords": [
                 "cache"
-            ]
+            ],
+            "time": "2012-08-18 09:01:44"
         },
         {
             "name": "pimple/pimple",
-            "version": "dev-master",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
-                "url": "git://github.com/fabpot/Pimple.git",
-                "reference": "d58cec632dfdd3305d6b4f2563a5cf2a75b4d978"
+                "url": "https://github.com/fabpot/Pimple.git",
+                "reference": "v1.0.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Pimple/archive/d58cec632dfdd3305d6b4f2563a5cf2a75b4d978.zip",
-                "reference": "d58cec632dfdd3305d6b4f2563a5cf2a75b4d978",
+                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/v1.0.2",
+                "reference": "v1.0.2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2013-01-07 10:39:26",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.0.x-dev"
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Pimple": "lib/"
@@ -151,31 +147,30 @@
             "description": "Pimple is a simple Dependency Injection Container for PHP 5.3",
             "homepage": "http://pimple.sensiolabs.org",
             "keywords": [
-                "dependency injection",
-                "container"
-            ]
+                "container",
+                "dependency injection"
+            ],
+            "time": "2013-03-08 08:21:40"
         },
         {
             "name": "symfony/yaml",
-            "version": "2.1.x-dev",
+            "version": "v2.1.9",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml",
-                "reference": "04b4da83cf5eeef90c74b7965cf12389ae08d3e1"
+                "url": "https://github.com/symfony/Yaml.git",
+                "reference": "v2.1.9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Yaml/archive/04b4da83cf5eeef90c74b7965cf12389ae08d3e1.zip",
-                "reference": "04b4da83cf5eeef90c74b7965cf12389ae08d3e1",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/v2.1.9",
+                "reference": "v2.1.9",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-04 17:00:54",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Component\\Yaml": ""
@@ -196,133 +191,11 @@
                 }
             ],
             "description": "Symfony Yaml Component",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2013-03-23 01:54:33"
         }
     ],
     "packages-dev": [
-        {
-            "name": "composer/composer",
-            "version": "1.0.0-alpha6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer/composer",
-                "reference": "1.0.0-alpha6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/composer/composer/archive/1.0.0-alpha6.zip",
-                "reference": "1.0.0-alpha6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2",
-                "justinrainbow/json-schema": "1.1.*",
-                "seld/jsonlint": "1.*",
-                "symfony/console": ">=2.1,<3.0",
-                "symfony/finder": ">=2.1,<3.0",
-                "symfony/process": ">=2.1,<3.0"
-            },
-            "suggest": {
-                "ext-zip": "Enabling the zip extension allows you to unzip archives, and allows gzip compression of all internet traffic",
-                "ext-openssl": "Enabling the openssl extension allows you to access https URLs for repositories and packages"
-            },
-            "time": "2012-10-23 01:54:25",
-            "bin": [
-                "bin/composer"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "Composer": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Nils Adermann",
-                    "email": "naderman@naderman.de",
-                    "homepage": "http://www.naderman.de"
-                }
-            ],
-            "description": "Package Manager",
-            "homepage": "http://getcomposer.org/",
-            "keywords": [
-                "package",
-                "dependency",
-                "autoload"
-            ]
-        },
-        {
-            "name": "justinrainbow/json-schema",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "git://github.com/justinrainbow/json-schema.git",
-                "reference": "v1.1.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/justinrainbow/json-schema/zipball/v1.1.0",
-                "reference": "v1.1.0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "time": "2012-01-02 16:33:17",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "JsonSchema": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "NewBSD"
-            ],
-            "authors": [
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch",
-                    "homepage": "http://wiedler.ch/igor/"
-                },
-                {
-                    "name": "Bruno Prieto Reis",
-                    "email": "bruno.p.reis@gmail.com"
-                },
-                {
-                    "name": "Justin Rainbow",
-                    "email": "justin.rainbow@gmail.com"
-                },
-                {
-                    "name": "Robert Schönthal",
-                    "email": "seroscho@googlemail.com",
-                    "homepage": "http://digitalkaoz.net"
-                }
-            ],
-            "description": "A library to validate a json schema.",
-            "homepage": "https://github.com/justinrainbow/json-schema",
-            "keywords": [
-                "json",
-                "schema"
-            ]
-        },
         {
             "name": "nikic/php-parser",
             "version": "v0.9.3",
@@ -340,9 +213,7 @@
             "require": {
                 "php": ">=5.2"
             },
-            "time": "2012-11-22 18:54:05",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "PHPParser": "lib/"
@@ -359,9 +230,10 @@
             ],
             "description": "A PHP parser written in PHP",
             "keywords": [
-                "php",
-                "parser"
-            ]
+                "parser",
+                "php"
+            ],
+            "time": "2012-11-22 18:54:05"
         },
         {
             "name": "pdepend/pdepend",
@@ -380,41 +252,38 @@
             "require": {
                 "php": ">=5.2.3"
             },
-            "time": "2012-09-12 04:09:19",
             "bin": [
                 "src/bin/pdepend"
             ],
             "type": "library",
-            "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
-            "description": "Official version of pdepend to be handled with Composer"
+            "description": "Official version of pdepend to be handled with Composer",
+            "time": "2012-09-12 04:09:19"
         },
         {
             "name": "phploc/phploc",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git://github.com/sebastianbergmann/phploc.git",
-                "reference": "9433a34cbb0168f0c43ae92cd1196df7d84ba8d3"
+                "url": "https://github.com/sebastianbergmann/phploc.git",
+                "reference": "7be2f3194284ddb3c8ddc065ddbf255570efe22b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sebastianbergmann/phploc/archive/9433a34cbb0168f0c43ae92cd1196df7d84ba8d3.zip",
-                "reference": "9433a34cbb0168f0c43ae92cd1196df7d84ba8d3",
+                "url": "https://api.github.com/repos/sebastianbergmann/phploc/zipball/7be2f3194284ddb3c8ddc065ddbf255570efe22b",
+                "reference": "7be2f3194284ddb3c8ddc065ddbf255570efe22b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
+                "sebastian/finder-facade": ">=1.0.5",
                 "symfony/finder": "2.1.x-dev",
-                "zetacomponents/console-tools": "dev-master",
-                "sebastian/finder-facade": ">=1.0.5"
+                "zetacomponents/console-tools": "dev-master"
             },
-            "time": "2013-01-07 10:52:06",
             "bin": [
                 "composer/bin/phploc"
             ],
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "src/"
@@ -432,7 +301,8 @@
                 }
             ],
             "description": "A tool for quickly measuring the size of a PHP project.",
-            "homepage": "https://github.com/sebastianbergmann/phploc"
+            "homepage": "https://github.com/sebastianbergmann/phploc",
+            "time": "2013-01-31 20:58:02"
         },
         {
             "name": "phpmd/phpmd",
@@ -449,53 +319,50 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "pdepend/pdepend": "*"
+                "pdepend/pdepend": "*",
+                "php": ">=5.3.0"
             },
-            "time": "2012-12-14 12:25:09",
             "bin": [
                 "src/bin/phpmd"
             ],
             "type": "library",
-            "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
             "include-path": [
                 "../../pdepend/pdepend/src/main/php",
                 "src/main/php"
             ],
-            "description": "Official version of PHPMD handled with Composer."
+            "description": "Official version of PHPMD handled with Composer.",
+            "time": "2012-12-14 12:25:09"
         },
         {
             "name": "sami/sami",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fabpot/Sami",
-                "reference": "8ba8d81abcc555c6defbda7d2fb721a8fd8b2af2"
+                "url": "https://github.com/fabpot/Sami.git",
+                "reference": "7c0ddabd7f7530225608982bae83e31106597ec3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Sami/archive/8ba8d81abcc555c6defbda7d2fb721a8fd8b2af2.zip",
-                "reference": "8ba8d81abcc555c6defbda7d2fb721a8fd8b2af2",
+                "url": "https://api.github.com/repos/fabpot/Sami/zipball/7c0ddabd7f7530225608982bae83e31106597ec3",
+                "reference": "7c0ddabd7f7530225608982bae83e31106597ec3",
                 "shasum": ""
             },
             "require": {
+                "nikic/php-parser": "0.9.*",
                 "php": ">=5.3.0",
                 "pimple/pimple": "1.0.*",
-                "twig/twig": "1.*",
-                "nikic/php-parser": "0.9.*",
                 "symfony/console": ">=2.1,<3.0-dev",
-                "symfony/finder": ">=2.1,<3.0-dev",
                 "symfony/filesystem": ">=2.1,<3.0-dev",
+                "symfony/finder": ">=2.1,<3.0-dev",
+                "symfony/process": ">=2.1,<3.0-dev",
                 "symfony/yaml": ">=2.1,<3.0-dev",
-                "symfony/process": ">=2.1,<3.0-dev"
+                "twig/twig": "1.*"
             },
-            "time": "2013-01-08 14:05:13",
             "bin": [
                 "sami.php"
             ],
             "type": "application",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Sami": "."
@@ -515,28 +382,28 @@
             "homepage": "http://sami.sensiolabs.org",
             "keywords": [
                 "phpdoc"
-            ]
+            ],
+            "time": "2013-03-20 19:08:32"
         },
         {
             "name": "sebastian/finder-facade",
-            "version": "dev-master",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "git://github.com/sebastianbergmann/finder-facade.git",
-                "reference": "c90973541f4ef902f9c4c69d2b41e247bb3cc080"
+                "reference": "1.0.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sebastianbergmann/finder-facade/archive/c90973541f4ef902f9c4c69d2b41e247bb3cc080.zip",
-                "reference": "c90973541f4ef902f9c4c69d2b41e247bb3cc080",
+                "url": "https://github.com/sebastianbergmann/finder-facade/archive/1.0.6.zip",
+                "reference": "1.0.6",
                 "shasum": ""
             },
             "require": {
+                "symfony/yaml": ">=2.1.0,<2.2.0",
                 "theseer/fdomdocument": ">=1.3.1"
             },
-            "time": "2013-01-07 10:48:45",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "src/"
@@ -554,71 +421,29 @@
                 }
             ],
             "description": "FinderFacade is a convenience wrapper for Symfony's Finder component.",
-            "homepage": "https://github.com/sebastianbergmann/finder-facade"
-        },
-        {
-            "name": "seld/jsonlint",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/Seldaek/jsonlint",
-                "reference": "1.1.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/Seldaek/jsonlint/archive/1.1.0.zip",
-                "reference": "1.1.0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "time": "2012-12-13 18:26:19",
-            "bin": [
-                "bin/jsonlint"
-            ],
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "Seld\\JsonLint": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "JSON Linter",
-            "keywords": [
-                "json",
-                "parser",
-                "linter",
-                "validator"
-            ]
+            "homepage": "https://github.com/sebastianbergmann/finder-facade",
+            "time": "2013-01-10 11:33:26"
         },
         {
             "name": "silverstripe/framework",
-            "version": "2.4.9",
+            "version": "2.4.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/silverstripe/sapphire.git",
+                "reference": "2.4.10"
+            },
             "dist": {
                 "type": "zip",
-                "url": "http://packages:satis@packages.heyday.net.nz/cache.zip/https---github.com-silverstripe-sapphire.git-2.4.9.zip",
-                "reference": null,
-                "shasum": null
+                "url": "https://api.github.com/repos/silverstripe/sapphire/zipball/2.4.10",
+                "reference": "2.4.10",
+                "shasum": ""
             },
             "require": {
-                "php": ">=5.2.4",
-                "composer/installers": "*"
+                "composer/installers": "*",
+                "php": ">=5.2.4"
             },
             "type": "silverstripe-module",
-            "installation-source": "dist",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -635,36 +460,85 @@
             "description": "The SilverStripe Framework",
             "homepage": "http://silverstripe.org",
             "keywords": [
-                "silverstripe",
-                "framework"
-            ]
+                "framework",
+                "silverstripe"
+            ],
+            "time": "2013-02-18 00:03:57"
         },
         {
-            "name": "symfony/console",
-            "version": "dev-master",
-            "target-dir": "Symfony/Component/Console",
+            "name": "symfony/class-loader",
+            "version": "v2.2.0",
+            "target-dir": "Symfony/Component/ClassLoader",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console",
-                "reference": "v2.2.0-BETA1"
+                "url": "https://github.com/symfony/ClassLoader.git",
+                "reference": "v2.2.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Console/archive/v2.2.0-BETA1.zip",
-                "reference": "v2.2.0-BETA1",
+                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/v2.2.0",
+                "reference": "v2.2.0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-08 18:17:41",
+            "require-dev": {
+                "symfony/finder": ">=2.0,<3.0"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.2-dev"
                 }
             },
-            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\ClassLoader\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony ClassLoader Component",
+            "homepage": "http://symfony.com",
+            "time": "2013-03-01 06:43:14"
+        },
+        {
+            "name": "symfony/console",
+            "version": "v2.2.0",
+            "target-dir": "Symfony/Component/Console",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Console.git",
+                "reference": "v2.2.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/v2.2.0",
+                "reference": "v2.2.0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Symfony\\Component\\Console\\": ""
@@ -685,34 +559,33 @@
                 }
             ],
             "description": "Symfony Console Component",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2013-03-01 06:43:14"
         },
         {
             "name": "symfony/filesystem",
-            "version": "dev-master",
+            "version": "v2.2.0",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Filesystem",
-                "reference": "v2.2.0-BETA1"
+                "url": "https://github.com/symfony/Filesystem.git",
+                "reference": "v2.2.0-RC3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Filesystem/archive/v2.2.0-BETA1.zip",
-                "reference": "v2.2.0-BETA1",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/v2.2.0-RC3",
+                "reference": "v2.2.0-RC3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-05 17:52:40",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.2-dev"
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Component\\Filesystem\\": ""
@@ -733,7 +606,8 @@
                 }
             ],
             "description": "Symfony Filesystem Component",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2013-01-17 15:25:59"
         },
         {
             "name": "symfony/finder",
@@ -741,21 +615,19 @@
             "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Finder",
-                "reference": "0530e25920b845e5fae7d9bd52444221055cc9ab"
+                "url": "https://github.com/symfony/Finder.git",
+                "reference": "v2.1.9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Finder/archive/0530e25920b845e5fae7d9bd52444221055cc9ab.zip",
-                "reference": "0530e25920b845e5fae7d9bd52444221055cc9ab",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/v2.1.9",
+                "reference": "v2.1.9",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-04 17:00:54",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Component\\Finder": ""
@@ -776,34 +648,33 @@
                 }
             ],
             "description": "Symfony Finder Component",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2013-03-06 19:26:55"
         },
         {
             "name": "symfony/process",
-            "version": "dev-master",
+            "version": "v2.2.0",
             "target-dir": "Symfony/Component/Process",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Process",
-                "reference": "v2.2.0-BETA1"
+                "url": "https://github.com/symfony/Process.git",
+                "reference": "v2.2.0-RC3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Process/archive/v2.2.0-BETA1.zip",
-                "reference": "v2.2.0-BETA1",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/v2.2.0-RC3",
+                "reference": "v2.2.0-RC3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-05 18:24:35",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.2-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Component\\Process\\": ""
@@ -824,30 +695,29 @@
                 }
             ],
             "description": "Symfony Process Component",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2013-02-18 21:28:10"
         },
         {
             "name": "theseer/fdomdocument",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git://github.com/theseer/fDOMDocument.git",
+                "url": "https://github.com/theseer/fDOMDocument.git",
                 "reference": "a7882cf2121f30c57e9fc8ded2cf0a58001e96cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/theseer/fDOMDocument/archive/a7882cf2121f30c57e9fc8ded2cf0a58001e96cc.zip",
+                "url": "https://api.github.com/repos/theseer/fDOMDocument/zipball/a7882cf2121f30c57e9fc8ded2cf0a58001e96cc",
                 "reference": "a7882cf2121f30c57e9fc8ded2cf0a58001e96cc",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
                 "ext-dom": "*",
-                "lib-libxml": "*"
+                "lib-libxml": "*",
+                "php": ">=5.3.3"
             },
-            "time": "2012-12-01 00:12:40",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "src/"
@@ -865,33 +735,32 @@
                 }
             ],
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convinience and to simplify the usage of DOM.",
-            "homepage": "https://github.com/theseer/fDOMDocument"
+            "homepage": "https://github.com/theseer/fDOMDocument",
+            "time": "2012-12-01 00:12:40"
         },
         {
             "name": "twig/twig",
-            "version": "dev-master",
+            "version": "v1.12.2",
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "3111e1265db1026323c589a5bd2d152871d7bbab"
+                "reference": "v1.12.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/archive/3111e1265db1026323c589a5bd2d152871d7bbab.zip",
-                "reference": "3111e1265db1026323c589a5bd2d152871d7bbab",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/v1.12.2",
+                "reference": "v1.12.2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "2013-01-08 16:56:12",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.12-dev"
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Twig_": "lib/"
@@ -915,28 +784,24 @@
             "homepage": "http://twig.sensiolabs.org",
             "keywords": [
                 "templating"
-            ]
+            ],
+            "time": "2013-02-09 18:21:53"
         },
         {
             "name": "zetacomponents/base",
-            "version": "dev-master",
+            "version": "1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/Base.git",
-                "reference": "642f63a8a72c32996f1aaf8a317fdf746bc32ce7"
+                "reference": "1.8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/zetacomponents/Base/archive/642f63a8a72c32996f1aaf8a317fdf746bc32ce7.zip",
-                "reference": "642f63a8a72c32996f1aaf8a317fdf746bc32ce7",
+                "url": "https://github.com/zetacomponents/Base/zipball/1.8",
+                "reference": "1.8",
                 "shasum": ""
             },
-            "require-dev": {
-                "zetacomponents/unit-test": "*"
-            },
-            "time": "2012-05-21 11:21:36",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "src"
@@ -944,7 +809,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "Apache-2.0"
+                "apache2"
             ],
             "authors": [
                 {
@@ -979,7 +844,8 @@
                 }
             ],
             "description": "The Base package provides the basic infrastructure that all packages rely on. Therefore every component relies on this package.",
-            "homepage": "https://github.com/zetacomponents"
+            "homepage": "https://github.com/zetacomponents",
+            "time": "2009-12-21 04:14:16"
         },
         {
             "name": "zetacomponents/console-tools",
@@ -991,7 +857,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/zetacomponents/ConsoleTools/archive/90156abef01e4215fda8b9740f77c322f126fb02.zip",
+                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/90156abef01e4215fda8b9740f77c322f126fb02",
                 "reference": "90156abef01e4215fda8b9740f77c322f126fb02",
                 "shasum": ""
             },
@@ -1001,9 +867,7 @@
             "require-dev": {
                 "zetacomponents/unit-test": "*"
             },
-            "time": "2012-05-21 09:55:34",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "src"
@@ -1046,16 +910,25 @@
                 }
             ],
             "description": "A set of classes to do different actions with the console (also called shell). It can render a progress bar, tables and a status bar and contains a class for parsing command line options.",
-            "homepage": "https://github.com/zetacomponents"
+            "homepage": "https://github.com/zetacomponents",
+            "time": "2012-05-21 09:55:34"
         }
     ],
     "aliases": [
 
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
-        "composer/composer": 15,
         "phploc/phploc": 20,
+        "symfony/finder": 20,
+        "zetacomponents/console-tools": 20,
+        "theseer/fdomdocument": 20,
         "sami/sami": 20
-    }
+    },
+    "platform": {
+        "php": ">=5.3.2"
+    },
+    "platform-dev": [
+
+    ]
 }

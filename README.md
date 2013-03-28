@@ -17,9 +17,35 @@ To install drop the `silverstripe-cacheinclude` directory into your SilverStripe
 
 ##Configuration
 
-`CacheInclude` uses a dependancy injection container (Pimple) for configuration and DI. The following options are available:
+`CacheInclude` uses a dependancy injection container (Pimple) for configuration and DI. The following options are available with the follow defaults:
 
-* 
+
+* 'cachecache.class'                  ('\CacheCache\Cache')
+* 'cachecache.options.namespace'      ('cacheinclude')
+* 'cachecache.options.default_ttl'    (null)
+* 'cachecache.options.ttl_variation'  (0)
+* 'cachecache_backend.class'          ('\CacheCache\Backends\File')
+* 'cacheinclude.class'                ('\Heyday\CacheInclude\CacheInclude')
+* 'cacheinclude.options.enabled'      (true)
+* 'cacheinclude.options.force_expire' (false)
+* 'cacheinclude_config.class'         ('\Heyday\CacheInclude\Configs\ArrayConfig')
+* 'cacheinclude_config.config'        (array())
+* 'cacheinclude_key_creator.class'    ('\Heyday\CacheInclude\KeyCreators\KeyCreator')
+* 'cacheinclude_processor.class'      ('\Heyday\CacheInclude\Processors\Processor')
+
+
+`mysite/_config.php`
+
+```php
+use Heyday\CacheInclude;
+CacheInclude\Container::addShared(
+    'cacheinclude_config',
+    function ($c) {
+        return new CacheInclude\YamlConfig(__DIR__ . '/cache_config.yml');
+    }
+);
+```
+
 
 
 ##Clearing Cache
