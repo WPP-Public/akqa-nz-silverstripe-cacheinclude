@@ -1,5 +1,7 @@
 #SilverStripe Cache Include
 
+[![Build Status](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude.png?token=PUaVGqRbNa3xySvbQ4qD&branch=master)](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude)
+
 HTML Caching can be added to your SilverStripe project by replacing <% include X %> calls with $CacheInclude(X) calls.
 
 ##License
@@ -7,15 +9,28 @@ HTML Caching can be added to your SilverStripe project by replacing <% include X
 
 ##Installation
 
-To install drop the `silverstripe-cacheinclude` directory into your SilverStripe root and run `/dev/build?flush=1`.
+	$ composer require silverstripe-cacheinclude:dev-master
 
 ##How to use
 
-###Templates
+### Enabling
+
+Enable in controller or relevant data objects or pages.
+
+```php
+class Page_Controller extends ContentController
+{
+	public static $extensions = array(
+		'CacheIncludeExtension'
+	);
+}
+```
+
+### Templates
 
     $CacheInclude(TemplateName)
 
-##Configuration
+## Configuration
 
 `CacheInclude` uses a dependancy injection container (Pimple) for configuration and DI. The following options are available with the follow defaults:
 
@@ -36,6 +51,8 @@ To install drop the `silverstripe-cacheinclude` directory into your SilverStripe
 
 `mysite/_config.php`
 
+Yaml config
+
 ```php
 use Heyday\CacheInclude;
 CacheInclude\Container::addShared(
@@ -46,27 +63,53 @@ CacheInclude\Container::addShared(
 );
 ```
 
+Yaml config with cacheing of yaml
 
+```php
+use Heyday\CacheInclude;
+CacheInclude\Container::addShared(
+    'cacheinclude_config',
+    function ($c) {
+        return new CacheInclude\Configs\YamlConfig(__DIR__ . '/cache_config.yml', $c['cachecache']);
+    }
+);
+```
 
-##Clearing Cache
+Array config
 
+```php
+use Heyday\CacheInclude;
+CacheInclude\Container::addShared(
+    'cacheinclude_config',
+    function ($c) {
+        return new CacheInclude\Configs\ArrayConfig(
+        	array(
+        		'TemplateName' => array(
+        			'context' => 'page'
+        		)
+        	)
+        );
+    }
+);
+```
+
+Clear cache mechanism
+
+```php
+use Heyday\CacheInclude;
+CacheInclude\Container::extendConfig(
+	array(
+		'cacheinclude.options.force_expire' => isset($_GET['flush']) && $_GET['flush'] && Permission::check('ADMIN')
+	)
+);
+```
 
 ##Contributing
 
-##Unit Testing
+###Unit Testing
 
-If you have `phpunit` installed you can run `silverstripe-cacheinclude`'s unit tests to see if everything is functioning correctly.
-
-###Running the unit tests
-
-From the command line:
-    
-    phpunit
-
-
-From your browser:
-
-    http://localhost/dev/tests/module/heyday-cacheinclude
+	$ composer install --dev
+	$ phpunit
 
 ###Code guidelines
 
@@ -75,3 +118,7 @@ This project follows the standards defined in:
 * [PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md)
 * [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
 * [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)
+
+Run the following before contributing:
+
+	$ php-cs-fixer fix .
