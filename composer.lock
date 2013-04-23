@@ -1,5 +1,5 @@
 {
-    "hash": "fec731a912290cb7e09cbbdf303bf15a",
+    "hash": "48d8671ee615b4c398601ad90b29362c",
     "packages": [
         {
             "name": "composer/installers",
@@ -274,18 +274,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phploc.git",
-                "reference": "7be2f3194284ddb3c8ddc065ddbf255570efe22b"
+                "reference": "3cf6e2032ecaabdd122fb0e987f6fdef09b2eacf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phploc/zipball/7be2f3194284ddb3c8ddc065ddbf255570efe22b",
-                "reference": "7be2f3194284ddb3c8ddc065ddbf255570efe22b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phploc/zipball/3cf6e2032ecaabdd122fb0e987f6fdef09b2eacf",
+                "reference": "3cf6e2032ecaabdd122fb0e987f6fdef09b2eacf",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "sebastian/finder-facade": ">=1.0.5",
-                "symfony/finder": "2.1.x-dev",
+                "symfony/finder": ">=2.1.2",
                 "zetacomponents/console-tools": "dev-master"
             },
             "bin": [
@@ -310,7 +310,7 @@
             ],
             "description": "A tool for quickly measuring the size of a PHP project.",
             "homepage": "https://github.com/sebastianbergmann/phploc",
-            "time": "2013-01-31 20:58:02"
+            "time": "2013-04-22 21:23:30"
         },
         {
             "name": "phpmd/phpmd",
@@ -624,26 +624,31 @@
         },
         {
             "name": "symfony/finder",
-            "version": "2.1.x-dev",
+            "version": "dev-master",
             "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "v2.1.9"
+                "reference": "4c15248eb0d2949ba7f5c1010262e3f4e70b3977"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/v2.1.9",
-                "reference": "v2.1.9",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/4c15248eb0d2949ba7f5c1010262e3f4e70b3977",
+                "reference": "4c15248eb0d2949ba7f5c1010262e3f4e70b3977",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\Finder": ""
+                    "Symfony\\Component\\Finder\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -662,7 +667,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2013-03-06 19:26:55"
+            "time": "2013-04-22 13:01:19"
         },
         {
             "name": "symfony/process",
