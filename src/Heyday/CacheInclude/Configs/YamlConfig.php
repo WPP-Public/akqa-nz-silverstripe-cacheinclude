@@ -2,11 +2,19 @@
 
 namespace Heyday\CacheInclude\Configs;
 
-use Symfony\Component\Yaml\Yaml;
 use CacheCache\Cache;
+use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Class YamlConfig
+ * @package Heyday\CacheInclude\Configs
+ */
 class YamlConfig extends ArrayConfig
 {
+    /**
+     * @param       $yaml
+     * @param Cache $cache
+     */
     public function __construct($yaml, Cache $cache = null)
     {
         if ($cache instanceof Cache) {

@@ -164,7 +164,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestKeyCreator implements \Heyday\CacheInclude\KeyCreatorInterface
+class TestKeyCreator implements \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface
 {
     public function getKey($name, \Controller $controller, $config)
     {

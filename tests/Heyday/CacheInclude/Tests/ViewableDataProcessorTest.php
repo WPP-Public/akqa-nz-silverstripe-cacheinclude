@@ -2,13 +2,13 @@
 
 namespace Heyday\CacheInclude\Tests;
 
-use Heyday\CacheInclude\Processors\Processor;
+use Heyday\CacheInclude\Processors\ViewableDataProcessor;
 
-class ProcessorTest extends \PHPUnit_Framework_TestCase
+class ViewableDataProcessorTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->processor = new Processor;
+        $this->processor = new ViewableDataProcessor;
     }
 
     protected function tearDown()

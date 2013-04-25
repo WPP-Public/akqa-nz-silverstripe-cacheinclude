@@ -2,20 +2,32 @@
 
 namespace Heyday\CacheInclude\KeyCreators;
 
-use Heyday\CacheInclude\KeyCreatorInterface;
+use Member;
+use SSViewer;
+use Versioned;
 
+/**
+ * Class KeyCreator
+ * @package Heyday\CacheInclude\KeyCreators
+ */
 class KeyCreator implements KeyCreatorInterface
 {
+    /**
+     * @param             $name
+     * @param \Controller $controller
+     * @param             $config
+     * @return string
+     */
     public function getKey($name, \Controller $controller, $config)
     {
         $keyParts = array(
-            \SSViewer::current_theme(),
-            \Versioned::current_stage()
+            SSViewer::current_theme(),
+            Versioned::current_stage()
         );
 
         //If member context matters get the members id
         if (isset($config['member']) && $config['member']) {
-            $memberID = \Member::currentUserID();
+            $memberID = Member::currentUserID();
             if ($memberID) {
                 $keyParts[] = 'Members';
                 $keyParts[] = $memberID;
@@ -63,7 +75,7 @@ class KeyCreator implements KeyCreatorInterface
 
         return implode(
             '.',
-            (array) $keyParts
+            (array)$keyParts
         );
 
     }

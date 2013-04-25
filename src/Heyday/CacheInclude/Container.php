@@ -36,7 +36,7 @@ class Container extends \Pimple
         'cacheinclude_key_creator.class'          => '\Heyday\CacheInclude\KeyCreators\KeyCreator',
 
         //Processor
-        'cacheinclude_processor.class'            => '\Heyday\CacheInclude\Processors\Processor'
+        'cacheinclude_processor.class'            => '\Heyday\CacheInclude\Processors\ViewableDataProcessor'
 
     );
     /**

@@ -1,8 +1,13 @@
 <?php
 
+/**
+ * Class CacheIncludeSiteTreeDecorator
+ */
 class CacheIncludeSiteTreeDecorator extends DataObjectDecorator
 {
-
+    /**
+     * @return array
+     */
     public function extraStatics()
     {
         return array(
@@ -11,12 +16,12 @@ class CacheIncludeSiteTreeDecorator extends DataObjectDecorator
             )
         );
     }
-
+    /**
+     *
+     */
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-
         $this->owner->FullLink = $this->owner->RelativeLink();
     }
-
 }
