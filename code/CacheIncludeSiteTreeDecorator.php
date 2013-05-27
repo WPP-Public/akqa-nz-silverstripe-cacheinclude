@@ -22,6 +22,10 @@ class CacheIncludeSiteTreeDecorator extends DataObjectDecorator
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        $this->owner->FullLink = $this->owner->RelativeLink();
+
+        // Ensure that the method exists
+        if (method_exists($this->owner, 'RelativeLink')) {
+            $this->owner->FullLink = $this->owner->RelativeLink();
+        }
     }
 }
