@@ -1,8 +1,6 @@
 <?php
 
 use Heyday\CacheInclude\Container;
-use Extension;
-use Controller;
 
 /**
  * Class CacheIncludeExtension
