@@ -4,7 +4,7 @@ if (file_exists(__DIR__ . '../vendor/autoload.php')) {
     require_once __DIR__ . '../vendor/autoload.php';
 }
 
-Director::addRules(20, array(
+Director::addRules(100, array(
     'cache-include//$Action' => 'CacheIncludeController'
 ));
 
