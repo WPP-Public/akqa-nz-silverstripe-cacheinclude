@@ -9,7 +9,7 @@ HTML Caching can be added to your SilverStripe project by replacing <% include X
 
 ##Installation
 
-	$ composer require silverstripe-cacheinclude:dev-master
+	$ composer require silverstripe-cacheinclude:2.0.0
 
 ##How to use
 
@@ -20,9 +20,9 @@ Enable in controller or relevant data objects or pages.
 ```php
 class Page_Controller extends ContentController
 {
-	public static $extensions = array(
-		'CacheIncludeExtension'
-	);
+    public static $extensions = array(
+        'CacheIncludeExtension'
+    );
 }
 ```
 
@@ -32,7 +32,7 @@ class Page_Controller extends ContentController
 
 ## Configuration
 
-`CacheInclude` uses a dependancy injection container (Pimple) for configuration and DI. The following options are available with the follow defaults:
+`CacheInclude` uses [Pimple](http://pimple.sensiolabs.org/) for configuration and dependency injection. The following options are available with the follow defaults:
 
 
 * 'cachecache.class'                  ('\CacheCache\Cache')
@@ -51,7 +51,7 @@ class Page_Controller extends ContentController
 
 `mysite/_config.php`
 
-Yaml config
+YAML config
 
 ```php
 use Heyday\CacheInclude;
@@ -63,7 +63,7 @@ CacheInclude\Container::addShared(
 );
 ```
 
-Yaml config with cacheing of yaml
+YAML config with caching of YAML
 
 ```php
 use Heyday\CacheInclude;
@@ -102,6 +102,19 @@ CacheInclude\Container::extendConfig(
 		'cacheinclude.options.force_expire' => isset($_GET['flush']) && $_GET['flush'] && Permission::check('ADMIN')
 	)
 );
+```
+
+Don't invoke the cache in development mode
+
+```php
+use Heyday\CacheInclude;
+if(Director::isDev()){
+    CacheInclude\Container::extendConfig(
+        array(
+            'cacheinclude.options.enabled' => false
+        )
+    );
+}
 ```
 
 ##Contributing

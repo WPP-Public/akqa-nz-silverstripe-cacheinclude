@@ -13,9 +13,9 @@ use Versioned;
 class KeyCreator implements KeyCreatorInterface
 {
     /**
-     * @param             $name
-     * @param \Controller $controller
-     * @param             $config
+     * @param              $name
+     * @param  \Controller $controller
+     * @param              $config
      * @return string
      */
     public function getKey($name, \Controller $controller, $config)
@@ -75,7 +75,7 @@ class KeyCreator implements KeyCreatorInterface
 
         return implode(
             '.',
-            (array)$keyParts
+            (array) $keyParts
         );
 
     }

@@ -22,8 +22,8 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param mixed $id
-     * @param mixed $value
+     * @param  mixed      $id
+     * @param  mixed      $value
      * @throws \Exception
      */
     public function offsetSet($id, $value)
@@ -32,7 +32,7 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param mixed $id
+     * @param  mixed                     $id
      * @return mixed
      * @throws \InvalidArgumentException
      */
@@ -46,7 +46,7 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param mixed $id
+     * @param  mixed $id
      * @return bool
      */
     public function offsetExists($id)
@@ -55,7 +55,7 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param mixed $id
+     * @param  mixed      $id
      * @throws \Exception
      */
     public function offsetUnset($id)

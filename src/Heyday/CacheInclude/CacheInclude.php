@@ -68,7 +68,7 @@ class CacheInclude
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = (boolean)$enabled;
+        $this->enabled = (boolean) $enabled;
     }
 
     /**
@@ -108,7 +108,7 @@ class CacheInclude
      */
     public function setForceExpire($forceExpire)
     {
-        $this->forceExpire = (boolean)$forceExpire;
+        $this->forceExpire = (boolean) $forceExpire;
     }
 
     /**
@@ -137,9 +137,9 @@ class CacheInclude
     }
 
     /**
-     * @param             $name
-     * @param             $processor
-     * @param \Controller $controller
+     * @param                            $name
+     * @param                            $processor
+     * @param  \Controller               $controller
      * @return mixed|null
      * @throws \InvalidArgumentException
      */
@@ -247,7 +247,7 @@ class CacheInclude
      */
     public function flushByName($name)
     {
-        foreach ((array)$this->getStoredKeys($name) as $key => $value) {
+        foreach ((array) $this->getStoredKeys($name) as $key => $value) {
             $this->cache->delete($key);
         }
         $this->resetStoredKeys($name);
