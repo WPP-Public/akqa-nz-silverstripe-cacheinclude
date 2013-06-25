@@ -29,10 +29,14 @@ class CacheIncludeExtension extends Extension
      */
     public function CacheInclude($name)
     {
+        $controller = $this->owner;
+        if (!($controller instanceof Controller) || !($controller->getRequest() instanceof SS_HTTPRequest)) {
+            $controller = Controller::curr();
+        }
         return $this->container['cacheinclude']->process(
             $name,
             $this->container['cacheinclude_processor']->setContext($this->owner),
-            $this->owner instanceof Controller ? $this->owner : Controller::curr()
+            $controller
         );
     }
     /**
