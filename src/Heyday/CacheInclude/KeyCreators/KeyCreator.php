@@ -71,6 +71,10 @@ class KeyCreator implements KeyCreatorInterface
                 break;
         }
 
+        if (isset($config['versions'])) {
+            $keyParts[] = mt_rand(1, $config['versions']);
+        }
+
         $keyParts[] = $name;
 
         return implode(
