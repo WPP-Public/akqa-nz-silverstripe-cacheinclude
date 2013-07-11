@@ -169,7 +169,7 @@ class CacheInclude
                 $expires = null;
             }
 
-            $result = $result = $processor($name);
+            $result = $processor($name);
 
             if ($this->forceExpire) {
 
