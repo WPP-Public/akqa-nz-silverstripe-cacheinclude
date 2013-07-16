@@ -2,6 +2,9 @@
 
 namespace Heyday\CacheInclude\KeyCreators;
 
+use Config;
+use ContentController;
+use Controller;
 use Member;
 use SSViewer;
 use Versioned;
@@ -13,15 +16,29 @@ use Versioned;
 class KeyCreator implements KeyCreatorInterface
 {
     /**
+     * @var \Config
+     */
+    protected $config;
+    /**
+     * 
+     */
+    public function getConfig()
+    {
+        if (null === $this->config) {
+            $this->config = Config::inst();
+        }
+        return $this->config;
+    }
+    /**
      * @param              $name
      * @param  \Controller $controller
      * @param              $config
      * @return string
      */
-    public function getKey($name, \Controller $controller, $config)
+    public function getKey($name, Controller $controller, $config)
     {
         $keyParts = array(
-            SSViewer::current_theme(),
+            class_exists('Config') ? $this->getConfig()->get('SSViewer', 'theme') : SSViewer::current_theme(),
             Versioned::current_stage()
         );
 
@@ -39,7 +56,7 @@ class KeyCreator implements KeyCreatorInterface
             case 'no':
                 break;
             case 'page':
-                if ($controller->FullLink) {
+                if ($controller instanceof ContentController && $controller->data()->db('FullLink')) {
                     $keyParts = array_merge($keyParts, explode('/', $controller->FullLink));
                 } else {
                     $params = $controller->getURLParams();
