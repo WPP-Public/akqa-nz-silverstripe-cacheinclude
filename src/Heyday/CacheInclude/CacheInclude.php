@@ -178,13 +178,7 @@ class CacheInclude
 
             } else {
 
-                $this->cache->set(
-                    $key,
-                    $result,
-                    $expires
-                );
-
-                $this->addStoredKey($name, $key);
+                $this->addByKey($name, $key, $result, $expires);
 
             }
 
@@ -192,7 +186,66 @@ class CacheInclude
 
         return $result;
     }
+    /**
+     * @param            $name
+     * @param Controller $controller
+     * @return mixed|null
+     */
+    public function get($name, Controller $controller)
+    {
+        if (!$this->enabled) {
+            return null;
+        }
+        
+        return $this->cache->get(
+            $this->keyCreator->getKey(
+                $name,
+                $controller,
+                $this->getCombinedConfig($name)
+            )
+        );
+    }
+    /**
+     * @param            $name
+     * @param            $result
+     * @param Controller $controller
+     */
+    public function set($name, $result, Controller $controller)
+    {
+        if (!$this->enabled) {
+            return;
+        }
+        
+        $key = $this->keyCreator->getKey(
+            $name,
+            $controller,
+            $config = $this->getCombinedConfig($name)
+        );
+        
+        if (isset($config['expires']) && is_string($config['expires'])) {
+            $expires = strtotime($config['expires']) - date('U');
+        } else {
+            $expires = null;
+        }
 
+        $this->addByKey($name, $key, $result, $expires);        
+    }
+    /**
+     * @param $name
+     * @param $key
+     * @param $result
+     * @param $expires
+     */
+    protected function addByKey($name, $key, $result, $expires)
+    {
+        $this->cache->set(
+            $key,
+            $result,
+            $expires
+        );
+
+        $this->addStoredKey($name, $key);
+    }
     /**
      * @param $name
      * @param $key

@@ -141,6 +141,15 @@ class Container extends \Pimple
 
     }
     /**
+     * @param $name
+     * @return mixed
+     */
+    public static function getService($name)
+    {
+        $container = self::getInstance();
+        return $container[$name];
+    }
+    /**
      * Returns and instance of the container
      * @return \Heyday\CacheInclude\Container Cache Include Container
      */

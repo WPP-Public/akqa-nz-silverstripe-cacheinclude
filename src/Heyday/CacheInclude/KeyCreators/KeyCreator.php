@@ -78,6 +78,13 @@ class KeyCreator implements KeyCreatorInterface
                 $keyParts = array_merge($keyParts, array_filter($controller->getURLParams()));
                 $keyParts[] = md5(http_build_query($data));
                 break;
+            case 'full-url':
+                $data = $controller->getRequest()->requestVars();
+                if (array_key_exists('flush', $data)) {
+                    unset($data['flush']);
+                }
+                $keyParts[] = md5(http_build_query($data));
+                break;
             //Controller Context
             case 'controller':
                 $keyParts[] = $controller->class;
