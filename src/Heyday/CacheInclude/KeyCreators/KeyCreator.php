@@ -20,7 +20,7 @@ class KeyCreator implements KeyCreatorInterface
      */
     protected $config;
     /**
-     * 
+     * Get a config instance
      */
     public function getConfig()
     {
@@ -41,6 +41,10 @@ class KeyCreator implements KeyCreatorInterface
             class_exists('Config') ? $this->getConfig()->get('SSViewer', 'theme') : SSViewer::current_theme(),
             Versioned::current_stage()
         );
+        
+        if (\Director::is_ajax()) {
+            $keyParts[] = 'ajax';
+        }
 
         //If member context matters get the members id
         if (isset($config['member']) && $config['member']) {

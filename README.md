@@ -83,10 +83,10 @@ With the previous config, the template cache `MyPageTypeInclude` will be refresh
 
 #### Alternate cache key modifiers
 
-* versions
-	* If set to 5 you will get 5 different caches of the same page. This is used for pages with random content per render
-* member
-	* If the member affects the content of the template cached then use the member id as part of the cache
+* `versions`
+	* Set this to any number, and that is how many versions of the cache you will get. This can be used when the content of your page changes each render (random)
+* `member`
+	* If set to true a new cache will be made per member logged in
 
 #### Putting it all together
 
