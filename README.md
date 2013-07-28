@@ -4,124 +4,111 @@
 
 HTML Caching can be added to your SilverStripe project by replacing <% include X %> calls with $CacheInclude(X) calls.
 
+For a SilverStripe `2.4` compatible version, see the `2.0` branch.
+
 ##License
 
 
 ##Installation
 
-	$ composer require silverstripe-cacheinclude:2.0.0
+	$ composer require silverstripe-cacheinclude:3.0.0
 
 ##How to use
 
 ### Enabling
 
-Enable in controller or relevant data objects or pages.
+To be able to use `CacheInclude` from your templates, and to be able to have caches cleared from DataObject writes. Add the `CacheIncludeExtension` like so:
 
-```php
-class Page_Controller extends ContentController
-{
-    public static $extensions = array(
-        'CacheIncludeExtension'
-    );
-}
+1. Create a config file `mysite/_config/caching.yml`
+2. Enable the extension:
+
+		---
+		After: 'silverstripe-cacheinclude/*'
+		---
+		DataObject:
+		  extensions:
+			- CacheIncludeExtension
+
+### Configuration
+
+`CacheInclude` uses the SilverStripe `Injector` system for DI. You can configure and override classes that `CacheInclude` uses.
+
+#### Yaml config
+
+To set up `CacheInclude` to be configured from a yml file:
+
+`mysite/_config/caching.yml`
+
+```yml
+---
+After: 'silverstripe-cacheinclude/*'
+---
+DataObject:
+  extensions:
+    - CacheIncludeExtension
+
+Injector:
+  CacheIncludeConfig:
+    class: Heyday\CacheInclude\Configs\YamlConfig
+    constructor:
+      0: '../mysite/cacheinclude_config.yml'
+      1: '%$CacheCache'
 ```
 
-### Templates
+#### Example yml config
 
-    $CacheInclude(TemplateName)
+`mysite/cacheinclude_config.yml`
 
-## Configuration
-
-`CacheInclude` uses [Pimple](http://pimple.sensiolabs.org/) for configuration and dependency injection. The following options are available with the follow defaults:
-
-
-* 'cachecache.class'                  ('\CacheCache\Cache')
-* 'cachecache.options.namespace'      ('cacheinclude')
-* 'cachecache.options.default_ttl'    (null)
-* 'cachecache.options.ttl_variation'  (0)
-* 'cachecache_backend.class'          ('\CacheCache\Backends\File')
-* 'cacheinclude.class'                ('\Heyday\CacheInclude\CacheInclude')
-* 'cacheinclude.options.enabled'      (true)
-* 'cacheinclude.options.force_expire' (false)
-* 'cacheinclude_config.class'         ('\Heyday\CacheInclude\Configs\ArrayConfig')
-* 'cacheinclude_config.config'        (array())
-* 'cacheinclude_key_creator.class'    ('\Heyday\CacheInclude\KeyCreators\KeyCreator')
-* 'cacheinclude_processor.class'      ('\Heyday\CacheInclude\Processors\Processor')
-
-
-`mysite/_config.php`
-
-YAML config
-
-```php
-use Heyday\CacheInclude;
-CacheInclude\Container::addShared(
-    'cacheinclude_config',
-    function ($c) {
-        return new CacheInclude\Configs\YamlConfig(__DIR__ . '/cache_config.yml');
-    }
-);
+```yml
+MyPageTypeInclude:
+    context: page
+    contains:
+        - MyPageType
 ```
 
-YAML config with caching of YAML
+With the previous config, the template cache `MyPageTypeInclude` will be refreshed whenever a page of `MyPageType` is written.
 
-```php
-use Heyday\CacheInclude;
-CacheInclude\Container::addShared(
-    'cacheinclude_config',
-    function ($c) {
-        return new CacheInclude\Configs\YamlConfig(__DIR__ . '/cache_config.yml', $c['cachecache']);
-    }
-);
-```
+#### Available contexts
 
-Array config
+* `no`
+	* No differences in url or environment will create a new cache key
+* `page`
+	* Differences in URLSegment will cause a different cache key
+* `url-params`
+	* `getURLParams` is used as part of the cache key
+* `full`
+	* `requestVars` is used to create the cache key
+* `controller`
+	* the controller class is used as the cache key
 
-```php
-use Heyday\CacheInclude;
-CacheInclude\Container::addShared(
-    'cacheinclude_config',
-    function ($c) {
-        return new CacheInclude\Configs\ArrayConfig(
-        	array(
-        		'TemplateName' => array(
-        			'context' => 'page'
-        		)
-        	)
-        );
-    }
-);
-```
+#### Alternate cache key modifiers
 
-Clear cache mechanism
+* versions
+	* If set to 5 you will get 5 different caches of the same page. This is used for pages with random content per render
+* member
+	* If the member affects the content of the template cached then use the member id as part of the cache
 
-```php
-use Heyday\CacheInclude;
-CacheInclude\Container::extendConfig(
-	array(
-		'cacheinclude.options.force_expire' => isset($_GET['flush']) && $_GET['flush'] && Permission::check('ADMIN')
-	)
-);
-```
+#### Putting it all together
 
-Don't invoke the cache in development mode
-
-```php
-use Heyday\CacheInclude;
-if(Director::isDev()){
-    CacheInclude\Container::extendConfig(
-        array(
-            'cacheinclude.options.enabled' => false
-        )
-    );
-}
+```yml
+MainMenu:
+  context: page
+  contains:
+    - Page
+SomeTemplate:
+  context: full
+  versions: 20
+  member: true
+  contains:
+    - MyDataObject
+    - MyPageType
 ```
 
 ##Contributing
 
 ###Unit Testing
 
-	$ composer install --dev
+	$ composer install --prefer-dist --dev
 	$ phpunit
 
 ###Code guidelines

@@ -1,6 +1,6 @@
 <?php
 
-use Heyday\CacheInclude\Container;
+use Heyday\CacheInclude\CacheInclude;
 
 /**
  * Class CacheIncludeController
@@ -12,17 +12,17 @@ class CacheIncludeController extends \CliController
         'clearAll',
         'clearTemplate'
     );
+
     /**
-     * Holds the dependency injection container
-     * @var
+     * @var Heyday\CacheInclude\CacheInclude
      */
-    protected $container;
+    protected $cache;
     /**
-     *
+     * @param CacheInclude $cache
      */
-    public function __construct()
+    public function __construct(CacheInclude $cache)
     {
-        $this->container = Container::getInstance();
+        $this->cache = $cache;
         parent::__construct();
     }
     /**
@@ -53,7 +53,7 @@ INFO;
      */
     public function clearAll()
     {
-        $this->getService('cacheinclude')->flushAll();
+        $this->cache->flushAll();
         return 'Done' . PHP_EOL;
     }
     /**
@@ -62,14 +62,10 @@ INFO;
     public function clearTemplate()
     {
         if ($this->request->param('ID')) {
-            $this->getService('cacheinclude')->flushByName($this->request->param('ID'));
+            $this->cache->flushByName($this->request->param('ID'));
             return 'Done' . PHP_EOL;
         } else {
             return 'You must specify a template:' . PHP_EOL . $this->index();
         }
-    }
-    protected function getService($name)
-    {
-        return $this->container[$name];
     }
 }

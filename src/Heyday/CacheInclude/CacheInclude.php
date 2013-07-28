@@ -173,8 +173,7 @@ class CacheInclude
 
             if ($this->forceExpire) {
 
-                $this->cache->delete($key);
-                $this->removeStoredKey($name, $key);
+                $this->removeByKey($name, $key);
 
             } else {
 
@@ -197,13 +196,17 @@ class CacheInclude
             return null;
         }
         
-        return $this->cache->get(
-            $this->keyCreator->getKey(
-                $name,
-                $controller,
-                $this->getCombinedConfig($name)
-            )
+        $key = $this->keyCreator->getKey(
+            $name,
+            $controller,
+            $this->getCombinedConfig($name)
         );
+        
+        if ($this->forceExpire) {
+            $this->removeByKey($name, $key);
+        }
+        
+        return $this->cache->get($key);
     }
     /**
      * @param            $name
@@ -246,6 +249,17 @@ class CacheInclude
 
         $this->addStoredKey($name, $key);
     }
+
+    /**
+     * @param $name
+     * @param $key
+     */
+    protected function removeByKey($name, $key)
+    {
+        $this->cache->delete($key);
+        $this->removeStoredKey($name, $key);
+    }
+
     /**
      * @param $name
      * @param $key

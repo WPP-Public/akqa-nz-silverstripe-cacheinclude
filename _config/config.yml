@@ -1,0 +1,56 @@
+---
+Name: config
+---
+Director:
+  rules:
+    'cache-include//$Action': 'CacheIncludeController'
+
+Injector:
+  CacheInclude:
+    class: Heyday\CacheInclude\CacheInclude
+    constructor:
+      0: '%$CacheCache'
+      1: '%$CacheIncludeKeyCreator'
+      2: '%$CacheIncludeConfig'
+  CacheIncludeKeyCreator:
+    class: Heyday\CacheInclude\KeyCreators\KeyCreator
+  CacheIncludeConfig:
+    class: Heyday\CacheInclude\Configs\ArrayConfig
+    constructor:
+      0: []
+  CacheIncludeViewableDataProcessor:
+    class: Heyday\CacheInclude\Processors\ViewableDataProcessor
+  CacheCache:
+    class: CacheCache\Cache
+    constructor:
+      0: '%$CacheCacheBackend'
+      1: cacheinclude
+      2: null
+      3: 0
+  CacheCacheBackend:
+    class: CacheCache\Backends\File
+    constructor:
+      0:
+        dir: '../silverstripe-cacheinclude/cache'
+        file_extension: '.cache'
+  CacheIncludeExtension:
+    class: CacheIncludeExtension
+    constructor:
+      0: '%$CacheInclude'
+      2: '%$CacheIncludeViewableDataProcessor'
+      
+      
+---
+Only:
+  CACHEINCLUDE_FORCE_EXPIRE: true
+Except:
+  environment: live
+---
+Injector:
+  CacheInclude:
+    class: Heyday\CacheInclude\CacheInclude
+    constructor:
+      0: '%$CacheCache'
+      1: '%$CacheIncludeKeyCreator'
+      2: '%$CacheIncludeConfig'
+      3: true

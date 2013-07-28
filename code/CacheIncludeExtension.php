@@ -1,6 +1,7 @@
 <?php
 
-use Heyday\CacheInclude\Container;
+use Heyday\CacheInclude\CacheInclude;
+use Heyday\CacheInclude\Processors\ViewableDataProcessor;
 
 /**
  * Class CacheIncludeExtension
@@ -8,20 +9,28 @@ use Heyday\CacheInclude\Container;
 class CacheIncludeExtension extends Extension
 {
     /**
+     * @var Heyday\CacheInclude\CacheInclude
+     */
+    protected $cache;
+    /**
+     * @var Heyday\CacheInclude\Processors\ViewableDataProcessor
+     */
+    protected $processor;
+    /**
      * @var array
      */
     private static $run = array();
     /**
-     * @var
+     * @param Heyday\CacheInclude\CacheInclude                     $cache
+     * @param Heyday\CacheInclude\Processors\ViewableDataProcessor $processor
      */
-    protected $container;
-    /**
-     * Get a container and set it
-     */
-    public function __construct()
-    {
+    public function __construct(
+        CacheInclude $cache,
+        ViewableDataProcessor $processor
+    ) {
+        $this->cache = $cache;
+        $this->processor = $processor;
         parent::__construct();
-        $this->container = Container::getInstance();
     }
     /**
      * @return Controller
@@ -38,11 +47,12 @@ class CacheIncludeExtension extends Extension
     /**
      * @param $name
      * @param $template
+     * @return mixed|null
      */
     public function CacheIncludePartial($name, $template)
     {
         $controller = $this->getController();
-        return $this->container['cacheinclude']->process(
+        return $this->cache->process(
             $name,
             function () use ($template, $controller) {
                 return $controller->renderWith(new SSViewer_FromString($template));
@@ -56,11 +66,10 @@ class CacheIncludeExtension extends Extension
      */
     public function CacheInclude($name)
     {
-        $controller = $this->getController();
-        return $this->container['cacheinclude']->process(
+        return $this->cache->process(
             $name,
-            $this->container['cacheinclude_processor']->setContext($this->owner),
-            $controller
+            $this->processor->setContext($this->owner),
+            $this->getController()
         );
     }
     /**
@@ -88,9 +97,7 @@ class CacheIncludeExtension extends Extension
 
             $names = array();
 
-            $cacheinclude = $this->container['cacheinclude'];
-
-            foreach ($cacheinclude->getConfig() as $name => $config) {
+            foreach ($this->cache->getConfig() as $name => $config) {
 
                 if (isset($config['contains']) && is_array($config['contains'])) {
 
@@ -114,7 +121,7 @@ class CacheIncludeExtension extends Extension
 
                 foreach ($names as $name) {
 
-                    $cacheinclude->flushByName($name);
+                    $this->cache->flushByName($name);
 
                 }
 
