@@ -11,7 +11,7 @@ For a SilverStripe `2.4` compatible version, see the `2.0` branch.
 
 ##Installation
 
-	$ composer require silverstripe-cacheinclude:3.0.0
+	$ composer require silverstripe-cacheinclude:3.0.2
 
 ##How to use
 
