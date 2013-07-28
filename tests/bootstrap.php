@@ -9,5 +9,5 @@ if (!file_exists(BASE_PATH . '/vendor/autoload.php')) {
 
 $loader = require BASE_PATH . '/vendor/autoload.php';
 
-$loader->addClassMap(Symfony\Component\ClassLoader\ClassMapGenerator::createMap(BASE_PATH . '/sapphire'));
+$loader->addClassMap(Symfony\Component\ClassLoader\ClassMapGenerator::createMap(BASE_PATH . '/framework'));
 $loader->add('Heyday\CacheInclude\Tests', __DIR__);

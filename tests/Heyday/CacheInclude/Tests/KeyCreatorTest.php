@@ -64,16 +64,12 @@ class KeyCreatorTest extends \PHPUnit_Framework_TestCase
     public function testFullPageContext()
     {
         $controller = new TestController;
-        $controller->setURLParams(array(
-            'URLSegment' => '1',
-            'Action' => '2',
-            'ID' => '3'
-        ));
         $controller->setRequest(new \SS_HTTPRequest('GET', 'test', array(
+            'url' => '1/2/3',
             'var1' => 'test',
             'flush' => 1
         )));
-        $this->assertEquals('theme.Live.1.2.3.' . md5(http_build_query(array('var1' => 'test'))) . '.test', $this->keyCreator->getKey(
+        $this->assertEquals('theme.Live.' . md5(http_build_query(array('url' => '1/2/3', 'var1' => 'test'))) . '.test', $this->keyCreator->getKey(
             'test',
             $controller,
             array(
@@ -93,31 +89,12 @@ class KeyCreatorTest extends \PHPUnit_Framework_TestCase
             )
         ));
     }
-
-    public function testCustomContext()
-    {
-        $controller = new TestController;
-        $this->assertEquals('theme.Live.new.test', $this->keyCreator->getKey(
-            'test',
-            $controller,
-            array(
-                'context' => 'custom'
-            )
-        ));
-    }
 }
 
 class TestController extends \Controller
 {
-    public function setRequest(\SS_HTTPRequest $request)
+    public function setRequest($request)
     {
         $this->request = $request;
-    }
-
-    public function CacheContext($parts)
-    {
-        $parts[] = 'new';
-
-        return $parts;
     }
 }

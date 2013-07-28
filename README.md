@@ -104,6 +104,10 @@ SomeTemplate:
     - MyPageType
 ```
 
+### Usage in templates
+
+Replace <% include %> calls with `$CacheInclude('TemplateName')` and ensure there is a config key for `TemplateName`
+
 ##Contributing
 
 ###Unit Testing
