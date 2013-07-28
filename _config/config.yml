@@ -42,6 +42,11 @@ Injector:
     class: CacheIncludeController
     constructor:
       0: '%$CacheInclude'
+  RequestCache:
+    class: Heyday\CacheInclude\RequestCache
+    constructor:
+      0: '%$CacheInclude'
+      1: Global
       
       
 ---

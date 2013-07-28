@@ -39,7 +39,7 @@ class KeyCreator implements KeyCreatorInterface
     public function getKey($name, Controller $controller, $config)
     {
         $keyParts = array(
-            class_exists('Config') ? $this->getConfig()->get('SSViewer', 'theme') : SSViewer::current_theme(),
+            $this->getConfig()->get('SSViewer', 'theme'),
             Versioned::current_stage()
         );
         
