@@ -38,6 +38,10 @@ Injector:
     constructor:
       0: '%$CacheInclude'
       2: '%$CacheIncludeViewableDataProcessor'
+  CacheIncludeController:
+    class: CacheIncludeController
+    constructor:
+      0: '%$CacheInclude'
       
       
 ---
