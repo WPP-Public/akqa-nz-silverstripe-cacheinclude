@@ -8,6 +8,7 @@ use Controller;
 use Member;
 use SSViewer;
 use Versioned;
+use Director;
 
 /**
  * Class KeyCreator
@@ -42,7 +43,11 @@ class KeyCreator implements KeyCreatorInterface
             Versioned::current_stage()
         );
         
-        if (\Director::is_ajax()) {
+        if (Director::is_https()) {
+            $keyParts[] = 'ssl';
+        }
+        
+        if (Director::is_ajax()) {
             $keyParts[] = 'ajax';
         }
 
