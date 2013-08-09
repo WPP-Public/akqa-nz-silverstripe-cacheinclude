@@ -20,13 +20,17 @@ class YamlConfig extends ArrayConfig
         if ($cache instanceof Cache) {
             if (is_file($yaml)) {
                 $yaml = file_get_contents($yaml);
-            }
-            if (!($result = $cache->load(md5($yaml)))) {
-                $cache->save($result = Yaml::parse($yaml));
+
+                if (!($result = $cache->load(md5($yaml)))) {
+                    $cache->save($result = Yaml::parse($yaml));
+                }
+            } else {
+                $result = array();
             }
         } else {
             $result = Yaml::parse($yaml);
         }
+
         parent::__construct($result);
     }
 }
