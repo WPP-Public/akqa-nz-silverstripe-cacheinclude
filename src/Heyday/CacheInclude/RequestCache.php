@@ -104,7 +104,7 @@ class RequestCache implements RequestFilter
      */
     public function preRequest(SS_HTTPRequest $request, Session $session, DataModel $model)
     {
-        if ($request->httpMethod() === 'GET' && !$this->isExcluded($request)) {
+        if (!$this->isExcluded($request)) {
             \Versioned::choose_site_stage();
             $response = $this->cache->get($this->name, $this->getController($request));
             if ($response instanceof SS_HTTPResponse) {
@@ -175,10 +175,14 @@ class RequestCache implements RequestFilter
      */
     protected function isExcluded(SS_HTTPRequest $request)
     {
-        $url = '/' . ltrim($request->getURL(), '/');
-        foreach ($this->excludes as $exclude) {
-            if (strpos($url, $exclude) === 0) {
-                return true;
+        if ($request->httpMethod() !== 'GET') {
+            return true;
+        } else {
+            $url = '/' . ltrim($request->getURL(), '/');
+            foreach ($this->excludes as $exclude) {
+                if (strpos($url, $exclude) === 0) {
+                    return true;
+                }
             }
         }
         return false;
