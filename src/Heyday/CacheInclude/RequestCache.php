@@ -15,6 +15,10 @@ use SS_HTTPResponse;
 class RequestCache implements RequestFilter
 {
     /**
+     *
+     */
+    const REPLACED_TOKEN_PREFIX = '!!ReplacedToken.';
+    /**
      * @var \Heyday\CacheInclude\CacheInclude
      */
     protected $cache;
@@ -26,21 +30,29 @@ class RequestCache implements RequestFilter
      * @var array
      */
     protected $excludes;
+
+    /**
+     * @var array
+     */
+    protected $tokens;
     /**
      * @param \Heyday\CacheInclude\CacheInclude $cache
-     * @param string                           $name
-     * @param array                            $excludes
+     * @param string                            $name
+     * @param array                             $excludes
+     * @param array                             $tokens
      */
     public function __construct(
         CacheInclude $cache,
         $name = 'Global',
-        $excludes = array('/admin', '/dev')
+        $excludes = array('/admin', '/dev'),
+        $tokens = array()
     ) {
         $this->cache = $cache;
         $this->name = $name;
         if (is_array($excludes)) {
             $this->excludes = $excludes;
         }
+        $this->setTokens($tokens);
     }
     /**
      * @param \Heyday\CacheInclude\CacheInclude $cache
@@ -64,6 +76,26 @@ class RequestCache implements RequestFilter
         return $this->excludes;
     }
     /**
+     * @param $tokens
+     */
+    public function setTokens($tokens)
+    {
+        if (is_array($tokens)) {
+            foreach ($tokens as $token) {
+                if ($token instanceof SecurityToken) {
+                    $this->tokens[] = $token;
+                }
+            }
+        }
+    }
+    /**
+     * @return bool
+     */
+    protected function hasTokens()
+    {
+        return count($this->tokens) > 0;
+    }
+    /**
      * If this url allows caching and there is a cached response then send it
      * @param SS_HTTPRequest $request
      * @param Session        $session
@@ -76,6 +108,18 @@ class RequestCache implements RequestFilter
             \Versioned::choose_site_stage();
             $response = $this->cache->get($this->name, $this->getController($request));
             if ($response instanceof SS_HTTPResponse) {
+                // replace in body
+                if ($this->hasTokens()) {
+                    $body = $response->getBody();
+                    foreach ($this->tokens as $token) {
+                        $name = self::REPLACED_TOKEN_PREFIX.$token->getName();
+                        if (strpos($body, $name) !== false) {
+                            $body = str_replace($name, $token->getValue(), $body);
+                        }
+                    }
+                    $response->setBody($body);
+                }
+                $session->save();
                 $response->output();
                 exit;
             }
@@ -92,17 +136,25 @@ class RequestCache implements RequestFilter
     public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model)
     {
         if ($response instanceof SS_HTTPResponse && !$this->isExcluded($request)) {
-            if (strpos($response->getBody(), SecurityToken::getSecurityID()) === false) {
-                $response = clone $response;
-                if (Director::is_ajax()) {
-                    Requirements::include_in_response($response);
+            $response = clone $response;
+            if ($this->hasTokens()) {
+                $body = $response->getBody();
+                foreach ($this->tokens as $token) {
+                    $val = $token->getValue();
+                    if (strpos($body, $val) !== false) {
+                        $body = str_replace($val, self::REPLACED_TOKEN_PREFIX.$token->getName(), $body);
+                    }
                 }
-                $this->cache->set(
-                    $this->name,
-                    $response,
-                    $this->getController($request)
-                );
+                $response->setBody($body);
             }
+            if (Director::is_ajax()) {
+                Requirements::include_in_response($response);
+            }
+            $this->cache->set(
+                $this->name,
+                $response,
+                $this->getController($request)
+            );
         }
         return true;
     }
