@@ -135,7 +135,7 @@ class RequestCache implements RequestFilter
      */
     public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model)
     {
-        if ($response instanceof SS_HTTPResponse && !$this->isExcluded($request)) {
+        if ($response instanceof SS_HTTPResponse && !$this->isExcluded($request, $response)) {
             $response = clone $response;
             if ($this->hasTokens()) {
                 $body = $response->getBody();
@@ -170,11 +170,19 @@ class RequestCache implements RequestFilter
         return $controller;
     }
     /**
-     * @param SS_HTTPRequest $request
+     * @param SS_HTTPRequest  $request
+     * @param SS_HTTPResponse $response
      * @return bool
      */
-    protected function isExcluded(SS_HTTPRequest $request)
+    protected function isExcluded(SS_HTTPRequest $request, SS_HTTPResponse $response = null)
     {
+        // Don't cache redirects
+        if ($response instanceof SS_HTTPResponse) {
+            $statusCode = $response->getStatusCode();
+            if ($statusCode >= 301 && $statusCode <= 307) {
+                return true;
+            }
+        }
         if ($request->httpMethod() !== 'GET') {
             return true;
         } else {
