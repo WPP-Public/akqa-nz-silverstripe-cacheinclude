@@ -30,7 +30,12 @@ class RequestCache implements RequestFilter
      * @var array
      */
     protected $excludes;
-
+    /**
+     * @var array
+     */
+    protected $cachableResponseCodes = array(
+        200
+    );
     /**
      * @var array
      */
@@ -95,6 +100,17 @@ class RequestCache implements RequestFilter
     {
         return count($this->tokens) > 0;
     }
+    
+    /**
+     * @param array $cachableResponseCodes
+     */
+    public function setCacheableResponseCodes($cachableResponseCodes)
+    {
+        if (is_array($cachableResponseCodes)) {
+            $this->cachableResponseCodes = $cachableResponseCodes;
+        }
+    }
+    
     /**
      * If this url allows caching and there is a cached response then send it
      * @param SS_HTTPRequest $request
@@ -176,10 +192,9 @@ class RequestCache implements RequestFilter
      */
     protected function isExcluded(SS_HTTPRequest $request, SS_HTTPResponse $response = null)
     {
-        // Don't cache redirects
         if ($response instanceof SS_HTTPResponse) {
-            $statusCode = $response->getStatusCode();
-            if ($statusCode >= 301 && $statusCode <= 307) {
+            // Don't cache non-200 responses
+            if (!in_array($response->getStatusCode(), $this->cachableResponseCodes)) {
                 return true;
             }
         }
