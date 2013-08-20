@@ -133,7 +133,7 @@ class CacheIncludeExtension extends Extension
     /**
      *
      */
-    public function extraStatics()
+    public function extraStatics($class = null, $extension = null)
     {
 
     }

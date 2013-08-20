@@ -146,7 +146,9 @@ class CacheInclude
     public function process($name, $processor, Controller $controller)
     {
         if (!$processor instanceof ProcessorInterface && !is_callable($processor)) {
-            throw new \InvalidArgumentException('The argument $processor must be an instance of ProcessorInterface or a callable');
+            throw new \InvalidArgumentException(
+                'The argument $processor must be an instance of ProcessorInterface or a callable'
+            );
         }
 
         if (!$this->enabled) {
