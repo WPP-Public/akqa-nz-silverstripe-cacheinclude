@@ -28,6 +28,7 @@ class KeyCreator implements KeyCreatorInterface
         if (null === $this->config) {
             $this->config = Config::inst();
         }
+
         return $this->config;
     }
     /**
@@ -42,11 +43,11 @@ class KeyCreator implements KeyCreatorInterface
             $this->getConfig()->get('SSViewer', 'theme'),
             Versioned::current_stage()
         );
-        
+
         if (Director::is_https()) {
             $keyParts[] = 'ssl';
         }
-        
+
         if (Director::is_ajax()) {
             $keyParts[] = 'ajax';
         }

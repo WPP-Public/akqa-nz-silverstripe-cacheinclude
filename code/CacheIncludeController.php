@@ -7,7 +7,7 @@ use Heyday\CacheInclude\CacheInclude;
  */
 class CacheIncludeController extends \CliController
 {
-    static $allowed_actions = array(
+    private static $allowed_actions = array(
         'index',
         'clearAll',
         'clearTemplate'
@@ -17,6 +17,7 @@ class CacheIncludeController extends \CliController
      * @var Heyday\CacheInclude\CacheInclude
      */
     protected $cache;
+
     /**
      * @param CacheInclude $cache
      */
@@ -54,6 +55,7 @@ INFO;
     public function clearAll()
     {
         $this->cache->flushAll();
+
         return 'Done' . PHP_EOL;
     }
     /**
@@ -63,6 +65,7 @@ INFO;
     {
         if ($this->request->param('ID')) {
             $this->cache->flushByName($this->request->param('ID'));
+
             return 'Done' . PHP_EOL;
         } else {
             return 'You must specify a template:' . PHP_EOL . $this->index();

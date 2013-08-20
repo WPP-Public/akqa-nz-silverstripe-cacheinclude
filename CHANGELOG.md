@@ -37,5 +37,5 @@
 ## 3.0.0
 
 * Support for SilverStripe 3
-* Removed backwards compatibility for SilverStripe 2
+* [BC BREAK] Removed backwards compatibility for SilverStripe 2
 * Removed Pimple as DI container. Migrated to SilverStripe Injector

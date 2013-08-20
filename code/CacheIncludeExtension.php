@@ -52,6 +52,7 @@ class CacheIncludeExtension extends Extension
     public function CacheIncludePartial($name, $template)
     {
         $controller = $this->getController();
+
         return $this->cache->process(
             $name,
             function () use ($template, $controller) {

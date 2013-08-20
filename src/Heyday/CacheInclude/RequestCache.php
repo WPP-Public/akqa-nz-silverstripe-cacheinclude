@@ -100,7 +100,7 @@ class RequestCache implements RequestFilter
     {
         return count($this->tokens) > 0;
     }
-    
+
     /**
      * @param array $cachableResponseCodes
      */
@@ -110,12 +110,12 @@ class RequestCache implements RequestFilter
             $this->cachableResponseCodes = $cachableResponseCodes;
         }
     }
-    
+
     /**
      * If this url allows caching and there is a cached response then send it
-     * @param SS_HTTPRequest $request
-     * @param Session        $session
-     * @param DataModel      $model
+     * @param  SS_HTTPRequest $request
+     * @param  Session        $session
+     * @param  DataModel      $model
      * @return bool|void
      */
     public function preRequest(SS_HTTPRequest $request, Session $session, DataModel $model)
@@ -140,13 +140,14 @@ class RequestCache implements RequestFilter
                 exit;
             }
         }
+
         return true;
     }
     /**
      * If this request allows caching then cache it
-     * @param SS_HTTPRequest  $request
-     * @param SS_HTTPResponse $response
-     * @param DataModel       $model
+     * @param  SS_HTTPRequest  $request
+     * @param  SS_HTTPResponse $response
+     * @param  DataModel       $model
      * @return bool
      */
     public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model)
@@ -172,10 +173,11 @@ class RequestCache implements RequestFilter
                 $this->getController($request)
             );
         }
+
         return true;
     }
     /**
-     * @param SS_HTTPRequest $request
+     * @param  SS_HTTPRequest $request
      * @return Controller
      */
     protected function getController(SS_HTTPRequest $request)
@@ -183,11 +185,12 @@ class RequestCache implements RequestFilter
         $controller = new Controller();
         $controller->setRequest($request);
         $controller->setURLParams($request->allParams());
+
         return $controller;
     }
     /**
-     * @param SS_HTTPRequest  $request
-     * @param SS_HTTPResponse $response
+     * @param  SS_HTTPRequest  $request
+     * @param  SS_HTTPResponse $response
      * @return bool
      */
     protected function isExcluded(SS_HTTPRequest $request, SS_HTTPResponse $response = null)
@@ -208,6 +211,7 @@ class RequestCache implements RequestFilter
                 }
             }
         }
+
         return false;
     }
 }

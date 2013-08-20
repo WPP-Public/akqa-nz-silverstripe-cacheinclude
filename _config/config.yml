@@ -47,8 +47,8 @@ Injector:
     constructor:
       0: '%$CacheInclude'
       1: Global
-      
-      
+
+
 ---
 Only:
   CACHEINCLUDE_FORCE_EXPIRE: true

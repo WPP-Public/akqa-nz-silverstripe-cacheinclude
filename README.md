@@ -1,4 +1,4 @@
-#SilverStripe Cache Include
+# SilverStripe Cache Include
 
 [![Build Status](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude.png?token=PUaVGqRbNa3xySvbQ4qD&branch=master)](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude)
 
@@ -6,14 +6,15 @@ HTML Caching can be added to your SilverStripe project by replacing <% include X
 
 For a SilverStripe `2.4` compatible version, see the `2.0` branch.
 
-##License
+## License
 
+SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-license.org/)
 
-##Installation
+## Installation
 
 	$ composer require silverstripe-cacheinclude
 
-##How to use
+## How to use
 
 ### Enabling
 
@@ -108,14 +109,14 @@ SomeTemplate:
 
 Replace <% include %> calls with `$CacheInclude('TemplateName')` and ensure there is a config key for `TemplateName`
 
-##Contributing
+## Contributing
 
-###Unit Testing
+### Unit Testing
 
 	$ composer install --prefer-dist --dev
 	$ phpunit
 
-###Code guidelines
+### Code guidelines
 
 This project follows the standards defined in:
 

@@ -186,8 +186,8 @@ class CacheInclude
         return $result;
     }
     /**
-     * @param            $name
-     * @param Controller $controller
+     * @param             $name
+     * @param  Controller $controller
      * @return mixed|null
      */
     public function get($name, Controller $controller)
@@ -195,17 +195,17 @@ class CacheInclude
         if (!$this->enabled) {
             return null;
         }
-        
+
         $key = $this->keyCreator->getKey(
             $name,
             $controller,
             $this->getCombinedConfig($name)
         );
-        
+
         if ($this->forceExpire) {
             $this->removeByKey($name, $key);
         }
-        
+
         return $this->cache->get($key);
     }
     /**
@@ -218,20 +218,20 @@ class CacheInclude
         if (!$this->enabled) {
             return;
         }
-        
+
         $key = $this->keyCreator->getKey(
             $name,
             $controller,
             $config = $this->getCombinedConfig($name)
         );
-        
+
         if (isset($config['expires']) && is_string($config['expires'])) {
             $expires = strtotime($config['expires']) - date('U');
         } else {
             $expires = null;
         }
 
-        $this->addByKey($name, $key, $result, $expires);        
+        $this->addByKey($name, $key, $result, $expires);
     }
     /**
      * @param $name

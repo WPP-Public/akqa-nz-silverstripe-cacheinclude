@@ -6,8 +6,8 @@
 class CacheIncludeSiteTreeExtension extends DataExtension
 {
     /**
-     * @param null $class
-     * @param null $extension
+     * @param  null  $class
+     * @param  null  $extension
      * @return array
      */
     public function extraStatics($class = null, $extension = null)
