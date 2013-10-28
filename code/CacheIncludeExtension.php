@@ -46,23 +46,6 @@ class CacheIncludeExtension extends Extension
     }
     /**
      * @param $name
-     * @param $template
-     * @return mixed|null
-     */
-    public function CacheIncludePartial($name, $template)
-    {
-        $controller = $this->getController();
-
-        return $this->cache->process(
-            $name,
-            function () use ($template, $controller) {
-                return $controller->renderWith(new SSViewer_FromString($template));
-            },
-            $controller
-        );
-    }
-    /**
-     * @param $name
      * @return mixed
      */
     public function CacheInclude($name)
@@ -72,6 +55,28 @@ class CacheIncludeExtension extends Extension
             $this->processor->setContext($this->owner),
             $this->getController()
         );
+    }
+    /**
+     * Allows the use of a <% cache 'ConfigName' %><% end_cache %> syntax in templates
+     * @param $res
+     * @throws InvalidArgumentException
+     * @return string
+     */
+    public static function cacheTemplate(&$res)
+    {
+        if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
+            throw new InvalidArgumentException('A config name must be passed into <% cache %>');
+        }
+        return <<<PHP
+\$val .= Injector::inst()->get('CacheInclude')->process(
+   {$res['Arguments'][0]['text']},
+   function () use (\$scope) {
+        \$val = '';
+        {$res['Template']['php']}        return \$val;
+   },
+   Controller::curr()
+);
+PHP;
     }
     /**
      * Remove invalid caches
