@@ -66,30 +66,13 @@ class KeyCreator implements KeyCreatorInterface
             case 'no':
                 break;
             case 'page':
-                if ($controller instanceof ContentController && $controller->data()->db('FullLink')) {
-                    $keyParts = array_merge($keyParts, explode('/', $controller->FullLink));
-                } else {
-                    $params = $controller->getURLParams();
-                    if (isset($params['URLSegment'])) {
-                        $keyParts[] = $params['URLSegment'];
-                    }
-                }
-                break;
-            //Action Context
             case 'url-params':
-                $keyParts = array_merge($keyParts, array_filter($controller->getURLParams()));
+            case 'controller':
+                $keyParts[] = md5($controller->getRequest()->getURL());
                 break;
             //Full Page Context
             case 'full':
-                $data = $controller->getRequest()->requestVars();
-                if (array_key_exists('flush', $data)) {
-                    unset($data['flush']);
-                }
-                $keyParts[] = md5(http_build_query($data));
-                break;
-            //Controller Context
-            case 'controller':
-                $keyParts[] = $controller->class;
+                $keyParts[] = md5($controller->getRequest()->getURL(true));
                 break;
         }
 
@@ -99,10 +82,7 @@ class KeyCreator implements KeyCreatorInterface
 
         $keyParts[] = $name;
 
-        return implode(
-            '.',
-            (array) $keyParts
-        );
+        return implode('.', $keyParts);
 
     }
 }
