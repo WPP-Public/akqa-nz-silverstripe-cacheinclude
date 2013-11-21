@@ -6,6 +6,10 @@ Director:
     'cache-include//$Action': 'CacheIncludeController'
 
 Injector:
+  SSTemplateParser:
+      properties:
+        closedBlocks:
+          cache: "CacheIncludeExtension::cacheTemplate"
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
