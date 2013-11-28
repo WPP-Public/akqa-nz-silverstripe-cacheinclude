@@ -122,6 +122,10 @@ class RequestCache implements RequestFilter
     {
         if (!$this->isExcluded($request)) {
             \Versioned::choose_site_stage();
+            if ($request->getURL() == '') {
+                $request = clone $request;
+                $request->setUrl('home');
+            }
             $response = $this->cache->get($this->name, $this->getController($request));
             if ($response instanceof SS_HTTPResponse) {
                 // replace in body
