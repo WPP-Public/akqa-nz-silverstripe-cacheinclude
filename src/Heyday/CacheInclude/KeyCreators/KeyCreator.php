@@ -57,7 +57,9 @@ class KeyCreator implements KeyCreatorInterface
             $memberID = Member::currentUserID();
             if ($memberID) {
                 $keyParts[] = 'Members';
-                $keyParts[] = $memberID;
+                if ($config['member'] !== 'any') {
+                    $keyParts[] = $memberID;
+                }
             }
         }
 
