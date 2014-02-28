@@ -32,7 +32,7 @@ YAML;
         $this->invalidYamlData = null;
     }
     /**
-     * @expectedException Symfony\Component\Yaml\Exception\ParseException
+     * @expectedException \Symfony\Component\Yaml\Exception\ParseException
      */
     public function testYamlException()
     {

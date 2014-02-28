@@ -2,12 +2,12 @@
 
 namespace Heyday\CacheInclude;
 
-use Stash\Item;
-use Stash\Pool;
+use Doctrine\Common\Cache\CacheProvider;
 use Heyday\CacheInclude\Configs\ConfigInterface;
 use Heyday\CacheInclude\KeyCreators\KeyCreatorInterface;
 use Heyday\CacheInclude\Processors\ProcessorInterface;
 use RuntimeException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class CacheInclude
@@ -16,22 +16,27 @@ use RuntimeException;
 class CacheInclude
 {
     /**
-     * @var \Stash\Pool
+     * The instance of doctrine cache that is used for caching
+     * @var \Doctrine\Common\Cache\CacheProvider
      */
     protected $cache;
     /**
+     * The config for the cache
      * @var ConfigInterface
      */
     protected $config;
     /**
+     * Whether the cache is enable or skipped
      * @var bool
      */
     protected $enabled = true;
     /**
+     * When this is set to true expire every cache that is requested 
      * @var bool
      */
     protected $forceExpire = false;
     /**
+     * The default config
      * @var array
      */
     protected $defaultConfig = array(
@@ -39,14 +44,19 @@ class CacheInclude
         'member' => false,
         'expires' => false
     );
+    /**
+     * An optional Logger
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
 
     /**
-     * @param Pool                $cache
+     * @param CacheProvider       $cache
      * @param ConfigInterface     $config
      * @param bool                $forceExpire
      */
     public function __construct(
-        Pool $cache,
+        CacheProvider $cache,
         ConfigInterface $config,
         $forceExpire = false
     )
@@ -57,6 +67,7 @@ class CacheInclude
     }
 
     /**
+     * Set the cache to enabled or disabled
      * @param $enabled
      */
     public function setEnabled($enabled)
@@ -65,6 +76,7 @@ class CacheInclude
     }
 
     /**
+     * Return whether the cache is enabled or disabled
      * @return bool
      */
     public function getEnabled()
@@ -73,6 +85,7 @@ class CacheInclude
     }
 
     /**
+     * Set the default config
      * @param $config
      */
     public function setDefaultConfig($config)
@@ -81,6 +94,7 @@ class CacheInclude
     }
 
     /**
+     * Return the default config
      * @return array
      */
     public function getDefaultConfig()
@@ -89,6 +103,7 @@ class CacheInclude
     }
 
     /**
+     * Get the config
      * @return ConfigInterface
      */
     public function getConfig()
@@ -97,6 +112,7 @@ class CacheInclude
     }
 
     /**
+     * Set the force expiry flag
      * @param $forceExpire
      */
     public function setForceExpire($forceExpire)
@@ -105,6 +121,7 @@ class CacheInclude
     }
 
     /**
+     * Get the force expire flag
      * @return bool
      */
     public function getForceExpire()
@@ -113,6 +130,23 @@ class CacheInclude
     }
 
     /**
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * Get the default config combined with the provided config
      * @param $name
      * @return mixed
      * @throws \RuntimeException
@@ -130,6 +164,7 @@ class CacheInclude
     }
 
     /**
+     * Prepare a key from key parts
      * @param array $keyParts
      * @return string
      */
@@ -139,6 +174,7 @@ class CacheInclude
     }
 
     /**
+     * 
      * @param                            $name
      * @param                            $processor
      * @param KeyCreators\KeyCreatorInterface $keyCreator
@@ -157,25 +193,29 @@ class CacheInclude
             return $processor($name);
         }
 
-        $key = $this->prepareKey(
-            $keyCreator->getKey(
-                $name,
-                $config = $this->getCombinedConfig($name)
-            )
-        );
+        $config = $this->getCombinedConfig($name);
 
-        $item = $this->cache->getItem($key);
-        $result = $item->get();
+        $key = $this->getKey($name, $keyCreator, $config);
 
         if ($this->forceExpire) {
-            $item->clear();
+            $this->cache->delete($key);
             $this->removeStoredKey($name, $key);
             $result = $processor($name);
-        } elseif ($item->isMiss()) {
-            $result = $processor($name);
-            $item->set($result, $this->getExpiry($config));
+            $type = "EXPIRE";
+        } elseif ($this->cache->contains($key)) {
+            $result = $this->cache->fetch($key);
+            $type = "HIT";
+        } else {
+            $this->cache->save(
+                $key,
+                $result = $processor($name),
+                $this->getExpiry($config)
+            );
             $this->addStoredKey($name, $key);
+            $type = "MISS";
         }
+
+        $this->log($type, $name, $key);
 
         return $result;
     }
@@ -187,14 +227,16 @@ class CacheInclude
      */
     public function get($name, KeyCreatorInterface $keyCreator)
     {
-        $key = $this->prepareKey(
-            $keyCreator->getKey(
-                $name,
-                $this->getCombinedConfig($name)
-            )
-        );
-
-        return $this->cache->getItem($key)->get();
+        $key = $this->getKey($name, $keyCreator);
+        $result = $this->cache->fetch($key);
+        
+        if ($result) {
+            $this->log('HIT', $name, $key);
+        } else {
+            $this->log('MISS', $name, $key);
+        }
+        
+        return $result;
     }
 
     /**
@@ -207,14 +249,15 @@ class CacheInclude
         if (!$this->enabled) {
             return;
         }
-        $key = $this->prepareKey(
-            $keyCreator->getKey(
-                $name,
-                $config = $this->getCombinedConfig($name)
-            )
-        );
 
-        $this->cache->getItem($key)->set($result, $this->getExpiry($config));
+        $config = $this->getCombinedConfig($name);
+        
+        $this->cache->save(
+            $key = $this->getKey($name, $keyCreator, $config),
+            $result,
+            $this->getExpiry($config)
+        );
+        
         $this->addStoredKey($name, $key);
     }
 
@@ -224,11 +267,10 @@ class CacheInclude
      */
     protected function addStoredKey($name, $key)
     {
-        $item = $this->cache->getItem($name);
-        $keys = (array) $item->get();
+        $keys = (array) $this->cache->fetch($name);
         if (!array_key_exists($key, $keys)) {
             $keys[$key] = true;
-            $item->set($keys);
+            $this->cache->save($name, $keys);
         }
     }
 
@@ -238,11 +280,10 @@ class CacheInclude
      */
     protected function removeStoredKey($name, $key)
     {
-        $item = $this->cache->getItem($name);
-        $keys = (array) $item->get();
+        $keys = (array) $this->cache->fetch($name);
         if (array_key_exists($key, $keys)) {
             unset($keys[$key]);
-            $item->set($keys);
+            $this->cache->save($name, $keys);
         }
     }
 
@@ -251,13 +292,11 @@ class CacheInclude
      */
     public function flushByName($name)
     {
-        $item = $this->cache->getItem($name);
-        $keys = array_keys((array) $this->cache->getItem($name)->get());
-        $iterator = $this->cache->getItemIterator($keys);
-        foreach ($iterator as $item) {
-            $item->clear();
+        $keys = (array) $this->cache->fetch($name);
+        foreach (array_keys($keys) as $key) {
+            $this->cache->delete($key);
         }
-        $item->set(array());
+        $this->cache->save($name, array());
     }
 
     /**
@@ -265,21 +304,50 @@ class CacheInclude
      */
     public function flushAll()
     {
-        $this->cache->purge();
+        $this->cache->flushAll();
     }
 
     /**
      * @param $config
-     * @return \DateTime|null
+     * @return string|int
      */
     protected function getExpiry($config)
     {
         if (isset($config['expires']) && is_string($config['expires'])) {
-            $expires = new \DateTime($config['expires']);
+            $expires = strtotime($config['expires']) - time();
         } else {
-            $expires = null;
+            $expires = 0;
         }
 
         return $expires;
+    }
+
+    /**
+     * @param $name
+     * @param KeyCreatorInterface $keyCreator
+     * @param array $config
+     * @return string
+     */
+    protected function getKey($name, KeyCreatorInterface $keyCreator, array $config = null)
+    {
+        return $this->prepareKey(
+            $keyCreator->getKey(
+                $name,
+                $config ?: $this->getCombinedConfig($name)
+            )
+        );
+    }
+
+    /**
+     * Log an event
+     * @param $type
+     * @param $name
+     * @param $key
+     */
+    protected function log($type, $name, $key)
+    {
+        if ($this->logger) {
+            $this->logger->info(sprintf("[%s] cacheinclude '%s' with key '%s'", $type, $name, $key));
+        }
     }
 }

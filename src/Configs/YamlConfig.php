@@ -2,7 +2,7 @@
 
 namespace Heyday\CacheInclude\Configs;
 
-use Stash\Pool;
+use Doctrine\Common\Cache\CacheProvider;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -12,19 +12,23 @@ use Symfony\Component\Yaml\Yaml;
 class YamlConfig extends ArrayConfig
 {
     /**
-     * @param            $yaml
-     * @param Pool $cache
+     * @param               $yaml
+     * @param CacheProvider $cache
      */
-    public function __construct($yaml, Pool $cache = null)
+    public function __construct($yaml, CacheProvider $cache = null)
     {
-        if ($cache instanceof Pool) {
+        if ($cache instanceof CacheProvider) {
             if (strpos($yaml, "\n") === false && is_file($yaml)){
                 $yaml = file_get_contents($yaml);
             }
-            $item = $cache->getItem(md5($yaml));
-            $result = $item->get();
-            if ($item->isMiss()) {
-                $item->set($result = Yaml::parse($yaml));
+            
+            $key = md5($yaml);
+            
+            if ($cache->contains($key)) {
+                $result = $cache->fetch($key);
+            } else {
+                $result = Yaml::parse($yaml);
+                $cache->save($key, $result);
             }
         } else {
             $result = Yaml::parse($yaml);

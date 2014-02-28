@@ -3,46 +3,61 @@ Name: config
 ---
 Director:
   rules:
-    'cache-include//$Action': 'CacheIncludeController'
+    'cache-include//$Action': 'Heyday\CacheInclude\SilverStripe\Controller'
+    
+Heyday\CacheInclude\SilverStripe\Controller:
+  allowed_actions:
+    - clearAll
+    - clearTemplate
 
 Injector:
   SSTemplateParser:
     properties:
       closedBlocks:
-        cache: "Heyday\CacheInclude\SilverStripe\CacheIncludeExtension::cacheTemplate"
+        cache: "Heyday\CacheInclude\SilverStripe\Extension::cacheTemplate"
 
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
-      0: '%$CacheCache'
-      2: '%$CacheIncludeConfig'
+      0: '%$DoctrineCache'
+      1: '%$CacheIncludeConfig'
 
   CacheIncludeConfig:
     class: Heyday\CacheInclude\Configs\ArrayConfig
 
   CacheIncludeViewableDataProcessor:
     class: Heyday\CacheInclude\Processors\ViewableDataProcessor
+    
+  CacheIncludeKeyCreator:
+    class: Heyday\CacheInclude\KeyCreator\ControllerBased
 
-  Stash:
-      class: Stash\Pool
+  DoctrineCache:
+      class: Doctrine\Common\Cache\FilesystemCache
       constructor:
-        0: '%$StashDriver'
-  StashDriver:
-    class: Stash\Driver\FileSystem
-    constructor:
-      0:
-        path: '../silverstripe-cacheinclude/cache'
+        0: '../silverstripe-cacheinclude/cache'
+        1: '.cache'
 
-  CacheIncludeExtension:
-    class: Heyday\CacheInclude\SilverStripe\CacheIncludeExtension
+  CacheIncludeController:
+    class: Heyday\CacheInclude\SilverStripe\Controller
+    constructor:
+      0: '%$CacheInclude'
+
+  Heyday\CacheInclude\SilverStripe\Controller:
+    class: Heyday\CacheInclude\SilverStripe\Controller
+    constructor:
+      0: '%$CacheInclude'
+
+  Heyday\CacheInclude\SilverStripe\Extension:
+    class: Heyday\CacheInclude\SilverStripe\Extension
     constructor:
       0: '%$CacheInclude'
       1: '%$CacheIncludeViewableDataProcessor'
-
-  CacheIncludeController:
-    class: Heyday\CacheInclude\SilverStripe\CacheIncludeController
+  
+  Heyday\CacheInclude\SilverStripe\Extension:
+    class: Heyday\CacheInclude\SilverStripe\Extension
     constructor:
       0: '%$CacheInclude'
+      1: '%$CacheIncludeViewableDataProcessor'
 
   RequestCache:
     class: Heyday\CacheInclude\RequestCache
@@ -60,6 +75,6 @@ Injector:
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
-      0: '%$CacheCache'
+      0: '%$DoctrineCache'
       1: '%$CacheIncludeConfig'
       2: true

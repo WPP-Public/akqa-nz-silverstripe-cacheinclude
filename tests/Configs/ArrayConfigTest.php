@@ -29,7 +29,7 @@ class ArrayConfigTest extends \PHPUnit_Framework_TestCase
         }
     }
     /**
-     * @expectedException Exception
+     * @expectedException \Exception
      * @expectedExceptionMessage Configs are immutable
      */
     public function testSet()
@@ -38,7 +38,7 @@ class ArrayConfigTest extends \PHPUnit_Framework_TestCase
         $config[2] = 'Three';
     }
     /**
-     * @expectedException Exception
+     * @expectedException \Exception
      * @expectedExceptionMessage Configs are immutable
      */
     public function testUnset()

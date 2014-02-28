@@ -11,12 +11,6 @@ use CliController;
  */
 class Controller extends CliController
 {
-    private static $allowed_actions = array(
-        'index',
-        'clearAll',
-        'clearTemplate'
-    );
-
     /**
      * @var \Heyday\CacheInclude\CacheInclude
      */

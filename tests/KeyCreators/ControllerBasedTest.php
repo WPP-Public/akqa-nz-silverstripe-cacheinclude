@@ -48,7 +48,36 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFullPageContext()
+    public function testPageContext()
+    {
+        $request = $this->getMock('SS_HTTPRequest', array(), array(), '', false);
+        $request->expects($this->once())
+            ->method('getURL')
+            ->will($this->returnValue('testurl?test=hello'));
+
+        $this->controllerMock->expects($this->once())
+            ->method('getRequest')
+            ->will(
+                $this->returnValue($request)
+            );
+
+        $this->assertEquals(
+            array(
+                'theme',
+                'Live',
+                md5('testurl?test=hello'),
+                'test'
+            ),
+            $this->keyCreator->getKey(
+                'test',
+                array(
+                    'context' => 'page'
+                )
+            )
+        );
+    }
+
+    public function testFullContext()
     {
         $request = $this->getMock('SS_HTTPRequest', array(), array(), '', false);
         $request->expects($this->once())

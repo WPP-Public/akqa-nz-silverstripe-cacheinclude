@@ -46,7 +46,7 @@ class Extension extends SilverStripeExtension
     )
     {
         $this->cache = $cache;
-        $this->keyCreator = $keyCreator ?: new ControllerBased($this->getController());
+        $this->keyCreator = $keyCreator ?: \Injector::inst()->create('CacheIncludeKeyCreator', $this->getController());
         $this->processor = $processor;
         parent::__construct();
     }
@@ -95,6 +95,12 @@ class Extension extends SilverStripeExtension
             $cacheIncludeServiceName = "'CacheInclude'";
         }
 
+        if (isset($res['Arguments'][2])) {
+            $cacheIncludeKeyCreatorServiceName = $res['Arguments'][2]['text'];
+        } else {
+            $cacheIncludeKeyCreatorServiceName = "'CacheIncludeKeyCreator'";
+        }
+
         return <<<PHP
 \$val .= Injector::inst()->get($cacheIncludeServiceName)->process(
    {$res['Arguments'][0]['text']},
@@ -102,7 +108,7 @@ class Extension extends SilverStripeExtension
         \$val = '';
         {$res['Template']['php']}        return \$val;
    },
-   new \Heyday\CacheInclude\KeyCreator\ControllerBased(Controller::curr())
+   Injector::inst()->create($cacheIncludeKeyCreatorServiceName, Controller::curr())
 );
 PHP;
     }

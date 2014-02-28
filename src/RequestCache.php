@@ -5,7 +5,6 @@ namespace Heyday\CacheInclude;
 use Controller;
 use DataModel;
 use Director;
-use Heyday\CacheInclude\KeyCreators\ControllerBased;
 use RequestFilter;
 use Requirements;
 use SecurityToken;
@@ -134,7 +133,13 @@ class RequestCache implements RequestFilter
                 $request = clone $request;
                 $request->setUrl('home');
             }
-            $response = $this->cache->get($this->name, new ControllerBased($this->getController($request)));
+            $response = $this->cache->get(
+                $this->name,
+                \Injector::inst()->create(
+                    'CacheIncludeKeyCreator',
+                    $this->getController($request)
+                )
+            );
             if ($response instanceof SS_HTTPResponse) {
                 // replace in body
                 if ($this->hasTokens()) {
@@ -183,7 +188,10 @@ class RequestCache implements RequestFilter
             $this->cache->set(
                 $this->name,
                 $response,
-                new ControllerBased($this->getController($request))
+                \Injector::inst()->create(
+                    'CacheIncludeKeyCreator',
+                    $this->getController($request)
+                )
             );
         }
 

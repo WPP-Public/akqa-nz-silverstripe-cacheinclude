@@ -69,11 +69,8 @@ class ControllerBased implements KeyCreatorInterface
             case 'no':
                 break;
             case 'page':
-            case 'url-params':
-            case 'controller':
                 $keyParts[] = md5($this->controller->getRequest()->getURL());
                 break;
-            //Full Page Context
             case 'full':
                 $keyParts[] = md5($this->controller->getRequest()->getURL(true));
                 break;

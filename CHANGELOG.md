@@ -2,8 +2,9 @@
 
 ## 4.0.0
 
-* [BC Break] Use "tedivm/stash" for caching
+* [BC Break] Use "doctrine/cache" for caching
 * [BC Break] Change KeyCreator interface to return an array from getKey
+* [BC Break] Remove support for "url-params" and "controller" contexts, replaced with "page"
 
 ## 3.1.0
 

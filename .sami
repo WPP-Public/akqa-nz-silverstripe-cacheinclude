@@ -11,7 +11,7 @@ $iterator = Finder::create()
     ->exclude('vendor')
     ->exclude('tests')
     ->exclude('framework')
-    ->in(__DIR__);
+    ->in($dir = __DIR__);
 
 $versions = GitVersionCollection::create($dir)
     ->addFromTags('*')

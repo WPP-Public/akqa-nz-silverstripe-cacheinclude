@@ -1,10 +1,8 @@
 # SilverStripe Cache Include
 
-[![Build Status](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude.png?token=PUaVGqRbNa3xySvbQ4qD&branch=master)](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude)
+Template caching based on urls not DB queries.
 
-HTML Caching can be added to your SilverStripe project by replacing <% include X %> calls with $CacheInclude(X) calls.
-
-For a SilverStripe `2.4` compatible version, see the `2.0` branch.
+For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
 ## License
 
@@ -74,13 +72,9 @@ With the previous config, the template cache `MyPageTypeInclude` will be refresh
 * `no`
 	* No differences in url or environment will create a new cache key
 * `page`
-	* Differences in URLSegment will cause a different cache key
-* `url-params`
-	* `getURLParams` is used as part of the cache key
+	* Url not including GET variables
 * `full`
-	* `requestVars` is used to create the cache key
-* `controller`
-	* the controller class is used as the cache key
+	* Url including GET variables
 
 #### Alternate cache key modifiers
 
@@ -88,6 +82,7 @@ With the previous config, the template cache `MyPageTypeInclude` will be refresh
 	* Set this to any number, and that is how many versions of the cache you will get. This can be used when the content of your page changes each render (random)
 * `member`
 	* If set to true a new cache will be made per member logged in
+	* If set to "any" there will be one cache for all logged in users
 
 #### Putting it all together
 
@@ -107,7 +102,7 @@ SomeTemplate:
 
 ### Usage in templates
 
-Replace <% include %> calls with `$CacheInclude('TemplateName')` and ensure there is a config key for `TemplateName`
+
 
 ## Contributing
 
