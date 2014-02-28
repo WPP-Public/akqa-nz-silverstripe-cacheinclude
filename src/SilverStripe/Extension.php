@@ -1,37 +1,56 @@
 <?php
 
+namespace Heyday\CacheInclude\SilverStripe;
+
+use Controller;
+use Extension as SilverStripeExtension;
 use Heyday\CacheInclude\CacheInclude;
+use Heyday\CacheInclude\KeyCreators\ControllerBased;
 use Heyday\CacheInclude\Processors\ViewableDataProcessor;
+use Heyday\CacheInclude\KeyCreators\KeyCreatorInterface;
+use InvalidArgumentException;
+use SS_HTTPRequest;
 
 /**
- * Class CacheIncludeExtension
+ * Class Extension
+ * @package Heyday\CacheInclude\SilverStripe
  */
-class CacheIncludeExtension extends Extension
+class Extension extends SilverStripeExtension
 {
     /**
-     * @var Heyday\CacheInclude\CacheInclude
+     * @var \Heyday\CacheInclude\CacheInclude
      */
     protected $cache;
     /**
-     * @var Heyday\CacheInclude\Processors\ViewableDataProcessor
+     * @var \Heyday\CacheInclude\Processors\ViewableDataProcessor
      */
     protected $processor;
+    /**
+     * @var \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface
+     */
+    protected $keyCreator;
     /**
      * @var array
      */
     private static $run = array();
+
     /**
-     * @param Heyday\CacheInclude\CacheInclude                     $cache
-     * @param Heyday\CacheInclude\Processors\ViewableDataProcessor $processor
+     * @param \Heyday\CacheInclude\CacheInclude                     $cache
+     * @param \Heyday\CacheInclude\Processors\ViewableDataProcessor $processor
+     * @param KeyCreatorInterface                                   $keyCreator
      */
     public function __construct(
         CacheInclude $cache,
-        ViewableDataProcessor $processor
-    ) {
+        ViewableDataProcessor $processor,
+        KeyCreatorInterface $keyCreator = null
+    )
+    {
         $this->cache = $cache;
+        $this->keyCreator = $keyCreator ?: new ControllerBased($this->getController());
         $this->processor = $processor;
         parent::__construct();
     }
+
     /**
      * @return Controller
      */
@@ -44,6 +63,7 @@ class CacheIncludeExtension extends Extension
 
         return $controller;
     }
+
     /**
      * @param $name
      * @return mixed
@@ -53,13 +73,14 @@ class CacheIncludeExtension extends Extension
         return $this->cache->process(
             $name,
             $this->processor->setContext($this->owner),
-            $this->getController()
+            $this->keyCreator
         );
     }
+
     /**
      * Allows the use of a <% cache 'ConfigName' %><% end_cache %> syntax in templates
      * @param $res
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @return string
      */
     public static function cacheTemplate(&$res)
@@ -67,17 +88,25 @@ class CacheIncludeExtension extends Extension
         if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
             throw new InvalidArgumentException('A config name must be passed into <% cache %>');
         }
+        
+        if (isset($res['Arguments'][1])) {
+            $cacheIncludeServiceName = $res['Arguments'][1]['text'];
+        } else {
+            $cacheIncludeServiceName = "'CacheInclude'";
+        }
+
         return <<<PHP
-\$val .= Injector::inst()->get('CacheInclude')->process(
+\$val .= Injector::inst()->get($cacheIncludeServiceName)->process(
    {$res['Arguments'][0]['text']},
    function () use (\$scope) {
         \$val = '';
         {$res['Template']['php']}        return \$val;
    },
-   Controller::curr()
+   new \Heyday\CacheInclude\KeyCreator\ControllerBased(Controller::curr())
 );
 PHP;
     }
+
     /**
      * Remove invalid caches
      */
@@ -85,6 +114,7 @@ PHP;
     {
         $this->onChange();
     }
+
     /**
      * Remove invalid caches
      */
@@ -92,6 +122,7 @@ PHP;
     {
         $this->onChange();
     }
+
     /**
      * Remove invalid caches
      */
@@ -135,6 +166,7 @@ PHP;
 
         }
     }
+
     /**
      *
      */

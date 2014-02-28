@@ -1,6 +1,7 @@
 <?php
 
 use Sami\Sami;
+use Sami\Version\GitVersionCollection;
 use Symfony\Component\Finder\Finder;
 
 $iterator = Finder::create()
@@ -12,8 +13,15 @@ $iterator = Finder::create()
     ->exclude('framework')
     ->in(__DIR__);
 
+$versions = GitVersionCollection::create($dir)
+    ->addFromTags('*')
+    ->add('master', 'master branch');
+
 return new Sami($iterator, array(
     'title'                => 'Cache Include API',
-    'build_dir'            => __DIR__ . '/build/api',
-    'cache_dir'            => __DIR__ . '/build/apicache'
+    'versions'             => $versions,
+    'theme'                => 'enhanced',
+    'build_dir'            => __DIR__ . '/build/api/%version%',
+    'cache_dir'            => __DIR__ . '/build/apicache/%version%',
+    'default_opened_level' => 2,
 ));

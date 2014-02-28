@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.0.0
+
+* [BC Break] Use "tedivm/stash" for caching
+* [BC Break] Change KeyCreator interface to return an array from getKey
+
+## 3.1.0
+
+* Added special <% cache 'Name' %> syntax for templates
+* [BC BREAK] Removed ability to use `CacheIncludePartial`
+* Added support for caching by whether a use is logged in (as opposed to caching for a specific user)
+* Removed redundant key creation code for page, url-params, controller all combined into one functionality
+
 ## 3.0.8
 
 * Only cache 200 status codes in global request cache

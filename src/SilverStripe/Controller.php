@@ -1,11 +1,15 @@
 <?php
 
+namespace Heyday\CacheInclude\SilverStripe;
+
 use Heyday\CacheInclude\CacheInclude;
+use CliController;
 
 /**
- * Class CacheIncludeController
+ * Class Controller
+ * @package Heyday\CacheInclude\SilverStripe
  */
-class CacheIncludeController extends \CliController
+class Controller extends CliController
 {
     private static $allowed_actions = array(
         'index',
@@ -14,7 +18,7 @@ class CacheIncludeController extends \CliController
     );
 
     /**
-     * @var Heyday\CacheInclude\CacheInclude
+     * @var \Heyday\CacheInclude\CacheInclude
      */
     protected $cache;
 
@@ -26,16 +30,7 @@ class CacheIncludeController extends \CliController
         $this->cache = $cache;
         parent::__construct();
     }
-    /**
-     * Ensure clear actions can only be run from the command line
-     */
-    public function init()
-    {
-        parent::init();
-        if (!Director::is_cli() && !Permission::check('ADMIN')) {
-            return Security::permissionFailure();
-        }
-    }
+
     /**
      *
      */
@@ -49,6 +44,7 @@ sake cache-include/clearTemplate/TemplateName #clear specific template
 
 INFO;
     }
+
     /**
      * Clears all caches
      */
@@ -58,8 +54,9 @@ INFO;
 
         return 'Done' . PHP_EOL;
     }
+
     /**
-     *
+     * Clears a specific template
      */
     public function clearTemplate()
     {

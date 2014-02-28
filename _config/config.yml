@@ -7,51 +7,48 @@ Director:
 
 Injector:
   SSTemplateParser:
-      properties:
-        closedBlocks:
-          cache: "CacheIncludeExtension::cacheTemplate"
+    properties:
+      closedBlocks:
+        cache: "Heyday\CacheInclude\SilverStripe\CacheIncludeExtension::cacheTemplate"
+
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
       0: '%$CacheCache'
-      1: '%$CacheIncludeKeyCreator'
       2: '%$CacheIncludeConfig'
-  CacheIncludeKeyCreator:
-    class: Heyday\CacheInclude\KeyCreators\KeyCreator
+
   CacheIncludeConfig:
     class: Heyday\CacheInclude\Configs\ArrayConfig
-    constructor:
-      0: []
+
   CacheIncludeViewableDataProcessor:
     class: Heyday\CacheInclude\Processors\ViewableDataProcessor
-  CacheCache:
-    class: CacheCache\Cache
-    constructor:
-      0: '%$CacheCacheBackend'
-      1: cacheinclude
-      2: null
-      3: 0
-  CacheCacheBackend:
-    class: CacheCache\Backends\File
+
+  Stash:
+      class: Stash\Pool
+      constructor:
+        0: '%$StashDriver'
+  StashDriver:
+    class: Stash\Driver\FileSystem
     constructor:
       0:
-        dir: '../silverstripe-cacheinclude/cache'
-        file_extension: '.cache'
+        path: '../silverstripe-cacheinclude/cache'
+
   CacheIncludeExtension:
-    class: CacheIncludeExtension
+    class: Heyday\CacheInclude\SilverStripe\CacheIncludeExtension
     constructor:
       0: '%$CacheInclude'
-      2: '%$CacheIncludeViewableDataProcessor'
+      1: '%$CacheIncludeViewableDataProcessor'
+
   CacheIncludeController:
-    class: CacheIncludeController
+    class: Heyday\CacheInclude\SilverStripe\CacheIncludeController
     constructor:
       0: '%$CacheInclude'
+
   RequestCache:
     class: Heyday\CacheInclude\RequestCache
     constructor:
       0: '%$CacheInclude'
       1: Global
-
 
 ---
 Only:
@@ -64,6 +61,5 @@ Injector:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
       0: '%$CacheCache'
-      1: '%$CacheIncludeKeyCreator'
-      2: '%$CacheIncludeConfig'
-      3: true
+      1: '%$CacheIncludeConfig'
+      2: true

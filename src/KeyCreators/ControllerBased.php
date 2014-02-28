@@ -3,44 +3,45 @@
 namespace Heyday\CacheInclude\KeyCreators;
 
 use Config;
-use ContentController;
 use Controller;
 use Member;
-use SSViewer;
 use Versioned;
 use Director;
 
 /**
- * Class KeyCreator
+ * Class ControllerBased
  * @package Heyday\CacheInclude\KeyCreators
  */
-class KeyCreator implements KeyCreatorInterface
+class ControllerBased implements KeyCreatorInterface
 {
+    /**
+     * @var \Controller
+     */
+    protected $controller;
+
     /**
      * @var \Config
      */
     protected $config;
-    /**
-     * Get a config instance
-     */
-    public function getConfig()
-    {
-        if (null === $this->config) {
-            $this->config = Config::inst();
-        }
 
-        return $this->config;
+    /**
+     * @param Controller $controlller
+     */
+    public function __construct(Controller $controlller)
+    {
+        $this->controller = $controlller;
+        $this->config = Config::inst();
     }
+
     /**
      * @param              $name
-     * @param  \Controller $controller
      * @param              $config
-     * @return string
+     * @return mixed
      */
-    public function getKey($name, Controller $controller, $config)
+    public function getKey($name, $config)
     {
         $keyParts = array(
-            $this->getConfig()->get('SSViewer', 'theme'),
+            $this->config->get('SSViewer', 'theme'),
             Versioned::current_stage()
         );
 
@@ -70,11 +71,11 @@ class KeyCreator implements KeyCreatorInterface
             case 'page':
             case 'url-params':
             case 'controller':
-                $keyParts[] = md5($controller->getRequest()->getURL());
+                $keyParts[] = md5($this->controller->getRequest()->getURL());
                 break;
             //Full Page Context
             case 'full':
-                $keyParts[] = md5($controller->getRequest()->getURL(true));
+                $keyParts[] = md5($this->controller->getRequest()->getURL(true));
                 break;
         }
 
@@ -84,7 +85,6 @@ class KeyCreator implements KeyCreatorInterface
 
         $keyParts[] = $name;
 
-        return implode('.', $keyParts);
-
+        return $keyParts;
     }
 }

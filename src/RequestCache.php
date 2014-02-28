@@ -5,6 +5,7 @@ namespace Heyday\CacheInclude;
 use Controller;
 use DataModel;
 use Director;
+use Heyday\CacheInclude\KeyCreators\ControllerBased;
 use RequestFilter;
 use Requirements;
 use SecurityToken;
@@ -40,6 +41,7 @@ class RequestCache implements RequestFilter
      * @var array
      */
     protected $tokens;
+
     /**
      * @param \Heyday\CacheInclude\CacheInclude $cache
      * @param string                            $name
@@ -51,7 +53,8 @@ class RequestCache implements RequestFilter
         $name = 'Global',
         $excludes = array('/admin', '/dev'),
         $tokens = array()
-    ) {
+    )
+    {
         $this->cache = $cache;
         $this->name = $name;
         if (is_array($excludes)) {
@@ -59,6 +62,7 @@ class RequestCache implements RequestFilter
         }
         $this->setTokens($tokens);
     }
+
     /**
      * @param \Heyday\CacheInclude\CacheInclude $cache
      */
@@ -66,6 +70,7 @@ class RequestCache implements RequestFilter
     {
         $this->cache = $cache;
     }
+
     /**
      * @param mixed $excludes
      */
@@ -73,6 +78,7 @@ class RequestCache implements RequestFilter
     {
         $this->excludes = $excludes;
     }
+
     /**
      * @return mixed
      */
@@ -80,6 +86,7 @@ class RequestCache implements RequestFilter
     {
         return $this->excludes;
     }
+
     /**
      * @param $tokens
      */
@@ -93,6 +100,7 @@ class RequestCache implements RequestFilter
             }
         }
     }
+
     /**
      * @return bool
      */
@@ -126,13 +134,13 @@ class RequestCache implements RequestFilter
                 $request = clone $request;
                 $request->setUrl('home');
             }
-            $response = $this->cache->get($this->name, $this->getController($request));
+            $response = $this->cache->get($this->name, new ControllerBased($this->getController($request)));
             if ($response instanceof SS_HTTPResponse) {
                 // replace in body
                 if ($this->hasTokens()) {
                     $body = $response->getBody();
                     foreach ($this->tokens as $token) {
-                        $name = self::REPLACED_TOKEN_PREFIX.$token->getName();
+                        $name = self::REPLACED_TOKEN_PREFIX . $token->getName();
                         if (strpos($body, $name) !== false) {
                             $body = str_replace($name, $token->getValue(), $body);
                         }
@@ -147,6 +155,7 @@ class RequestCache implements RequestFilter
 
         return true;
     }
+
     /**
      * If this request allows caching then cache it
      * @param  SS_HTTPRequest  $request
@@ -163,7 +172,7 @@ class RequestCache implements RequestFilter
                 foreach ($this->tokens as $token) {
                     $val = $token->getValue();
                     if (strpos($body, $val) !== false) {
-                        $body = str_replace($val, self::REPLACED_TOKEN_PREFIX.$token->getName(), $body);
+                        $body = str_replace($val, self::REPLACED_TOKEN_PREFIX . $token->getName(), $body);
                     }
                 }
                 $response->setBody($body);
@@ -174,12 +183,13 @@ class RequestCache implements RequestFilter
             $this->cache->set(
                 $this->name,
                 $response,
-                $this->getController($request)
+                new ControllerBased($this->getController($request))
             );
         }
 
         return true;
     }
+
     /**
      * @param  SS_HTTPRequest $request
      * @return Controller
@@ -192,6 +202,7 @@ class RequestCache implements RequestFilter
 
         return $controller;
     }
+
     /**
      * @param  SS_HTTPRequest  $request
      * @param  SS_HTTPResponse $response

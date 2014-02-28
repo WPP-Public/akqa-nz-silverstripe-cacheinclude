@@ -17,7 +17,7 @@ class ViewableDataProcessor implements ProcessorInterface
     protected $context;
 
     /**
-     * @param \ViewableData $context
+     * @param  \ViewableData $context
      * @return $this
      */
     public function setContext(ViewableData $context)
@@ -26,6 +26,7 @@ class ViewableDataProcessor implements ProcessorInterface
 
         return $this;
     }
+
     /**
      * @param $name
      * @return string
@@ -36,6 +37,7 @@ class ViewableDataProcessor implements ProcessorInterface
         if (!$this->context instanceof ViewableData) {
             throw new InvalidArgumentException('Context must be instance of ViewableData');
         }
+
         if ($this->context->hasMethod($name)) {
             $result = $this->context->$name();
 

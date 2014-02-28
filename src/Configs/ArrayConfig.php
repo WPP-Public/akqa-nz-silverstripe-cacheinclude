@@ -9,14 +9,14 @@ namespace Heyday\CacheInclude\Configs;
 class ArrayConfig implements ConfigInterface
 {
     /**
-     * @var
+     * @var array
      */
     protected $config;
 
     /**
-     * @param $config
+     * @param array|void $config
      */
-    public function __construct($config)
+    public function __construct(array $config = array())
     {
         $this->config = $config;
     }
