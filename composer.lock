@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "d09edb428bd13922bff70bc31f2f900f",
+    "hash": "82701022a0010863583bd81d4d450b5d",
     "packages": [
         {
             "name": "composer/installers",
@@ -200,6 +200,55 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "symfony/expression-language",
+            "version": "v2.4.2",
+            "target-dir": "Symfony/Component/ExpressionLanguage",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/expression-language.git",
+                "reference": "e969ce56b986ae291174658396d852c29246d65a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/expression-language/zipball/e969ce56b986ae291174658396d852c29246d65a",
+                "reference": "e969ce56b986ae291174658396d852c29246d65a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\ExpressionLanguage\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony ExpressionLanguage Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-02-10 14:27:45"
         },
         {
             "name": "symfony/yaml",
@@ -796,12 +845,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Sami.git",
-                "reference": "157335a995165e74445f1995540923cf82c2997b"
+                "reference": "a9578e8b51c70929b3687f57028699d403aafa84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Sami/zipball/157335a995165e74445f1995540923cf82c2997b",
-                "reference": "157335a995165e74445f1995540923cf82c2997b",
+                "url": "https://api.github.com/repos/fabpot/Sami/zipball/a9578e8b51c70929b3687f57028699d403aafa84",
+                "reference": "a9578e8b51c70929b3687f57028699d403aafa84",
                 "shasum": ""
             },
             "require": {
@@ -847,20 +896,20 @@
             "keywords": [
                 "phpdoc"
             ],
-            "time": "2014-02-20 19:47:23"
+            "time": "2014-03-02 09:04:43"
         },
         {
             "name": "silverstripe/framework",
-            "version": "3.1.2",
+            "version": "3.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silverstripe/silverstripe-framework.git",
-                "reference": "054b35ded7674f13ccad4cec8fe38372e2a001df"
+                "reference": "ead3e263786e85ef00ffa76d8d740a62526c5414"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silverstripe/silverstripe-framework/zipball/054b35ded7674f13ccad4cec8fe38372e2a001df",
-                "reference": "054b35ded7674f13ccad4cec8fe38372e2a001df",
+                "url": "https://api.github.com/repos/silverstripe/silverstripe-framework/zipball/ead3e263786e85ef00ffa76d8d740a62526c5414",
+                "reference": "ead3e263786e85ef00ffa76d8d740a62526c5414",
                 "shasum": ""
             },
             "require": {
@@ -893,7 +942,7 @@
                 "framework",
                 "silverstripe"
             ],
-            "time": "2013-11-12 18:43:44"
+            "time": "2014-03-02 19:54:18"
         },
         {
             "name": "symfony/class-loader",

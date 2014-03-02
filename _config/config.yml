@@ -14,13 +14,16 @@ Injector:
   SSTemplateParser:
     properties:
       closedBlocks:
-        cache: "Heyday\CacheInclude\SilverStripe\Extension::cacheTemplate"
+        cache: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate"
 
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
       0: '%$DoctrineCache'
       1: '%$CacheIncludeConfig'
+   
+  CacheIncludeExpressionLanguage:
+    class: Heyday\CacheInclude\ExpressionLanguage
 
   CacheIncludeConfig:
     class: Heyday\CacheInclude\Configs\ArrayConfig
@@ -29,7 +32,7 @@ Injector:
     class: Heyday\CacheInclude\Processors\ViewableDataProcessor
     
   CacheIncludeKeyCreator:
-    class: Heyday\CacheInclude\KeyCreator\ControllerBased
+    class: Heyday\CacheInclude\KeyCreators\ControllerBased
 
   DoctrineCache:
       class: Doctrine\Common\Cache\FilesystemCache
@@ -47,23 +50,34 @@ Injector:
     constructor:
       0: '%$CacheInclude'
 
-  Heyday\CacheInclude\SilverStripe\Extension:
-    class: Heyday\CacheInclude\SilverStripe\Extension
+  Heyday\CacheInclude\SilverStripe\InvalidationExtension:
+    class: Heyday\CacheInclude\SilverStripe\InvalidationExtension
     constructor:
       0: '%$CacheInclude'
-      1: '%$CacheIncludeViewableDataProcessor'
-  
-  Heyday\CacheInclude\SilverStripe\Extension:
-    class: Heyday\CacheInclude\SilverStripe\Extension
-    constructor:
-      0: '%$CacheInclude'
-      1: '%$CacheIncludeViewableDataProcessor'
+      1: '%$CacheIncludeExpressionLanguage'
 
   RequestCache:
     class: Heyday\CacheInclude\RequestCache
     constructor:
       0: '%$CacheInclude'
-      1: Global
+      1: '%$CacheIncludeExpressionLanguage'
+      2: Global
+    properties:
+      Tokens:
+        - '%$SecurityToken'
+
+      SaveExcludeRules:
+        - 'request.getUrl() matches "/^\\/admin|dev/"'
+
+      SaveIncludeRules:
+        - "request.httpMethod() == 'GET'"
+        - "response.getStatusCode() == 200"
+
+      FetchExcludeRules:
+        - 'request.getUrl() matches "/^\\/admin|dev/"'
+
+      FetchIncludeRules:
+        - "request.httpMethod() == 'GET'"
 
 ---
 Only:

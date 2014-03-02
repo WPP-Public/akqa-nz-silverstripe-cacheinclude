@@ -27,9 +27,9 @@ class ControllerBased implements KeyCreatorInterface
     /**
      * @param Controller $controlller
      */
-    public function __construct(Controller $controlller)
+    public function __construct(Controller $controller)
     {
-        $this->controller = $controlller;
+        $this->controller = $controller;
         $this->config = Config::inst();
     }
 
@@ -41,8 +41,9 @@ class ControllerBased implements KeyCreatorInterface
     public function getKey($name, $config)
     {
         $keyParts = array(
+            Director::get_environment_type(),
+            Versioned::current_stage(),
             $this->config->get('SSViewer', 'theme'),
-            Versioned::current_stage()
         );
 
         if (Director::is_https()) {

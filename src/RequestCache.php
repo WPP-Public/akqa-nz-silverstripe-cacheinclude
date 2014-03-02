@@ -12,53 +12,78 @@ use Session;
 use SS_HTTPRequest;
 use SS_HTTPResponse;
 
+/**
+ * Class RequestCache
+ * @package Heyday\CacheInclude
+ */
 class RequestCache implements RequestFilter
 {
     /**
-     *
+     * The constant used when replacing tokens in an response
      */
     const REPLACED_TOKEN_PREFIX = '!!ReplacedToken.';
     /**
+     * The instanceof CacheInclude to use for cache
      * @var \Heyday\CacheInclude\CacheInclude
      */
     protected $cache;
     /**
+     * The name that identifies which config to use
      * @var string
      */
     protected $name;
     /**
+     * Rules that when true skips saving
      * @var array
      */
-    protected $excludes;
+    protected $saveExcludeRules = array();
     /**
+     * Rules that when false skip saving
      * @var array
      */
-    protected $cachableResponseCodes = array(
-        200
-    );
+    protected $saveIncludeRules = array();
     /**
+     * Rules that when true skip fetching
+     * @var array
+     */
+    protected $fetchExcludeRules = array();
+    /**
+     * Rules that when false skip fetching
+     * @var array
+     */
+    protected $fetchIncludeRules = array();
+    /**
+     * Tokens that should be searched for and replaced in cached output
      * @var array
      */
     protected $tokens;
+    /**
+     * The expression language used to evaluate rules
+     * @var \Heyday\CacheInclude\ExpressionLanguage
+     */
+    protected $expressionLanguage;
+    /**
+     * Extra variables that are used when evaluating rules
+     * @var array
+     */
+    protected $extraExpressionVars = array();
 
     /**
-     * @param \Heyday\CacheInclude\CacheInclude $cache
-     * @param string                            $name
-     * @param array                             $excludes
-     * @param array                             $tokens
+     * @param CacheInclude $cache
+     * @param ExpressionLanguage $expressionLanguage
+     * @param string $name
+     * @param array $tokens
      */
     public function __construct(
         CacheInclude $cache,
+        ExpressionLanguage $expressionLanguage,
         $name = 'Global',
-        $excludes = array('/admin', '/dev'),
         $tokens = array()
     )
     {
         $this->cache = $cache;
+        $this->expressionLanguage = $expressionLanguage;
         $this->name = $name;
-        if (is_array($excludes)) {
-            $this->excludes = $excludes;
-        }
         $this->setTokens($tokens);
     }
 
@@ -71,19 +96,43 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param mixed $excludes
+     * @param mixed $fetchExcludeRules
      */
-    public function setExcludes($excludes)
+    public function setFetchExcludeRules(array $fetchExcludeRules)
     {
-        $this->excludes = $excludes;
+        $this->fetchExcludeRules = $fetchExcludeRules;
     }
 
     /**
-     * @return mixed
+     * @param mixed $fetchIncludeRules
      */
-    public function getExcludes()
+    public function setFetchIncludeRules(array $fetchIncludeRules)
     {
-        return $this->excludes;
+        $this->fetchIncludeRules = $fetchIncludeRules;
+    }
+
+    /**
+     * @param mixed $saveExcludeRules
+     */
+    public function setSaveExcludeRules(array $saveExcludeRules)
+    {
+        $this->saveExcludeRules = $saveExcludeRules;
+    }
+
+    /**
+     * @param mixed $saveIncludeRules
+     */
+    public function setSaveIncludeRules(array $saveIncludeRules)
+    {
+        $this->saveIncludeRules = $saveIncludeRules;
+    }
+
+    /**
+     * @param array $extraExpressionVars
+     */
+    public function setExtraExpressionVars($extraExpressionVars)
+    {
+        $this->extraExpressionVars = $extraExpressionVars;
     }
 
     /**
@@ -127,7 +176,7 @@ class RequestCache implements RequestFilter
      */
     public function preRequest(SS_HTTPRequest $request, Session $session, DataModel $model)
     {
-        if (!$this->isExcluded($request)) {
+        if ($this->allowFetch($request)) {
             \Versioned::choose_site_stage();
             if ($request->getURL() == '') {
                 $request = clone $request;
@@ -170,7 +219,7 @@ class RequestCache implements RequestFilter
      */
     public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model)
     {
-        if ($response instanceof SS_HTTPResponse && !$this->isExcluded($request, $response)) {
+        if ($response instanceof SS_HTTPResponse && $this->allowSave($request, $response)) {
             $response = clone $response;
             if ($this->hasTokens()) {
                 $body = $response->getBody();
@@ -212,29 +261,66 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param  SS_HTTPRequest  $request
-     * @param  SS_HTTPResponse $response
+     * @param SS_HTTPRequest $request
      * @return bool
      */
-    protected function isExcluded(SS_HTTPRequest $request, SS_HTTPResponse $response = null)
+    protected function allowFetch(SS_HTTPRequest $request)
     {
-        if ($response instanceof SS_HTTPResponse) {
-            // Don't cache non-200 responses
-            if (!in_array($response->getStatusCode(), $this->cachableResponseCodes)) {
-                return true;
-            }
-        }
-        if ($request->httpMethod() !== 'GET') {
-            return true;
-        } else {
-            $url = '/' . ltrim($request->getURL(), '/');
-            foreach ($this->excludes as $exclude) {
-                if (strpos($url, $exclude) === 0) {
-                    return true;
+        $vars = array(
+            'request' => $request,
+            'member' => \Member::currentUser(),
+            'session' => \Session::get_all()
+        ) + $this->extraExpressionVars;
+
+        if (count($this->fetchExcludeRules)) {
+            foreach ($this->fetchExcludeRules as $rule) {
+                if ($this->expressionLanguage->evaluate($rule, $vars)) {
+                    return false;
                 }
             }
         }
 
-        return false;
+        if (count($this->fetchIncludeRules)) {
+            foreach ($this->fetchIncludeRules as $rule) {
+                if (!$this->expressionLanguage->evaluate($rule, $vars)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param SS_HTTPRequest $request
+     * @param SS_HTTPResponse $response
+     * @return bool
+     */
+    protected function allowSave(SS_HTTPRequest $request, SS_HTTPResponse $response)
+    {   
+        $vars = array(
+            'request' => $request,
+            'response' => $response,
+            'member' => \Member::currentUser(),
+            'session' => \Session::get_all()
+        ) + $this->extraExpressionVars;
+
+        if (count($this->saveExcludeRules)) {
+            foreach ($this->saveExcludeRules as $rule) {
+                if ($this->expressionLanguage->evaluate($rule, $vars)) {
+                    return false;
+                }
+            }
+        }
+
+        if (count($this->saveIncludeRules)) {
+            foreach ($this->saveIncludeRules as $rule) {
+                if (!$this->expressionLanguage->evaluate($rule, $vars)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
 }
