@@ -20,8 +20,10 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $config = \Config::inst();
+        $config->update('Director', 'environment_type', 'dev');
+        $config->update('SSViewer', 'theme', 'theme');
         \Versioned::choose_site_stage();
-        \Config::inst()->update('SSViewer', 'theme', 'theme');
         
         $this->controllerMock = $this->getMock('Controller');
         
@@ -37,7 +39,7 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'theme', 'Live', 'test'
+                'dev', 'Live', 'theme', 'test'
             ),
             $this->keyCreator->getKey(
                 'test',
@@ -63,8 +65,9 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             array(
-                'theme',
+                'dev',
                 'Live',
+                'theme',
                 md5('testurl?test=hello'),
                 'test'
             ),
@@ -92,8 +95,9 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             array(
-                'theme',
+                'dev',
                 'Live',
+                'theme',
                 md5('testurl'),
                 'test'
             ),

@@ -25,12 +25,7 @@ s
 s
 YAML;
     }
-
-    protected function tearDown()
-    {
-        $this->validYamlData = null;
-        $this->invalidYamlData = null;
-    }
+    
     /**
      * @expectedException \Symfony\Component\Yaml\Exception\ParseException
      */
@@ -62,71 +57,70 @@ YAML;
             )
         );
 
-        $itemMock = $this->getMockBuilder('Stash\Item')->disableOriginalConstructor()->getMock();
+        $key = md5($this->validYamlData);
 
-        $itemMock->expects($this->once())
-            ->method('get')
-            ->will($this->returnValue(Yaml::parse($this->validYamlData)));
-
-        $itemMock->expects($this->once())
-            ->method('isMiss')
-            ->will($this->returnValue(false));
-
-        $cacheMock = $this->getMockBuilder('Stash\Pool')->disableOriginalConstructor()->getMock();
+        $cacheMock = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
+            ->setMethods(array('contains', 'fetch'))
+            ->getMockForAbstractClass();
 
         $cacheMock->expects($this->once())
-            ->method('getItem')
-            ->with(md5($this->validYamlData))
-            ->will($this->returnValue($itemMock));
+            ->method('contains')
+            ->with($key)
+            ->will($this->returnValue(true));
 
-        $config = new YamlConfig(vfsStream::url('root/test.yml'), $cacheMock);
+        $cacheMock->expects($this->once())
+            ->method('fetch')
+            ->with($key)
+            ->will($this->returnValue(Yaml::parse($this->validYamlData)));
 
-        $this->assertEquals(array(
-            'expires' => '+1 week',
-            'contains' => array(
-                'Page',
-                'HomePage'
-            )
-        ), $config['Something']);
+        $config = new YamlConfig(
+            vfsStream::url('root/test.yml'),
+            $cacheMock
+        );
+
+        $this->assertEquals(
+            array(
+                'expires' => '+1 week',
+                'contains' => array(
+                    'Page',
+                    'HomePage'
+                )
+            ),
+            $config['Something']
+        );
     }
 
     public function testYamlCacheHit()
     {
-        $itemMock = $this->getMockBuilder('Stash\Item')->disableOriginalConstructor()->getMock();
-
-        $itemMock->expects($this->once())
-            ->method('get');
-
-        $itemMock->expects($this->once())
-            ->method('isMiss')
-            ->will($this->returnValue(false));
-
-        $itemMock->expects($this->never())
-            ->method('set');
-
-        $cacheMock = $this->getMockBuilder('Stash\Pool')->disableOriginalConstructor()->getMock();
+        $cacheMock = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
+            ->setMethods(array('contains', 'fetch'))
+            ->getMockForAbstractClass();
 
         $cacheMock->expects($this->once())
-            ->method('getItem')
-            ->will($this->returnValue($itemMock));
+            ->method('contains')
+            ->will($this->returnValue(true));
+
+        $cacheMock->expects($this->once())
+            ->method('fetch')
+            ->will($this->returnValue(Yaml::parse($this->validYamlData)));
 
         new YamlConfig($this->validYamlData, $cacheMock);
     }
 
     public function testYamlCacheMiss()
     {
-        $itemMock = $this->getMockBuilder('Stash\Item')->disableOriginalConstructor()->getMock();
+        $cacheMock = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
+            ->setMethods(array('contains', 'save'))
+            ->getMockForAbstractClass();
 
-        $itemMock->expects($this->once())
-            ->method('get');
+        $cacheMock->expects($this->once())
+            ->method('contains')
+            ->will($this->returnValue(false));
 
-        $itemMock->expects($this->once())
-            ->method('isMiss')
-            ->will($this->returnValue(true));
-
-        $itemMock->expects($this->once())
-            ->method('set')
+        $cacheMock->expects($this->once())
+            ->method('save')
             ->with(
+                md5($this->validYamlData),
                 array(
                     'Something' => array(
                         'expires' => '+1 week',
@@ -137,12 +131,6 @@ YAML;
                     )
                 )
             );
-
-        $cacheMock = $this->getMockBuilder('Stash\Pool')->disableOriginalConstructor()->getMock();
-
-        $cacheMock->expects($this->once())
-            ->method('getItem')
-            ->will($this->returnValue($itemMock));
 
         new YamlConfig($this->validYamlData, $cacheMock);
     }

@@ -2,6 +2,7 @@
 
 namespace Heyday\CacheInclude;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Stash\Pool;
 use Stash\Driver\Ephemeral;
 use Heyday\CacheInclude\Configs\ArrayConfig;
@@ -24,22 +25,16 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->cacheMock = $this->getMock('Stash\Pool');
+        $this->cacheMock = new ArrayCache();
         $this->keyCreatorMock = $this->getMock('Heyday\CacheInclude\KeyCreators\KeyCreatorInterface');
         $this->cacheinclude = new CacheInclude(
-            new Pool(new Ephemeral()),
+            $this->cacheMock,
             new ArrayConfig(array(
                 'test' => array(
                     'expires' => '+1 week'
                 )
             ))
         );
-    }
-
-    protected function tearDown()
-    {
-        $this->cacheinclude = null;
-        $this->cacheMock = null;
     }
 
     public function testEnabled()

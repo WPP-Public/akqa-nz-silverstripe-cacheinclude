@@ -21,9 +21,9 @@ class YamlConfig extends ArrayConfig
             if (strpos($yaml, "\n") === false && is_file($yaml)){
                 $yaml = file_get_contents($yaml);
             }
-            
+
             $key = md5($yaml);
-            
+
             if ($cache->contains($key)) {
                 $result = $cache->fetch($key);
             } else {

@@ -25,7 +25,7 @@ class ControllerBased implements KeyCreatorInterface
     protected $config;
 
     /**
-     * @param Controller $controlller
+     * @param \Controller $controlller
      */
     public function __construct(Controller $controller)
     {
