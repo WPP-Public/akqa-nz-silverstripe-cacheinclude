@@ -5,6 +5,7 @@
 * [BC Break] Use "doctrine/cache" for caching
 * [BC Break] Change KeyCreator interface to return an array from getKey
 * [BC Break] Remove support for "url-params" and "controller" contexts, replaced with "page"
+* [BC Break] Introduced new expression language for creating cache invalidation rules
 
 ## 3.1.0
 
