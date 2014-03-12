@@ -8,7 +8,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage as SymfonyExpression
  * Class ExpressionLanguage
  * @package Heyday\CacheInclude
  */
-class ExpressionLanguage extends SymfonyExpressionLanguage
+class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializable
 {
     protected function registerFunctions()
     {
@@ -16,54 +16,39 @@ class ExpressionLanguage extends SymfonyExpressionLanguage
 
         $this->register(
             'list',
-            array($this, 'listCompiler'),
-            array($this, 'listEvaluator')
+            function ($arg) {
+                return sprintf('%s::get()', $arg);
+            },
+            function (array $variables, $value) {
+                return \DataList::create($value);
+            }
         );
 
         $this->register(
             'instanceof',
-            array($this, 'instanceofCompiler'),
-            array($this, 'instanceofEvaluator')
+            function ($arg0, $arg1) {
+                return sprintf('%s instanceof %s', $arg0, $arg1);
+            },
+            function (array $variables, $arg0, $arg1) {
+                return $arg0 instanceof $arg1;
+            }
         );
     }
 
     /**
-     * @param $arg
-     * @return string
+     * @return null
      */
-    public function listCompiler($arg)
+    public function serialize()
     {
-        return sprintf('%s::get()', $arg);
+        return null;
     }
 
-    /**
-     * @param array $variables
-     * @param $value
-     * @return static
-     */
-    public function listEvaluator(array $variables, $value)
-    {
-        return \DataList::create($value);
-    }
 
     /**
-     * @param $arg0
-     * @param $arg1
-     * @return string
+     * @param string $serialized
      */
-    public function instanceofCompiler($arg0, $arg1)
+    public function unserialize($serialized)
     {
-        return sprintf('%s instanceof %s', $arg0, $arg1);
+        $this->__construct();
     }
-
-    /**
-     * @param array $variables
-     * @param $arg0
-     * @param $arg1
-     * @return bool
-     */
-    public function instanceofEvaluator(array $variables, $arg0, $arg1)
-    {
-        return $arg0 instanceof $arg1;
-    }
-}
+} 
