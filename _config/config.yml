@@ -21,9 +21,16 @@ Injector:
     constructor:
       0: '%$DoctrineCache'
       1: '%$CacheIncludeConfig'
+      
+  CacheIncludeExpressionLanguageParserCache:
+    class: Heyday\CacheInclude\ExpressionLanguageParserCache
+    constructor:
+      0: '%$DoctrineCache'
    
   CacheIncludeExpressionLanguage:
     class: Heyday\CacheInclude\ExpressionLanguage
+    constructor:
+      0: '%$CacheIncludeExpressionLanguageParserCache'
 
   CacheIncludeConfig:
     class: Heyday\CacheInclude\Configs\ArrayConfig
