@@ -92,7 +92,7 @@ class InvalidationExtension extends Extension
                 $contains = false;
                 foreach ($inst['contains'] as $contain) {
                     if ($this->owner instanceof $contain) {
-                        $contains = true;
+                        $contains = $contain;
                         break;
                     }
                 }
@@ -112,7 +112,7 @@ class InvalidationExtension extends Extension
                         $this->invalidate(
                             $name,
                             sprintf(
-                                "Cache '%s' invalidated by rule '%s'",
+                                "Cache name '%s' invalidated by rule '%s'",
                                 $name,
                                 $rule
                             ),
@@ -127,8 +127,9 @@ class InvalidationExtension extends Extension
                 $this->invalidate(
                     $name,
                     sprintf(
-                        "Cache '%s' invalidated contains rules",
-                        $name
+                        "Cache name '%s' invalidated as it contains '%s'",
+                        $name,
+                        $contains
                     ),
                     $logger
                 );

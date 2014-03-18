@@ -158,16 +158,6 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param array $cachableResponseCodes
-     */
-    public function setCacheableResponseCodes($cachableResponseCodes)
-    {
-        if (is_array($cachableResponseCodes)) {
-            $this->cachableResponseCodes = $cachableResponseCodes;
-        }
-    }
-
-    /**
      * If this url allows caching and there is a cached response then send it
      * @param  SS_HTTPRequest $request
      * @param  Session        $session
