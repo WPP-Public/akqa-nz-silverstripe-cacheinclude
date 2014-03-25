@@ -33,6 +33,16 @@ class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializa
                 return $arg0 instanceof $arg1;
             }
         );
+
+        $this->register(
+            'key_exists',
+            function ($arg0, $arg1) {
+                return sprintf('array_key_exists(%s, %s)', $arg0, $arg1);
+            },
+            function (array $variables, $arg0, $arg1) {
+                return array_key_exists($arg0, $arg1);
+            }
+        );
     }
 
     /**
