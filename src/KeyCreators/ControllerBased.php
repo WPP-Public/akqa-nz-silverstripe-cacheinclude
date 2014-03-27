@@ -25,12 +25,42 @@ class ControllerBased implements KeyCreatorInterface
     protected $config;
 
     /**
-     * @param \Controller $controlller
+     * @var string
+     */
+    protected $environmentType;
+
+    /**
+     * @var string
+     */
+    protected $currentStage;
+
+    /**
+     * @var string
+     */
+    protected $theme;
+
+    /**
+     * @var bool
+     */
+    protected $ssl;
+
+    /**
+     * @var int
+     */
+    protected $memberID;
+
+    /**
+     * @param \Controller $controller
      */
     public function __construct(Controller $controller)
     {
         $this->controller = $controller;
         $this->config = Config::inst();
+        $this->environmentType = Director::get_environment_type();
+        $this->currentStage = Versioned::current_stage();
+        $this->theme = $this->config->get('SSViewer', 'theme');
+        $this->ssl = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+        $this->memberID = Member::currentUserID();
     }
 
     /**
@@ -40,49 +70,106 @@ class ControllerBased implements KeyCreatorInterface
      */
     public function getKey($name, $config)
     {
+        $request = $this->controller->getRequest();
+
         $keyParts = array(
-            Director::get_environment_type(),
-            Versioned::current_stage(),
-            $this->config->get('SSViewer', 'theme'),
+            $this->environmentType,
+            $this->currentStage,
+            $this->theme,
         );
 
-        if (Director::is_https()) {
+        if ($this->ssl) {
             $keyParts[] = 'ssl';
         }
 
-        if (Director::is_ajax()) {
+        if ($request->isAjax()) {
             $keyParts[] = 'ajax';
         }
 
-        //If member context matters get the members id
-        if (isset($config['member']) && $config['member']) {
-            $memberID = Member::currentUserID();
-            if ($memberID) {
-                $keyParts[] = 'Members';
-                if ($config['member'] !== 'any') {
-                    $keyParts[] = $memberID;
-                }
+        // If member context matters get the members id
+        if (isset($config['member']) && $config['member'] && $this->memberID) {
+            $keyParts[] = 'Members';
+            if ($config['member'] !== 'any') {
+                $keyParts[] = $this->memberID;
             }
         }
 
-        //Determine the context
-        switch ($config['context']) {
-            case 'no':
-                break;
-            case 'page':
-                $keyParts[] = md5($this->controller->getRequest()->getURL());
-                break;
-            case 'full':
-                $keyParts[] = md5($this->controller->getRequest()->getURL(true));
-                break;
+        // Determine the context
+        if (isset($config['context'])) {
+            switch ($config['context']) {
+                case 'no':
+                    break;
+                case 'page':
+                    $keyParts[] = md5($request->getURL());
+                    break;
+                case 'full':
+                    $keyParts[] = md5($request->getURL(true));
+                    break;
+            }
         }
 
         if (isset($config['versions'])) {
-            $keyParts[] = mt_rand(1, $config['versions']);
+            $keyParts[] = mt_rand(1, (int) $config['versions']);
         }
 
         $keyParts[] = $name;
 
         return $keyParts;
+    }
+
+    /**
+     * @param \Config $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @param \Controller $controller
+     */
+    public function setController($controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
+     * @param string $currentStage
+     */
+    public function setCurrentStage($currentStage)
+    {
+        $this->currentStage = $currentStage;
+    }
+
+    /**
+     * @param string $environmentType
+     */
+    public function setEnvironmentType($environmentType)
+    {
+        $this->environmentType = $environmentType;
+    }
+
+    /**
+     * @param int $memberID
+     */
+    public function setMemberID($memberID)
+    {
+        $this->memberID = $memberID;
+    }
+
+    /**
+     * @param boolean $ssl
+     */
+    public function setSsl($ssl)
+    {
+        $this->ssl = $ssl;
+    }
+
+    /**
+     * @param string $theme
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
     }
 }

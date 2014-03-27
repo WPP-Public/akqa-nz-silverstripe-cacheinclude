@@ -37,6 +37,17 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
 
     public function testNoContext()
     {
+        $request = $this->getMock('SS_HTTPRequest', array(), array(), '', false);
+        $request->expects($this->once())
+            ->method('isAjax')
+            ->will($this->returnValue(false));
+        
+        $this->controllerMock->expects($this->once())
+            ->method('getRequest')
+            ->will(
+                $this->returnValue($request)
+            );
+        
         $this->assertEquals(
             array(
                 'dev', 'Live', 'theme', 'test'
