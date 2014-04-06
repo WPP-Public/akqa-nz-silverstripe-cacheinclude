@@ -1,10 +1,8 @@
 # SilverStripe Cache Include
 
-[![Build Status](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude.png?token=PUaVGqRbNa3xySvbQ4qD&branch=master)](https://magnum.travis-ci.com/heyday/silverstripe-cacheinclude)
+Template caching based on urls not DB queries.
 
-HTML Caching can be added to your SilverStripe project by replacing <% include X %> calls with $CacheInclude(X) calls.
-
-For a SilverStripe `2.4` compatible version, see the `2.0` branch.
+For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
 ## License
 
@@ -23,20 +21,29 @@ To be able to use `CacheInclude` from your templates, and to be able to have cac
 1. Create a config file `mysite/_config/caching.yml`
 2. Enable the extension:
 
-		---
-		After: 'silverstripe-cacheinclude/*'
-		---
-		DataObject:
-		  extensions:
-			- CacheIncludeExtension
+```yml
+---
+After: 'silverstripe-cacheinclude/*'
+---
+DataObject:
+	extensions:
+		- Heyday\CacheInclude\SilverStripe\InvalidationExtension
+```
 
-### Configuration
+### Template Usage
 
-`CacheInclude` uses the SilverStripe `Injector` system for DI. You can configure and override classes that `CacheInclude` uses.
+```
+<% cache 'blockName' %>
+Template cache to go here
+<% loop ExpensiveSet %><% end_loop %>
+<% end_cache %>
+```
 
-#### Yaml config
+For each cache block name, you will need a config entry in a Yaml file:
 
-To set up `CacheInclude` to be configured from a yml file:
+### Yaml config
+
+The following config will tell `CacheInclude` to look for a config file in `../mysite/cacheinclude_config.yml`
 
 `mysite/_config/caching.yml`
 
@@ -44,58 +51,19 @@ To set up `CacheInclude` to be configured from a yml file:
 ---
 After: 'silverstripe-cacheinclude/*'
 ---
-DataObject:
-  extensions:
-    - CacheIncludeExtension
-
 Injector:
   CacheIncludeConfig:
     class: Heyday\CacheInclude\Configs\YamlConfig
     constructor:
       0: '../mysite/cacheinclude_config.yml'
-      1: '%$CacheCache'
+      1: '%$DoctrineCache'
 ```
 
-#### Example yml config
+#### Example Yaml config
 
 `mysite/cacheinclude_config.yml`
 
 ```yml
-MyPageTypeInclude:
-    context: page
-    contains:
-        - MyPageType
-```
-
-With the previous config, the template cache `MyPageTypeInclude` will be refreshed whenever a page of `MyPageType` is written.
-
-#### Available contexts
-
-* `no`
-	* No differences in url or environment will create a new cache key
-* `page`
-	* Differences in URLSegment will cause a different cache key
-* `url-params`
-	* `getURLParams` is used as part of the cache key
-* `full`
-	* `requestVars` is used to create the cache key
-* `controller`
-	* the controller class is used as the cache key
-
-#### Alternate cache key modifiers
-
-* `versions`
-	* Set this to any number, and that is how many versions of the cache you will get. This can be used when the content of your page changes each render (random)
-* `member`
-	* If set to true a new cache will be made per member logged in
-
-#### Putting it all together
-
-```yml
-MainMenu:
-  context: page
-  contains:
-    - Page
 SomeTemplate:
   context: full
   versions: 20
@@ -105,9 +73,73 @@ SomeTemplate:
     - MyPageType
 ```
 
-### Usage in templates
+### Configuration options
 
-Replace <% include %> calls with `$CacheInclude('TemplateName')` and ensure there is a config key for `TemplateName`
+Key creation options:
+
+#### `context`
+
+Context is a method to tell the key creator what information about the request to include in the created key.
+
+Possible values:
+
+* `no`
+	* Key created is independent of the request
+* `page`
+	* Key is created based on url, but not including GET variables
+* `full`
+	* Key is created based on url, including GET variables
+
+#### `member`
+
+Possible values:
+
+* `true`
+	* Will create a new cache per logged in member
+* `any`
+	* Will create a new cache members as a group (and another key when a person is not logged in)
+
+#### `versions`
+
+Possible values:
+
+* (int)
+	* Set this to an integer to make the specified number of versions of the cache
+	
+This is useful for when a cache block contains random content, but you still want caching.
+
+e.g. set to 20 to get 20 (potentially) different version of a cache block.
+
+Cache invalidation options
+
+#### `contains`
+
+* (array)
+	* An array of class names that if a record saved matches the cache will invalidate
+
+#### `invalidation_rules`
+
+* (array)
+	* An array of rules written in the available expression language. If a rule is matched the cache will invalidate
+
+The Expression Language is provided by Symfony, but also has the following available:
+
+##### Variables
+
+- `item`
+- `action`
+
+##### Functions
+
+- `list()`
+- `instanceof()`
+
+Theses can be used to do the following:
+
+```
+  invalidation_rules:
+    - "instanceof(item, 'CreativeProfile') and item.ID in list('CreativeProfile').sort('Created DESC').limit(4).getIDList()"
+```
 
 ## Contributing
 

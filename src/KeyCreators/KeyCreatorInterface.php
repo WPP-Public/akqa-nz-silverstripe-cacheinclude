@@ -12,9 +12,8 @@ interface KeyCreatorInterface
 {
     /**
      * @param              $name
-     * @param  \Controller $controller
      * @param              $config
      * @return mixed
      */
-    public function getKey($name, Controller $controller, $config);
+    public function getKey($name, $config);
 }

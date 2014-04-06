@@ -3,55 +3,88 @@ Name: config
 ---
 Director:
   rules:
-    'cache-include//$Action': 'CacheIncludeController'
+    'cache-include//$Action': 'Heyday\CacheInclude\SilverStripe\Controller'
+    
+Heyday\CacheInclude\SilverStripe\Controller:
+  allowed_actions:
+    - clearAll
+    - clearTemplate
 
 Injector:
   SSTemplateParser:
-      properties:
-        closedBlocks:
-          cache: "CacheIncludeExtension::cacheTemplate"
+    properties:
+      closedBlocks:
+        cache: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate"
+
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
-      0: '%$CacheCache'
-      1: '%$CacheIncludeKeyCreator'
-      2: '%$CacheIncludeConfig'
-  CacheIncludeKeyCreator:
-    class: Heyday\CacheInclude\KeyCreators\KeyCreator
+      0: '%$DoctrineCache'
+      1: '%$CacheIncludeConfig'
+      
+  CacheIncludeExpressionLanguageParserCache:
+    class: Heyday\CacheInclude\ExpressionLanguageParserCache
+    constructor:
+      0: '%$DoctrineCache'
+   
+  CacheIncludeExpressionLanguage:
+    class: Heyday\CacheInclude\ExpressionLanguage
+    constructor:
+      0: '%$CacheIncludeExpressionLanguageParserCache'
+
   CacheIncludeConfig:
     class: Heyday\CacheInclude\Configs\ArrayConfig
-    constructor:
-      0: []
+
   CacheIncludeViewableDataProcessor:
     class: Heyday\CacheInclude\Processors\ViewableDataProcessor
-  CacheCache:
-    class: CacheCache\Cache
-    constructor:
-      0: '%$CacheCacheBackend'
-      1: cacheinclude
-      2: null
-      3: 0
-  CacheCacheBackend:
-    class: CacheCache\Backends\File
-    constructor:
-      0:
-        dir: '../silverstripe-cacheinclude/cache'
-        file_extension: '.cache'
-  CacheIncludeExtension:
-    class: CacheIncludeExtension
-    constructor:
-      0: '%$CacheInclude'
-      2: '%$CacheIncludeViewableDataProcessor'
+    
+  CacheIncludeKeyCreator:
+    class: Heyday\CacheInclude\KeyCreators\ControllerBased
+
+  DoctrineCache:
+      class: Doctrine\Common\Cache\FilesystemCache
+      constructor:
+        0: '../silverstripe-cacheinclude/cache'
+        1: '.cache'
+
   CacheIncludeController:
-    class: CacheIncludeController
+    class: Heyday\CacheInclude\SilverStripe\Controller
     constructor:
       0: '%$CacheInclude'
+
+  Heyday\CacheInclude\SilverStripe\Controller:
+    class: Heyday\CacheInclude\SilverStripe\Controller
+    constructor:
+      0: '%$CacheInclude'
+
+  Heyday\CacheInclude\SilverStripe\InvalidationExtension:
+    class: Heyday\CacheInclude\SilverStripe\InvalidationExtension
+    constructor:
+      0: '%$CacheInclude'
+      1: '%$CacheIncludeExpressionLanguage'
+
   RequestCache:
     class: Heyday\CacheInclude\RequestCache
     constructor:
       0: '%$CacheInclude'
-      1: Global
+      1: '%$CacheIncludeExpressionLanguage'
+      2: Global
+    properties:
+      Tokens:
+        - '%$SecurityToken'
 
+      SaveExcludeRules:
+        - 'request.getUrl() matches "/^\\/admin|dev/"'
+
+      SaveIncludeRules:
+        - "request.httpMethod() == 'GET'"
+        - "response.getStatusCode() == 200"
+
+      FetchExcludeRules:
+        - 'request.getUrl() matches "/^\\/admin|dev/"'
+
+      FetchIncludeRules:
+        - "request.httpMethod() == 'GET'"
 
 ---
 Only:
@@ -63,7 +96,6 @@ Injector:
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
-      0: '%$CacheCache'
-      1: '%$CacheIncludeKeyCreator'
-      2: '%$CacheIncludeConfig'
-      3: true
+      0: '%$DoctrineCache'
+      1: '%$CacheIncludeConfig'
+      2: true

@@ -13,7 +13,7 @@
 >
     <testsuites>
         <testsuite name="CacheInclude Test Suite">
-            <directory>./tests/Heyday/CacheInclude/</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 

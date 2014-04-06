@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\ClassLoader\ClassMapGenerator;
+
 define('BASE_PATH', realpath(dirname(__DIR__)));
 
 if (!file_exists(BASE_PATH . '/vendor/autoload.php')) {
@@ -9,5 +11,6 @@ if (!file_exists(BASE_PATH . '/vendor/autoload.php')) {
 
 $loader = require BASE_PATH . '/vendor/autoload.php';
 
-$loader->addClassMap(Symfony\Component\ClassLoader\ClassMapGenerator::createMap(BASE_PATH . '/framework'));
-$loader->add('Heyday\CacheInclude\Tests', __DIR__);
+$classMap = ClassMapGenerator::createMap(BASE_PATH . '/framework');
+unset($classMap['PHPUnit_Framework_TestCase']);
+$loader->addClassMap($classMap);
