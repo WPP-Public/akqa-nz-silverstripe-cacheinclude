@@ -22,6 +22,16 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
+     * @param array $config
+     */
+    public function setConfig(array $config)
+    {
+        if (is_array($config)) {
+            $this->config = $config;
+        }
+    }
+
+    /**
      * @param  mixed      $id
      * @param  mixed      $value
      * @throws \Exception
