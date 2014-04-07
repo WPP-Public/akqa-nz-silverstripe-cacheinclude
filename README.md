@@ -2,11 +2,16 @@
 
 Template caching based on urls not DB queries.
 
+## Features
+
+* Cache keys are built from information available in request object (means no DB calls)
+* Invalidation hooks for when DataObject's are modified
+* Uses `doctrine/cache` library, providing many cache backends
+* Uses Symfony Expression language for fine-grained invalidation control
+* Support for `<% cache %><% end_cache %>` syntax in templates
+* Highly customisable
+
 For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
-
-## License
-
-SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-license.org/)
 
 ## Installation
 
@@ -16,10 +21,10 @@ SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-
 
 ### Enabling
 
-To be able to use `CacheInclude` from your templates, and to be able to have caches cleared from DataObject writes. Add the `CacheIncludeExtension` like so:
+To be able to use `CacheInclude` from your templates, and to be able to have caches cleared from DataObject writes. Add the `InvalidationExtension` like so:
 
 1. Create a config file `mysite/_config/caching.yml`
-2. Enable the extension:
+2. Add the following to the yml file
 
 ```yml
 ---
@@ -33,7 +38,7 @@ DataObject:
 ### Template Usage
 
 ```
-<% cache 'blockName' %>
+<% cache 'SomeCacheBlock' %>
 Template cache to go here
 <% loop ExpensiveSet %><% end_loop %>
 <% end_cache %>
@@ -41,9 +46,11 @@ Template cache to go here
 
 For each cache block name, you will need a config entry in a Yaml file:
 
-### Yaml config
+### Cache block config
 
-The following config will tell `CacheInclude` to look for a config file in `../mysite/cacheinclude_config.yml`
+For each cache block that is used, you need a corresponding config provided to `CacheInclude`.
+
+The following is an example of a config for `SomeCacheBlock`:
 
 `mysite/_config/caching.yml`
 
@@ -52,25 +59,14 @@ The following config will tell `CacheInclude` to look for a config file in `../m
 After: 'silverstripe-cacheinclude/*'
 ---
 Injector:
-  CacheIncludeConfig:
-    class: Heyday\CacheInclude\Configs\YamlConfig
-    constructor:
-      0: '../mysite/cacheinclude_config.yml'
-      1: '%$DoctrineCache'
-```
-
-#### Example Yaml config
-
-`mysite/cacheinclude_config.yml`
-
-```yml
-SomeTemplate:
-  context: full
-  versions: 20
-  member: true
-  contains:
-    - MyDataObject
-    - MyPageType
+	CacheIncludeConfig:
+		class: Heyday\CacheInclude\Configs\ArrayConfig
+		properties:
+			Config:
+				SomeCacheBlock:
+					context: full
+					contains:
+						- MyDataObject
 ```
 
 ### Configuration options
@@ -140,6 +136,10 @@ Theses can be used to do the following:
   invalidation_rules:
     - "instanceof(item, 'CreativeProfile') and item.ID in list('CreativeProfile').sort('Created DESC').limit(4).getIDList()"
 ```
+
+## License
+
+SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-license.org/)
 
 ## Contributing
 
