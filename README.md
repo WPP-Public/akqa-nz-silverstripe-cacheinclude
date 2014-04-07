@@ -67,6 +67,9 @@ Injector:
 					context: full
 					contains:
 						- MyDataObject
+				AnotherCacheBlock:
+					context: no
+					expires: +1 hour
 ```
 
 ### Configuration options
