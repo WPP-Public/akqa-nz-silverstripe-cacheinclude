@@ -9,6 +9,7 @@ Template caching based on urls not DB queries.
 * Uses `doctrine/cache` library, providing many cache backends
 * Uses Symfony Expression language for fine-grained invalidation control
 * Support for `<% cache %><% end_cache %>` syntax in templates
+* A full request cache that includes the ability to substitute security tokens
 * Highly customisable
 
 For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
