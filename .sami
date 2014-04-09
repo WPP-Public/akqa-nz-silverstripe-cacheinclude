@@ -21,7 +21,7 @@ return new Sami($iterator, array(
     'title'                => 'Cache Include API',
     'versions'             => $versions,
     'theme'                => 'enhanced',
-    'build_dir'            => __DIR__ . '/build/api/%version%',
-    'cache_dir'            => __DIR__ . '/build/apicache/%version%',
+    'build_dir'            => __DIR__ . '/../api/%version%',
+    'cache_dir'            => __DIR__ . '/../apicache/%version%',
     'default_opened_level' => 2,
 ));
