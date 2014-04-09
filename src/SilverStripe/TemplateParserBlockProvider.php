@@ -37,4 +37,35 @@ class TemplateParserBlockProvider
 );
 PHP;
     }
+    
+    /**
+     * Allows the use of a <% cache_include 'ConfigName' %> syntax in templates
+     *
+     * Also supports the optional specification of a key creator and a cache include instance
+     *
+     * <% cache_include 'ConfigName', 'KeyCreatorServiceName', 'CacheIncludeServiceName' %><% end_cache %>
+     *
+     * @param $res
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    public static function cacheIncludeTemplate(&$res)
+    {
+        if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
+            throw new InvalidArgumentException('A template name must be passed into <% cache_include %>');
+        }
+
+        $keyCreator = isset($res['Arguments'][1]) ? $res['Arguments'][1]['text'] : "'CacheIncludeKeyCreator'";
+        $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
+
+        return <<<PHP
+\$val .= \Injector::inst()->get($cacheInclude)->process(
+   {$res['Arguments'][0]['text']},
+   function () use (\$scope) {
+       return SSViewer::execute_template({$res['Arguments'][0]['text']}, \$scope->getItem(), array(), \$scope);
+   },
+   \Injector::inst()->get($keyCreator)
+);
+PHP;
+    }
 }

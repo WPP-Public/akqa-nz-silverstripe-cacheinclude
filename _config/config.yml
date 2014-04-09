@@ -15,6 +15,8 @@ Injector:
     properties:
       closedBlocks:
         cache: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate"
+      openBlocks:
+        cache_include: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheIncludeTemplate"
 
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
