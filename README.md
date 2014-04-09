@@ -96,6 +96,15 @@ Possible values:
 * `full`
 	* Key is created based on url, including GET variables
 
+#### `expires`
+
+Possible values:
+
+* (string)
+	* A string to pass into strtotime e.g. '+1 hour'
+* (int)
+	* A number of seconds
+
 #### `member`
 
 Possible values:
