@@ -45,6 +45,10 @@ Template cache to go here
 <% end_cache %>
 ```
 
+```
+<% cache_include 'SomeTemplateName' %>
+```
+
 For each cache block name, you will need a config entry in a Yaml file:
 
 ### Cache block config
