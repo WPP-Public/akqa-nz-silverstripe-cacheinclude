@@ -7,16 +7,12 @@ use InvalidArgumentException;
 class TemplateParserBlockProvider
 {
     /**
-     * @var \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface
-     */
-    protected static $keyCreator;
-    /**
-     * @var \Heyday\CacheInclude\CacheInclude
-     */
-    protected static $cacheInclude;
-
-    /**
      * Allows the use of a <% cache 'ConfigName' %><% end_cache %> syntax in templates
+     *
+     * Also supports the optional specification of a key creator and a cache include instance
+     * 
+     * <% cache 'ConfigName', 'KeyCreatorServiceName', 'CacheIncludeServiceName' %><% end_cache %>
+     * 
      * @param $res
      * @throws \InvalidArgumentException
      * @return string
@@ -26,40 +22,19 @@ class TemplateParserBlockProvider
         if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
             throw new InvalidArgumentException('A config name must be passed into <% cache %>');
         }
+        
+        $keyCreator = isset($res['Arguments'][1]) ? $res['Arguments'][1]['text'] : "'CacheIncludeKeyCreator'";
+        $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
 
         return <<<PHP
-\$val .= \Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::getCacheInclude()->process(
+\$val .= \Injector::inst()->get($cacheInclude)->process(
    {$res['Arguments'][0]['text']},
    function () use (\$scope) {
         \$val = '';
         {$res['Template']['php']}        return \$val;
    },
-   \Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::getKeyCreator()
+   \Injector::inst()->get($keyCreator)
 );
 PHP;
-    }
-
-    /**
-     * @return \Heyday\CacheInclude\CacheInclude
-     */
-    public static function getCacheInclude()
-    {
-        if (self::$cacheInclude === null) {
-            self::$cacheInclude = \Injector::inst()->create('CacheInclude');
-        }
-
-        return self::$cacheInclude;
-    }
-
-    /**
-     * @return \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface
-     */
-    public static function getKeyCreator()
-    {
-        if (self::$keyCreator === null) {
-            self::$keyCreator = \Injector::inst()->create('CacheIncludeKeyCreator', \Controller::curr());
-        }
-
-        return self::$keyCreator;
     }
 } 

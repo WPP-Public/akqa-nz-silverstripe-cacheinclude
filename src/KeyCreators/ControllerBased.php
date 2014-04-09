@@ -50,11 +50,15 @@ class ControllerBased implements KeyCreatorInterface
     protected $memberID;
 
     /**
-     * @param \Controller $controller
+     * @param \Controller|void $controller
+     * @throws \Exception
      */
-    public function __construct(Controller $controller)
+    public function __construct(Controller $controller = null)
     {
-        $this->controller = $controller;
+        if (!$controller && !Controller::has_curr()) {
+            throw new \Exception("Controller based key creators must have a current controller");
+        }
+        $this->controller = $controller ?: Controller::curr();
         $this->config = Config::inst();
         $this->environmentType = Director::get_environment_type();
         $this->currentStage = Versioned::current_stage();
