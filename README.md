@@ -18,7 +18,7 @@ For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
 ## Installation
 
-	$ composer require silverstripe-cacheinclude:~4.0
+  $ composer require silverstripe-cacheinclude:~4.0
 
 ## How to use
 
@@ -34,8 +34,8 @@ To  be able to invalidate caches from DataObject writes, add the `InvalidationEx
 After: 'silverstripe-cacheinclude/*'
 ---
 DataObject:
-	extensions:
-		- Heyday\CacheInclude\SilverStripe\InvalidationExtension
+  extensions:
+    - Heyday\CacheInclude\SilverStripe\InvalidationExtension
 ```
 
 ### Template Usage
@@ -67,17 +67,17 @@ The following is an example of a config for `SomeCacheBlock` and `AnotherCacheBl
 After: 'silverstripe-cacheinclude/*'
 ---
 Injector:
-	CacheIncludeConfig:
-		class: Heyday\CacheInclude\Configs\ArrayConfig
-		properties:
-			Config:
-				SomeCacheBlock:
-					context: full
-					contains:
-						- MyDataObject
-				AnotherCacheBlock:
-					context: no
-					expires: +1 hour
+  CacheIncludeConfig:
+    class: Heyday\CacheInclude\Configs\ArrayConfig
+    properties:
+      Config:
+        SomeCacheBlock:
+          context: full
+          contains:
+            - MyDataObject
+        AnotherCacheBlock:
+          context: no
+          expires: +1 hour
 ```
 
 ### Configuration options
@@ -91,37 +91,37 @@ Context is a method to tell the key creator what information about the request t
 Possible values:
 
 * `no`
-	* Key created is independent of the request
+  * Key created is independent of the request
 * `page`
-	* Key is created based on url, but not including GET variables
+  * Key is created based on url, but not including GET variables
 * `full`
-	* Key is created based on url, including GET variables
+  * Key is created based on url, including GET variables
 
 #### `expires`
 
 Possible values:
 
 * (string)
-	* A string to pass into strtotime e.g. '+1 hour'
+  * A string to pass into strtotime e.g. '+1 hour'
 * (int)
-	* A number of seconds
+  * A number of seconds
 
 #### `member`
 
 Possible values:
 
 * `true`
-	* Will create a new cache per logged in member
+  * Will create a new cache per logged in member
 * `any`
-	* Will create a new cache members as a group (and another key when a person is not logged in)
+  * Will create a new cache members as a group (and another key when a person is not logged in)
 
 #### `versions`
 
 Possible values:
 
 * (int)
-	* Set this to an integer to make the specified number of versions of the cache
-	
+  * Set this to an integer to make the specified number of versions of the cache
+  
 This is useful for when a cache block contains random content, but you still want caching.
 
 e.g. set to 20 to get 20 (potentially) different version of a cache block.
@@ -131,12 +131,12 @@ Cache invalidation options
 #### `contains`
 
 * (array)
-	* An array of class names that if a record saved matches the cache will invalidate
+  * An array of class names that if a record saved matches the cache will invalidate
 
 #### `invalidation_rules`
 
 * (array)
-	* An array of rules written in the available expression language. If a rule is matched the cache will invalidate
+  * An array of rules written in the available expression language. If a rule is matched the cache will invalidate
 
 The Expression Language is provided by Symfony, but also has the following available:
 
@@ -249,8 +249,10 @@ SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-
 
 ### Unit Testing
 
-	$ composer install --prefer-dist --dev
-	$ phpunit
+```bash
+$ composer install --prefer-dist --dev
+$ phpunit
+```
 
 ### Code guidelines
 
@@ -262,4 +264,6 @@ This project follows the standards defined in:
 
 Run the following before contributing:
 
-	$ php-cs-fixer fix .
+```bash
+$ php-cs-fixer fix .
+```
