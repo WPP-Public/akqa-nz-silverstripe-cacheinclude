@@ -1,5 +1,7 @@
 # SilverStripe Cache Include
 
+[![Build Status](https://travis-ci.org/heyday/silverstripe-cacheinclude.svg?branch=master)](https://travis-ci.org/heyday/silverstripe-cacheinclude)
+
 Template caching based on urls not DB queries.
 
 ## Features
@@ -16,7 +18,7 @@ For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
 ## Installation
 
-	$ composer require silverstripe-cacheinclude
+	$ composer require silverstripe-cacheinclude:~4.0
 
 ## How to use
 
