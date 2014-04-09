@@ -25,7 +25,7 @@ s
 s
 YAML;
     }
-    
+
     /**
      * @expectedException \Symfony\Component\Yaml\Exception\ParseException
      */

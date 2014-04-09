@@ -3,8 +3,6 @@
 namespace Heyday\CacheInclude;
 
 use Doctrine\Common\Cache\ArrayCache;
-use Stash\Pool;
-use Stash\Driver\Ephemeral;
 use Heyday\CacheInclude\Configs\ArrayConfig;
 
 class CacheIncludeTest extends \PHPUnit_Framework_TestCase

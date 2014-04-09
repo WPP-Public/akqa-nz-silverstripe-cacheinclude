@@ -50,7 +50,7 @@ class ControllerBased implements KeyCreatorInterface
     protected $memberID;
 
     /**
-     * @param \Controller|void $controller
+     * @param  \Controller|void $controller
      * @throws \Exception
      */
     public function __construct(Controller $controller = null)
@@ -68,8 +68,8 @@ class ControllerBased implements KeyCreatorInterface
     }
 
     /**
-     * @param              $name
-     * @param              $config
+     * @param        $name
+     * @param        $config
      * @return mixed
      */
     public function getKey($name, $config)

@@ -2,8 +2,6 @@
 
 namespace Heyday\CacheInclude\KeyCreators;
 
-use Controller;
-
 /**
  * Class KeyCreatorInterface
  * @package Heyday\CacheInclude\KeyCreators
@@ -11,8 +9,8 @@ use Controller;
 interface KeyCreatorInterface
 {
     /**
-     * @param              $name
-     * @param              $config
+     * @param        $name
+     * @param        $config
      * @return mixed
      */
     public function getKey($name, $config);

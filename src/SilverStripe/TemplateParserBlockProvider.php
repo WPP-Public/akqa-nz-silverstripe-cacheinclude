@@ -10,9 +10,9 @@ class TemplateParserBlockProvider
      * Allows the use of a <% cache 'ConfigName' %><% end_cache %> syntax in templates
      *
      * Also supports the optional specification of a key creator and a cache include instance
-     * 
+     *
      * <% cache 'ConfigName', 'KeyCreatorServiceName', 'CacheIncludeServiceName' %><% end_cache %>
-     * 
+     *
      * @param $res
      * @throws \InvalidArgumentException
      * @return string
@@ -22,7 +22,7 @@ class TemplateParserBlockProvider
         if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
             throw new InvalidArgumentException('A config name must be passed into <% cache %>');
         }
-        
+
         $keyCreator = isset($res['Arguments'][1]) ? $res['Arguments'][1]['text'] : "'CacheIncludeKeyCreator'";
         $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
 
@@ -37,4 +37,4 @@ class TemplateParserBlockProvider
 );
 PHP;
     }
-} 
+}

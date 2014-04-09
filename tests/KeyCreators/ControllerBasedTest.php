@@ -12,7 +12,7 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $controllerMock;
-    
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -24,9 +24,9 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
         $config->update('Director', 'environment_type', 'dev');
         $config->update('SSViewer', 'theme', 'theme');
         \Versioned::choose_site_stage();
-        
+
         $this->controllerMock = $this->getMock('Controller');
-        
+
         $this->keyCreator = new ControllerBased($this->controllerMock);
     }
 
@@ -41,13 +41,13 @@ class ControllerBasedTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())
             ->method('isAjax')
             ->will($this->returnValue(false));
-        
+
         $this->controllerMock->expects($this->once())
             ->method('getRequest')
             ->will(
                 $this->returnValue($request)
             );
-        
+
         $this->assertEquals(
             array(
                 'dev', 'Live', 'theme', 'test'

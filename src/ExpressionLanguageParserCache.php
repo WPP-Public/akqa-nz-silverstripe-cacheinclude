@@ -20,11 +20,11 @@ class ExpressionLanguageParserCache implements ParserCacheInterface
     {
         $this->cache = $cache;
     }
-    
+
     /**
      * Saves an expression in the cache.
      *
-     * @param string $key The cache key
+     * @param string           $key        The cache key
      * @param ParsedExpression $expression A ParsedExpression instance to store in the cache
      */
     public function save($key, ParsedExpression $expression)
@@ -43,4 +43,4 @@ class ExpressionLanguageParserCache implements ParserCacheInterface
     {
         return $this->cache->fetch($key) ?: null;
     }
-} 
+}

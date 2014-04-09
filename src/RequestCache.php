@@ -69,10 +69,10 @@ class RequestCache implements RequestFilter
     protected $extraExpressionVars = array();
 
     /**
-     * @param CacheInclude $cache
+     * @param CacheInclude       $cache
      * @param ExpressionLanguage $expressionLanguage
-     * @param string $name
-     * @param array $tokens
+     * @param string             $name
+     * @param array              $tokens
      */
     public function __construct(
         CacheInclude $cache,
@@ -251,7 +251,7 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param SS_HTTPRequest $request
+     * @param  SS_HTTPRequest $request
      * @return bool
      */
     protected function allowFetch(SS_HTTPRequest $request)
@@ -282,12 +282,12 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param SS_HTTPRequest $request
-     * @param SS_HTTPResponse $response
+     * @param  SS_HTTPRequest  $request
+     * @param  SS_HTTPResponse $response
      * @return bool
      */
     protected function allowSave(SS_HTTPRequest $request, SS_HTTPResponse $response)
-    {   
+    {
         $vars = array(
             'request' => $request,
             'response' => $response,
@@ -310,7 +310,7 @@ class RequestCache implements RequestFilter
                 }
             }
         }
-        
+
         return true;
     }
 }

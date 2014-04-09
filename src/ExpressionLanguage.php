@@ -53,7 +53,6 @@ class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializa
         return null;
     }
 
-
     /**
      * @param string $serialized
      */
@@ -61,4 +60,4 @@ class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializa
     {
         $this->__construct();
     }
-} 
+}

@@ -4,7 +4,7 @@ Name: config
 Director:
   rules:
     'cache-include//$Action': 'Heyday\CacheInclude\SilverStripe\Controller'
-    
+
 Heyday\CacheInclude\SilverStripe\Controller:
   allowed_actions:
     - clearAll
@@ -21,12 +21,12 @@ Injector:
     constructor:
       0: '%$DoctrineCache'
       1: '%$CacheIncludeConfig'
-      
+
   CacheIncludeExpressionLanguageParserCache:
     class: Heyday\CacheInclude\ExpressionLanguageParserCache
     constructor:
       0: '%$DoctrineCache'
-   
+
   CacheIncludeExpressionLanguage:
     class: Heyday\CacheInclude\ExpressionLanguage
     constructor:
@@ -37,7 +37,7 @@ Injector:
 
   CacheIncludeViewableDataProcessor:
     class: Heyday\CacheInclude\Processors\ViewableDataProcessor
-    
+
   CacheIncludeKeyCreator:
     class: Heyday\CacheInclude\KeyCreators\ControllerBased
 

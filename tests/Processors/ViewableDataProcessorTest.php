@@ -7,7 +7,7 @@ use Heyday\CacheInclude\Processors\ViewableDataProcessor;
 class ViewableDataProcessorTest extends \PHPUnit_Framework_TestCase
 {
     protected $processor;
-    
+
     protected function setUp()
     {
         $this->processor = new ViewableDataProcessor;

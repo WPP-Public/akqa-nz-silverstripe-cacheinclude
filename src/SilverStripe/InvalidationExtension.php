@@ -5,7 +5,6 @@ namespace Heyday\CacheInclude\SilverStripe;
 use Extension;
 use Heyday\CacheInclude\CacheInclude;
 use Heyday\CacheInclude\ExpressionLanguage;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class Extension
@@ -23,7 +22,7 @@ class InvalidationExtension extends Extension
     protected $expressionLanguage;
 
     /**
-     * @param \Heyday\CacheInclude\CacheInclude $cache
+     * @param \Heyday\CacheInclude\CacheInclude       $cache
      * @param \Heyday\CacheInclude\ExpressionLanguage $expressionLanguage
      */
     public function __construct(
@@ -84,7 +83,7 @@ class InvalidationExtension extends Extension
         foreach ($this->cache->getConfig() as $name => $inst) {
             $hasContainsRules = isset($inst['contains']) && is_array($inst['contains']);
             $hasInvalidationRules = isset($inst['invalidation_rules']) && is_array($inst['invalidation_rules']);
-            
+
             // Check to see if there are contains rules, and if there is
             // we want to ensure that the invalidation rules are only processed
             // if the class at least passes the invalidation rules
@@ -96,7 +95,7 @@ class InvalidationExtension extends Extension
                         break;
                     }
                 }
-                
+
                 // We don't want to do any more processing if the contains
                 // rules didn't even pass
                 if (!$contains) {
@@ -105,7 +104,7 @@ class InvalidationExtension extends Extension
             } else {
                 $contains = true;
             }
-            
+
             if ($hasInvalidationRules) {
                 foreach ($inst['invalidation_rules'] as $rule) {
                     if ($this->expressionLanguage->evaluate($rule, $vars) && $contains) {

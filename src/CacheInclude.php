@@ -31,7 +31,7 @@ class CacheInclude
      */
     protected $enabled = true;
     /**
-     * When this is set to true expire every cache that is requested 
+     * When this is set to true expire every cache that is requested
      * @var bool
      */
     protected $forceExpire = false;
@@ -51,9 +51,9 @@ class CacheInclude
     protected $logger;
 
     /**
-     * @param CacheProvider       $cache
-     * @param ConfigInterface     $config
-     * @param bool                $forceExpire
+     * @param CacheProvider   $cache
+     * @param ConfigInterface $config
+     * @param bool            $forceExpire
      */
     public function __construct(
         CacheProvider $cache,
@@ -165,7 +165,7 @@ class CacheInclude
 
     /**
      * Prepare a key from key parts
-     * @param array $keyParts
+     * @param  array  $keyParts
      * @return string
      */
     protected function prepareKey(array $keyParts)
@@ -174,10 +174,10 @@ class CacheInclude
     }
 
     /**
-     * 
-     * @param                            $name
-     * @param                            $processor
-     * @param KeyCreators\KeyCreatorInterface $keyCreator
+     *
+     * @param                                  $name
+     * @param                                  $processor
+     * @param  KeyCreators\KeyCreatorInterface $keyCreator
      * @throws \InvalidArgumentException
      * @return mixed|null
      */
@@ -221,21 +221,21 @@ class CacheInclude
     }
 
     /**
-     * @param                     $name
-     * @param KeyCreatorInterface $keyCreator
+     * @param                      $name
+     * @param  KeyCreatorInterface $keyCreator
      * @return mixed
      */
     public function get($name, KeyCreatorInterface $keyCreator)
     {
         $key = $this->getKey($name, $keyCreator);
         $result = $this->cache->fetch($key);
-        
+
         if ($result) {
             $this->log('HIT', $name, $key);
         } else {
             $this->log('MISS', $name, $key);
         }
-        
+
         return $result;
     }
 
@@ -251,13 +251,13 @@ class CacheInclude
         }
 
         $config = $this->getCombinedConfig($name);
-        
+
         $this->cache->save(
             $key = $this->getKey($name, $keyCreator, $config),
             $result,
             $this->getExpiry($config)
         );
-        
+
         $this->addStoredKey($name, $key);
     }
 
@@ -324,8 +324,8 @@ class CacheInclude
 
     /**
      * @param $name
-     * @param KeyCreatorInterface $keyCreator
-     * @param array $config
+     * @param  KeyCreatorInterface $keyCreator
+     * @param  array               $config
      * @return string
      */
     protected function getKey($name, KeyCreatorInterface $keyCreator, array $config = null)
