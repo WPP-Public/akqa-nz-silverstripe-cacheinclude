@@ -141,6 +141,65 @@ Theses can be used to do the following:
     - "instanceof(item, 'CreativeProfile') and item.ID in list('CreativeProfile').sort('Created DESC').limit(4).getIDList()"
 ```
 
+## Full request caching
+
+CacheInclude comes with a `RequestCache` service that can be added to cache full request objects for use in high load
+sites.
+
+### Enabling
+
+To enable the full request cache the `RequestCache` service needs to be added to the `RequestProcessor` as a filter.
+
+```yml
+Injector:
+  RequestProcessor:
+    class: RequestProcessor
+    properties:
+      filters:
+        - '%$RequestCache'
+```
+
+Full request caching increases performance substantially but it isn't without a cost. It can be hard to configure, as there
+are numerous cases where you don't want to either cache a request or alternatively serve a cached request.
+
+To help in this there is quite a bit you can do out of the box to configure the way that caching is handled.
+
+The following gives some demonstration of how to configure things and what you can do:
+
+```yml
+Injector:
+  RequestCache:
+    class: Heyday\CacheInclude\RequestCache
+    constructor:
+      0: '%$CacheInclude'
+      1: '%$CacheIncludeExpressionLanguage'
+      2: Global
+    properties:
+      # Add here any security token services that shouldn't be cached within the request
+      # Each token from this list that appears in cached content will be swapped out with a dummy string
+      # This dummy string will be replaced with a real token when a cache is served
+      Tokens:
+        - '%$SecurityToken'
+
+      # Expression language rules:
+      # Add here any rules that should cause a request to not have a cache saved
+      SaveExcludeRules:
+        - 'request.getUrl() matches "/^\\/admin|dev/"'
+
+      # Add here any rules that must pass in order for a request to have a cache saved
+      SaveIncludeRules:
+        - "request.httpMethod() == 'GET'"
+        - "response.getStatusCode() == 200"
+
+      # Add here any rules that should cause a request to not have a cache served
+      FetchExcludeRules:
+        - 'request.getUrl() matches "/^\\/admin|dev/"'
+
+      # Add here any rules that must pass in order for a request to have a cache served
+      FetchIncludeRules:
+        - "request.httpMethod() == 'GET'"
+```
+
 ## License
 
 SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-license.org/)
