@@ -18,7 +18,9 @@ For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
 ## Installation
 
-  $ composer require silverstripe-cacheinclude:~4.0
+```bash
+$ composer require silverstripe-cacheinclude:~4.0
+```
 
 ## How to use
 
