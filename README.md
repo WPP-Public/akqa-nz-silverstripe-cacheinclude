@@ -24,7 +24,7 @@ For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
 ### Enabling
 
-To be able to use `CacheInclude` from your templates, and to be able to have caches cleared from DataObject writes. Add the `InvalidationExtension` like so:
+To  be able to invalidate caches from DataObject writes, add the `InvalidationExtension`:
 
 1. Create a config file `mysite/_config/caching.yml`
 2. Add the following to the yml file
@@ -40,24 +40,25 @@ DataObject:
 
 ### Template Usage
 
+Cache a section of a template:
+
 ```
 <% cache 'SomeCacheBlock' %>
-Template cache to go here
 <% loop ExpensiveSet %><% end_loop %>
 <% end_cache %>
 ```
+
+Cache an included template:
 
 ```
 <% cache_include 'SomeTemplateName' %>
 ```
 
-For each cache block name, you will need a config entry in a Yaml file:
-
 ### Cache block config
 
 For each cache block that is used, you need a corresponding config provided to `CacheInclude`.
 
-The following is an example of a config for `SomeCacheBlock`:
+The following is an example of a config for `SomeCacheBlock` and `AnotherCacheBlock`:
 
 `mysite/_config/caching.yml`
 
