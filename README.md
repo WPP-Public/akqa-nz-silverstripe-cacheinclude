@@ -200,6 +200,31 @@ Injector:
         - "request.httpMethod() == 'GET'"
 ```
 
+As you can see above there are some variables made accessible to you in the expression language.
+
+The following is made available in the "Save" rules:
+
+* `request`
+* `response`
+* `member`
+* `session`
+
+The following is made available in the "Fetch" rules:
+
+* `request`
+* `member`
+* `session`
+
+Additional variables can be provided through the injector system.
+ 
+```yml
+Injector:
+  RequestCache:
+    properties:
+      ExtraExpressionVars:
+        'hello': 'Something'
+```
+
 ## License
 
 SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-license.org/)
