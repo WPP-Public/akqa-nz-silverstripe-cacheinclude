@@ -243,6 +243,37 @@ Injector:
         'hello': 'Something'
 ```
 
+## Customisation
+
+Because of the heavy usage of dependency injection and the SilverStripe `Injector` component, most parts
+of `CacheInclude` can be completely customised by replacing the standard classes with ones of your own.
+
+### Key Creators
+
+`CacheInclude` comes built in with one key creator `Heyday\CacheInclude\KeyCreators\ControllerBased`.
+This key creator makes keys based on the config supplied in yaml, the current request and the environment.
+
+You can create your own key creators by extending the `KeyCreatorInterface` and specifying the creator's service name from the template.
+
+```
+<% cache 'SomeBlock', 'MyKeyCreator' %>
+Some content
+<% end_cache %>
+```
+
+```php
+class MyKeyCreator implements \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface
+{
+    public function getKey($name, $config)
+    {
+        return [
+           'key',
+           'parts'
+        ];
+    }
+}
+```
+
 ## License
 
 SilverStripe CacheInclude is released under the [MIT license](http://heyday.mit-license.org/)
