@@ -14,14 +14,14 @@ class CacheIncludeExtension extends Extension
     /**
      * @var
      */
-    protected $container;
+    protected static $container;
     /**
      * Get a container and set it
      */
     public function __construct()
     {
         parent::__construct();
-        $this->container = Container::getInstance();
+        self::$container = Container::getInstance();
     }
     /**
      * @return Controller
@@ -42,7 +42,7 @@ class CacheIncludeExtension extends Extension
     public function CacheIncludePartial($name, $template)
     {
         $controller = $this->getController();
-        return $this->container['cacheinclude']->process(
+        return self::$container['cacheinclude']->process(
             $name,
             function () use ($template, $controller) {
                 return $controller->renderWith(new SSViewer_FromString($template));
@@ -57,9 +57,9 @@ class CacheIncludeExtension extends Extension
     public function CacheInclude($name)
     {
         $controller = $this->getController();
-        return $this->container['cacheinclude']->process(
+        return self::$container['cacheinclude']->process(
             $name,
-            $this->container['cacheinclude_processor']->setContext($this->owner),
+            self::$container['cacheinclude_processor']->setContext($this->owner),
             $controller
         );
     }
@@ -88,7 +88,7 @@ class CacheIncludeExtension extends Extension
 
             $names = array();
 
-            $cacheinclude = $this->container['cacheinclude'];
+            $cacheinclude = self::$container['cacheinclude'];
 
             foreach ($cacheinclude->getConfig() as $name => $config) {
 
