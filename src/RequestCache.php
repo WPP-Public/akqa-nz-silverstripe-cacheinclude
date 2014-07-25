@@ -258,8 +258,8 @@ class RequestCache implements RequestFilter
     {
         $vars = array(
             'request' => $request,
-            'member' => \Member::currentUser(),
-            'session' => \Session::get_all()
+            'member' => function () { return $this->getMember(); },
+            'session' => function () { return \Session::get_all(); }
         ) + $this->extraExpressionVars;
 
         if (count($this->fetchExcludeRules)) {
@@ -312,5 +312,19 @@ class RequestCache implements RequestFilter
         }
 
         return true;
+    }
+
+    /**
+     * @return \Member
+     */
+    public function getMember()
+    {
+        if (!\DB::getConn()) {
+            global $databaseConfig;
+            if ($databaseConfig) {
+                \DB::connect($databaseConfig);
+            }
+        }
+        return \Member::currentUser();
     }
 }
