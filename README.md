@@ -13,6 +13,7 @@ Template caching based on urls not DB queries.
 * Support for `<% cache %><% end_cache %>` syntax in templates
 * A full request cache that includes the ability to substitute security tokens
 * Highly customisable
+* CacheInclude Manager for easy cache management https://github.com/heyday/silverstripe-cacheinclude-manager/
 
 For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 
