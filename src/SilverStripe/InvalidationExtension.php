@@ -68,6 +68,22 @@ class InvalidationExtension extends Extension
     }
 
     /**
+     * @return void
+     */
+    public function onAfterManyManyRelationAdd()
+    {
+        $this->onChange('many_many_relation_add');
+    }
+
+    /**
+     * @return void
+     */
+    public function onAfterManyManyRelationRemove()
+    {
+        $this->onChange('many_many_relation_remove');
+    }
+
+    /**
      * @param $action
      */
     protected function onChange($action)

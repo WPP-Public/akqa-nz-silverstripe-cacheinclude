@@ -11,6 +11,9 @@ Heyday\CacheInclude\SilverStripe\Controller:
     - clearTemplate
 
 Injector:
+  ManyManyList:
+    class: Heyday\CacheInclude\SilverStripe\ManyManyList
+    
   SSTemplateParser:
     properties:
       closedBlocks:
