@@ -187,6 +187,12 @@ The following gives some demonstration of how to configure things and what you c
 
 ```yml
 Injector:
+  RequestProcessor:
+    class: RequestProcessor
+    properties:
+      filters:
+        - '%$RequestCache'
+
   RequestCache:
     class: Heyday\CacheInclude\RequestCache
     constructor:
@@ -194,16 +200,10 @@ Injector:
       1: '%$CacheIncludeExpressionLanguage'
       2: Global
     properties:
-      # Add here any security token services that shouldn't be cached within the request
-      # Each token from this list that appears in cached content will be swapped out with a dummy string
-      # This dummy string will be replaced with a real token when a cache is served
-      Tokens:
-        - '%$SecurityToken'
-
       # Expression language rules:
       # Add here any rules that should cause a request to not have a cache saved
       SaveExcludeRules:
-        - 'request.getUrl() matches "/^\\/admin|dev/"'
+        - 'request.getUrl() matches "{^admin|dev|cache-manager}"'
 
       # Add here any rules that must pass in order for a request to have a cache saved
       SaveIncludeRules:
@@ -212,7 +212,7 @@ Injector:
 
       # Add here any rules that should cause a request to not have a cache served
       FetchExcludeRules:
-        - 'request.getUrl() matches "/^\\/admin|dev/"'
+        - 'request.getUrl() matches "{^admin|dev|cache-manager}"'
 
       # Add here any rules that must pass in order for a request to have a cache served
       FetchIncludeRules:
