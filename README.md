@@ -244,6 +244,12 @@ Injector:
         'hello': 'Something'
 ```
 
+### Extra performance
+
+For even more performance from global caching, a new `main.php` file is provided which ensures database connections aren't made when a cache is available for the current request.
+
+If using apache, replace instances of `framework/main.php` with `silverstripe-cacheinclude/main.php` in your `.htaccess` file.
+
 ## Customisation
 
 Because of the heavy usage of dependency injection and the SilverStripe `Injector` component, most parts
