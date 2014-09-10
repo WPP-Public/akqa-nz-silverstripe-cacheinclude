@@ -5,6 +5,7 @@ namespace Heyday\CacheInclude;
 use Doctrine\Common\Cache\CacheProvider;
 use Heyday\CacheInclude\Configs\ConfigInterface;
 use Heyday\CacheInclude\KeyCreators\KeyCreatorInterface;
+use Heyday\CacheInclude\KeyCreators\KeyInformationProviderInterface;
 use Heyday\CacheInclude\Processors\ProcessorInterface;
 use RuntimeException;
 use Psr\Log\LoggerInterface;
@@ -175,11 +176,11 @@ class CacheInclude
 
     /**
      *
-     * @param                                  $name
-     * @param                                  $processor
-     * @param  KeyCreators\KeyCreatorInterface $keyCreator
+     * @param string $name
+     * @param string $processor
+     * @param \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface $keyCreator
      * @throws \InvalidArgumentException
-     * @return mixed|null
+     * @return mixed
      */
     public function process($name, $processor, KeyCreatorInterface $keyCreator)
     {
@@ -211,7 +212,7 @@ class CacheInclude
                 $result = $processor($name),
                 $this->getExpiry($config)
             );
-            $this->addStoredKey($name, $key);
+            $this->addStoredKey($name, $key, $keyCreator);
             $type = "MISS";
         }
 
@@ -221,8 +222,8 @@ class CacheInclude
     }
 
     /**
-     * @param                      $name
-     * @param  KeyCreatorInterface $keyCreator
+     * @param string $name
+     * @param \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface $keyCreator
      * @return mixed
      */
     public function get($name, KeyCreatorInterface $keyCreator)
@@ -240,9 +241,10 @@ class CacheInclude
     }
 
     /**
-     * @param                     $name
-     * @param                     $result
-     * @param KeyCreatorInterface $keyCreator
+     * @param string $name
+     * @param string $result
+     * @param \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface $keyCreator
+     * @return void
      */
     public function set($name, $result, KeyCreatorInterface $keyCreator)
     {
@@ -258,25 +260,31 @@ class CacheInclude
             $this->getExpiry($config)
         );
 
-        $this->addStoredKey($name, $key);
+        $this->addStoredKey($name, $key, $keyCreator);
     }
 
     /**
-     * @param $name
-     * @param $key
+     * @param string $name
+     * @param string $key
+     * @param \Heyday\CacheInclude\KeyCreators\KeyCreatorInterface $keyCreator
+     * @return void
      */
-    protected function addStoredKey($name, $key)
+    protected function addStoredKey($name, $key, KeyCreatorInterface $keyCreator)
     {
         $keys = (array) $this->cache->fetch($name);
         if (!array_key_exists($key, $keys)) {
-            $keys[$key] = true;
+            if ($keyCreator instanceof KeyInformationProviderInterface) {
+                $keys[$key] = $keyCreator->getKeyInformation();
+            } else {
+                $keys[$key] = true;
+            }
             $this->cache->save($name, $keys);
         }
     }
 
     /**
-     * @param $name
-     * @param $key
+     * @param string $name
+     * @param string $key
      */
     protected function removeStoredKey($name, $key)
     {

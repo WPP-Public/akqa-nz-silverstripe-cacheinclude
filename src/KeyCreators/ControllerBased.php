@@ -12,7 +12,7 @@ use Director;
  * Class ControllerBased
  * @package Heyday\CacheInclude\KeyCreators
  */
-class ControllerBased implements KeyCreatorInterface
+class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInterface
 {
     /**
      * @var \Controller
@@ -119,6 +119,21 @@ class ControllerBased implements KeyCreatorInterface
         $keyParts[] = $name;
 
         return $keyParts;
+    }
+
+    /**
+     * @return array
+     */
+    public function getKeyInformation()
+    {
+        $request = $this->controller->getRequest();
+
+        return array(
+            'url' => sprintf(
+                "/%s/",
+                trim($request->getURL(true), '/')
+            )
+        );
     }
 
     /**
