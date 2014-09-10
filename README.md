@@ -10,6 +10,7 @@ Template caching based on urls not DB queries.
 * Invalidation hooks for when DataObject's are modified
 * Uses `doctrine/cache` library, providing many cache backends
 * Uses Symfony Expression language for fine-grained invalidation control
+* Support for `<% cache_include 'TemplateName' %>` syntax in templates
 * Support for `<% cache %><% end_cache %>` syntax in templates
 * A full request cache that includes the ability to substitute security tokens
 * Highly customisable
