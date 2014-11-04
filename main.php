@@ -16,7 +16,7 @@ foreach ($headers as $header => $value) {
 
 $container = Injector::inst();
 
-$session = $container->create('Session', []);
+$session = $container->create('Session', array());
 if (Session::request_contains_session_id()) {
     $session->inst_start();
 }
