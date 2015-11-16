@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 namespace Heyday\CacheInclude\SilverStripe;
 
@@ -62,6 +62,14 @@ class InvalidationExtension extends Extension
     /**
      * @return void
      */
+    public function onAfterReorder()
+    {
+        $this->onChange('write');
+    }
+
+    /**
+     * @return void
+     */
     public function onAfterDelete()
     {
         $this->onChange('delete');
@@ -86,7 +94,7 @@ class InvalidationExtension extends Extension
     /**
      * @param $action
      */
-    public function onChange($action)
+    protected function onChange($action)
     {
         $vars = array(
             'item' => $this->owner,
