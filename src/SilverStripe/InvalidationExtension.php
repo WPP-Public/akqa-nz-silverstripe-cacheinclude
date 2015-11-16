@@ -86,7 +86,7 @@ class InvalidationExtension extends Extension
     /**
      * @param $action
      */
-    protected function onChange($action)
+    public function onChange($action)
     {
         $vars = array(
             'item' => $this->owner,
