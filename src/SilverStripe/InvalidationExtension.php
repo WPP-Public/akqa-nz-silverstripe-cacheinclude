@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 namespace Heyday\CacheInclude\SilverStripe;
 
@@ -55,6 +55,14 @@ class InvalidationExtension extends Extension
      * @return void
      */
     public function onAfterWrite()
+    {
+        $this->onChange('write');
+    }
+
+    /**
+     * @return void
+     */
+    public function onAfterReorder()
     {
         $this->onChange('write');
     }
