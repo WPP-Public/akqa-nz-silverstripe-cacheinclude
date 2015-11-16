@@ -62,6 +62,14 @@ class InvalidationExtension extends Extension
     /**
      * @return void
      */
+    public function onAfterReorder()
+    {
+        $this->onChange('reorder');
+    }
+
+    /**
+     * @return void
+     */
     public function onAfterDelete()
     {
         $this->onChange('delete');
