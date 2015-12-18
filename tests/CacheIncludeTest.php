@@ -8,7 +8,7 @@ use Heyday\CacheInclude\Configs\ArrayConfig;
 class CacheIncludeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var
+     * @var \Doctrine\Common\Cache\Cache
      */
     protected $cacheMock;
     /**
@@ -180,4 +180,16 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
         $this->cacheinclude->setForceExpire(true);
         $this->assertTrue($this->cacheinclude->getForceExpire());
     }
+
+    public function testCreatingAndDeletingLockKey()
+    {
+        $keyName = "test";
+        $this->assertTrue($this->cacheinclude->createLockForName($keyName),
+          "Writing lock key");
+        $this->assertTrue($this->cacheinclude->checkLockForName($keyName),
+          "Checking lock key");
+        $this->assertTrue($this->cacheinclude->releaseLockForName($keyName),
+          "Releasing lock key");
+    }
+
 }

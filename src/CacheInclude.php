@@ -17,6 +17,14 @@ use Psr\Log\LoggerInterface;
 class CacheInclude
 {
     /**
+     * @var string
+     */
+    public static $WRITE_LOCK_SUFFIX = ".lock";
+    /**
+    * @var int
+    */
+    public static  $LOCK_EXPIRE_TIME = 30;
+    /**
      * The instance of doctrine cache that is used for caching
      * @var \Doctrine\Common\Cache\CacheProvider
      */
@@ -199,24 +207,66 @@ class CacheInclude
         $key = $this->getKey($name, $keyCreator, $config);
 
         if ($this->forceExpire) {
-            $this->cache->delete($key);
-            $this->removeStoredKey($name, $key);
-            $result = $processor($name);
+            $result = $this->forceExpire($processor, $name, $key);
             $type = "EXPIRE";
         } elseif ($this->cache->contains($key)) {
             $result = $this->cache->fetch($key);
             $type = "HIT";
         } else {
-            $this->cache->save(
-                $key,
-                $result = $processor($name),
-                $this->getExpiry($config)
-            );
-            $this->addStoredKey($name, $key, $keyCreator);
+            $result = $this->cacheSave($processor, $keyCreator, $config, $name, $key);
             $type = "MISS";
         }
 
         $this->log($type, $name, $key);
+
+        return $result;
+    }
+
+    /**
+     * @param string $processor
+     * @param string $name
+     * @param string $key
+     *
+     * @return mixed
+     */
+
+    private function forceExpire($processor, $name, $key)
+    {
+      $result = $processor($name);
+
+      if (!$this->checkLockForName($name)) {
+        $this->cache->delete($key);
+        $this->removeStoredKey($name, $key);
+        $this->releaseLockForName($name);
+      }
+
+      return $result;
+    }
+
+  /**
+   * @param $processor
+   * @param $keyCreator
+   * @param $config
+   * @param $name
+   * @param $key
+   *
+   * @return mixed
+   */
+
+    private function cacheSave($processor, $keyCreator, $config, $name, $key)
+    {
+        $result = $processor($name);
+
+        if(!$this->checkLockForName($name)){
+            $this->createLockForName($name);
+            $this->cache->save(
+              $key,
+              $result,
+              $this->getExpiry($config)
+            );
+            $this->addStoredKey($name, $key, $keyCreator);
+            $this->releaseLockForName($name);
+        }
 
         return $result;
     }
@@ -293,6 +343,38 @@ class CacheInclude
             unset($keys[$key]);
             $this->cache->save($name, $keys);
         }
+    }
+
+  /**
+   * @param string $name
+   *
+   * @return bool
+   */
+    public function createLockForName($name)
+    {
+     return $this->cache->save($name . self::$WRITE_LOCK_SUFFIX, "",
+        self::$LOCK_EXPIRE_TIME);
+    }
+
+  /**
+   * @param string $name
+   *
+   * @return bool
+   */
+
+    public function releaseLockForName($name)
+    {
+      return $this->cache->delete($name . self::$WRITE_LOCK_SUFFIX);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function checkLockForName($name)
+    {
+      return $this->cache->contains($name . self::$WRITE_LOCK_SUFFIX);
     }
 
     /**
