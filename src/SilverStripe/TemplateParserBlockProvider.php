@@ -17,7 +17,7 @@ class TemplateParserBlockProvider
      * @throws \InvalidArgumentException
      * @return string
      */
-    public static function cacheTemplate(&$res)
+    public static function cacheTemplate($res)
     {
         if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
             throw new InvalidArgumentException('A config name must be passed into <% cache %>');
@@ -49,7 +49,7 @@ PHP;
      * @throws \InvalidArgumentException
      * @return string
      */
-    public static function cacheIncludeTemplate(&$res)
+    public static function cacheIncludeTemplate($res)
     {
         if (!isset($res['Arguments']) || !isset($res['Arguments'][0])) {
             throw new InvalidArgumentException('A template name must be passed into <% cache_include %>');
