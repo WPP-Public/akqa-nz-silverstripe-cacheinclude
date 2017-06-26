@@ -194,6 +194,16 @@ Injector:
       filters:
         - '%$RequestCache'
 
+  CacheIncludeConfig:
+    class: Heyday\CacheInclude\Configs\ArrayConfig
+    properties:
+      Config:
+        Global:
+          context: full
+          contains:
+            - MyDataObject
+          expires: +1 hour
+
   RequestCache:
     class: Heyday\CacheInclude\RequestCache
     constructor:
