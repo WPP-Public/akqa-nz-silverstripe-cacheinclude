@@ -1,7 +1,7 @@
 ---
 Name: config
 ---
-Director:
+SilverStripe\Control\Director:
   rules:
     'cache-include//$Action': 'Heyday\CacheInclude\SilverStripe\Controller'
 
@@ -10,16 +10,14 @@ Heyday\CacheInclude\SilverStripe\Controller:
     - clearAll
     - clearTemplate
 
-Injector:
+SilverStripe\Core\Injector\Injector:
   ManyManyList:
     class: Heyday\CacheInclude\SilverStripe\ManyManyList
     
-  SSTemplateParser:
+  SilverStripe\View\SSTemplateParser:
     properties:
-      closedBlocks:
-        cache: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate"
       openBlocks:
-        cache_include: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheIncludeTemplate"
+        cache_include: 'Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheIncludeTemplate'
 
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
@@ -93,11 +91,12 @@ Injector:
 
 ---
 Only:
-  CACHEINCLUDE_FORCE_EXPIRE: true
+  ConstantDefined:
+    CACHEINCLUDE_FORCE_EXPIRE: true
 Except:
   environment: live
 ---
-Injector:
+SilverStripe\Core\Injector\Injector:
   CacheInclude:
     class: Heyday\CacheInclude\CacheInclude
     constructor:
