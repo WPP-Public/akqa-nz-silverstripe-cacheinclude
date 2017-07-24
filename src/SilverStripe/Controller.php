@@ -3,7 +3,7 @@
 namespace Heyday\CacheInclude\SilverStripe;
 
 use Heyday\CacheInclude\CacheInclude;
-use CliController;
+use SilverStripe\Control\CliController;
 
 /**
  * Class Controller
