@@ -3,6 +3,7 @@
 namespace Heyday\CacheInclude;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Exception;
 use Heyday\CacheInclude\Configs\ConfigInterface;
 use Heyday\CacheInclude\KeyCreators\KeyCreatorInterface;
 use Heyday\CacheInclude\KeyCreators\KeyInformationProviderInterface;
@@ -16,6 +17,10 @@ use Psr\Log\LoggerInterface;
  */
 class CacheInclude
 {
+    /**
+     * @var string
+     */
+    public static $lock_file_path;
     /**
      * The instance of doctrine cache that is used for caching
      * @var \Doctrine\Common\Cache\CacheProvider
@@ -195,30 +200,102 @@ class CacheInclude
         }
 
         $config = $this->getCombinedConfig($name);
-
         $key = $this->getKey($name, $keyCreator, $config);
 
         if ($this->forceExpire) {
-            $this->cache->delete($key);
-            $this->removeStoredKey($name, $key);
+            $this->lockCacheAndRun(function () use ($key, $name) {
+                $this->cache->delete($key);
+                $this->removeStoredKey($name, $key);
+            });
+
             $result = $processor($name);
             $type = "EXPIRE";
         } elseif ($this->cache->contains($key)) {
             $result = $this->cache->fetch($key);
             $type = "HIT";
         } else {
-            $this->cache->save(
-                $key,
-                $result = $processor($name),
-                $this->getExpiry($config)
-            );
-            $this->addStoredKey($name, $key, $keyCreator);
+            $result = $processor($name);
+            $this->runIfCacheLockIsFree(function () use ($key, $name, $result, $keyCreator, $config) {
+                $this->cache->save($key, $result, $this->getExpiry($config));
+                $this->addStoredKey($name, $key, $keyCreator);
+            });
             $type = "MISS";
         }
 
         $this->log($type, $name, $key);
 
         return $result;
+    }
+
+    /**
+     * Run $callback only if the cache hasn't already been locked. As such,
+     * $callback is never *guaranteed* to be run. This is used to skip
+     * non-essential actions (like writing data to the cache) if we're unable
+     * to obtain a lock
+     *
+     * @param callable $callback
+     * @return mixed
+     */
+    protected function runIfCacheLockIsFree(callable $callback)
+    {
+        $fp = fopen($this->getLockFilePath(), 'w+');
+
+        // Attempt a non-blocking lock on the file, bail out if we can't get one
+        if (!flock($fp, LOCK_EX | LOCK_NB)) {
+            return null;
+        }
+
+        try {
+            $result = $callback();
+        } catch (Exception $e) {
+            $result = null;
+        }
+
+        // Release the lock
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return $result;
+    }
+
+    /**
+     * Lock the cache while $callback is running. This is used to prevent race
+     * conditions from concurrent requests, and will wait for the lock to be
+     * released by any other processes before proceeding.
+     *
+     * @param callable $callback
+     * @return mixed
+     */
+    protected function lockCacheAndRun(callable $callback)
+    {
+        $fp = fopen($this->getLockFilePath(), 'w+');
+
+        // Exclusive lock - PHP will wait until the lock is free before continuing
+        flock($fp, LOCK_EX);
+
+        try {
+            $result = $callback();
+        } catch (Exception $e) {
+            $result = null;
+        }
+
+        // Release the lock
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getLockFilePath()
+    {
+        if (static::$lock_file_path) {
+            return static::$lock_file_path;
+        }
+
+        return TEMP_FOLDER . '/cacheinclude.lock';
     }
 
     /**
@@ -253,14 +330,11 @@ class CacheInclude
         }
 
         $config = $this->getCombinedConfig($name);
-
-        $this->cache->save(
-            $key = $this->getKey($name, $keyCreator, $config),
-            $result,
-            $this->getExpiry($config)
-        );
-
-        $this->addStoredKey($name, $key, $keyCreator);
+        $key = $this->getKey($name, $keyCreator, $config);
+        $this->runIfCacheLockIsFree(function () use ($name, $result, $keyCreator, $key, $config) {
+            $this->cache->save($key, $result, $this->getExpiry($config));
+            $this->addStoredKey($name, $key, $keyCreator);
+        });
     }
 
     /**
@@ -300,11 +374,13 @@ class CacheInclude
      */
     public function flushByName($name)
     {
-        $keys = (array) $this->cache->fetch($name);
-        foreach (array_keys($keys) as $key) {
-            $this->cache->delete($key);
-        }
-        $this->cache->save($name, array());
+        $this->lockCacheAndRun(function() use ($name) {
+            $keys = (array) $this->cache->fetch($name);
+            foreach (array_keys($keys) as $key) {
+                $this->cache->delete($key);
+            }
+            $this->cache->save($name, array());
+        });
     }
 
     /**
@@ -312,7 +388,9 @@ class CacheInclude
      */
     public function flushAll()
     {
-        $this->cache->flushAll();
+        $this->lockCacheAndRun(function() {
+            $this->cache->flushAll();
+        });
     }
 
     /**
