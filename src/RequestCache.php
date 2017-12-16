@@ -2,15 +2,19 @@
 
 namespace Heyday\CacheInclude;
 
-use Controller;
-use DataModel;
-use Director;
-use RequestFilter;
-use Requirements;
-use SecurityToken;
-use Session;
-use SS_HTTPRequest;
-use SS_HTTPResponse;
+use Heyday\CacheInclude\SilverStripe\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\View\Requirements;
+use SilverStripe\Security\SecurityToken;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Control\Session;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Control\RequestFilter;
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\DB;
+use SilverStripe\Security\Security;
 
 /**
  * Class RequestCache
@@ -159,27 +163,26 @@ class RequestCache implements RequestFilter
 
     /**
      * If this url allows caching and there is a cached response then send it
-     * @param  SS_HTTPRequest $request
-     * @param  Session        $session
-     * @param  DataModel      $model
-     * @return bool|void
+     *
+     * @param HTTPRequest $request
+     * @return bool
      */
-    public function preRequest(SS_HTTPRequest $request, Session $session, DataModel $model)
+    public function preRequest(HTTPRequest $request)
     {
         if ($this->allowFetch($request)) {
-            \Versioned::choose_site_stage();
+            Versioned::choose_site_stage($request);
             if ($request->getURL() == '') {
                 $request = clone $request;
                 $request->setUrl('home');
             }
             $response = $this->cache->get(
                 $this->name,
-                \Injector::inst()->create(
+                Injector::inst()->create(
                     'CacheIncludeKeyCreator',
                     $this->getController($request)
                 )
             );
-            if ($response instanceof SS_HTTPResponse) {
+            if ($response instanceof HTTPResponse) {
                 // replace in body
                 if ($this->hasTokens()) {
                     $body = $response->getBody();
@@ -191,7 +194,7 @@ class RequestCache implements RequestFilter
                     }
                     $response->setBody($body);
                 }
-                $session->save();
+//                $session->save();
                 $response->output();
                 exit;
             }
@@ -202,14 +205,14 @@ class RequestCache implements RequestFilter
 
     /**
      * If this request allows caching then cache it
-     * @param  SS_HTTPRequest  $request
-     * @param  SS_HTTPResponse $response
-     * @param  DataModel       $model
+     *
+     * @param HTTPRequest $request
+     * @param HTTPResponse $response
      * @return bool
      */
-    public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model)
+    public function postRequest(HTTPRequest $request, HTTPResponse $response)
     {
-        if ($response instanceof SS_HTTPResponse && $this->allowSave($request, $response)) {
+        if ($response instanceof HTTPResponse && $this->allowSave($request, $response)) {
             $response = clone $response;
             if ($this->hasTokens()) {
                 $body = $response->getBody();
@@ -227,7 +230,7 @@ class RequestCache implements RequestFilter
             $this->cache->set(
                 $this->name,
                 $response,
-                \Injector::inst()->create(
+                Injector::inst()->create(
                     'CacheIncludeKeyCreator',
                     $this->getController($request)
                 )
@@ -238,12 +241,12 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param  SS_HTTPRequest $request
+     * @param  HTTPRequest $request
      * @return Controller
      */
-    protected function getController(SS_HTTPRequest $request)
+    protected function getController(HTTPRequest $request)
     {
-        $controller = new Controller();
+        $controller = Controller::create();
         $controller->setRequest($request);
         $controller->setURLParams($request->allParams());
 
@@ -251,15 +254,15 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param  SS_HTTPRequest $request
+     * @param  HTTPRequest $request
      * @return bool
      */
-    protected function allowFetch(SS_HTTPRequest $request)
+    protected function allowFetch(HTTPRequest $request)
     {
         $vars = array(
             'request' => $request,
             'member' => function () { return $this->getMember(); },
-            'session' => function () { return \Session::get_all(); }
+            'session' => function () { return Session::get_all(); }
         ) + $this->extraExpressionVars;
 
         if (count($this->fetchExcludeRules)) {
@@ -282,17 +285,17 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @param  SS_HTTPRequest  $request
-     * @param  SS_HTTPResponse $response
+     * @param  HTTPRequest  $request
+     * @param  HTTPResponse $response
      * @return bool
      */
-    protected function allowSave(SS_HTTPRequest $request, SS_HTTPResponse $response)
+    protected function allowSave(HTTPRequest $request, HTTPResponse $response)
     {
         $vars = array(
             'request' => $request,
             'response' => $response,
-            'member' => \Member::currentUser(),
-            'session' => \Session::get_all()
+            'member' => Security::getCurrentUser(),
+            'session' => Session::get_all()
         ) + $this->extraExpressionVars;
 
         if (count($this->saveExcludeRules)) {
@@ -315,16 +318,16 @@ class RequestCache implements RequestFilter
     }
 
     /**
-     * @return \Member
+     * @return Member
      */
     public function getMember()
     {
-        if (!\DB::getConn()) {
+        if (!DB::get_conn()) {
             global $databaseConfig;
             if ($databaseConfig) {
-                \DB::connect($databaseConfig);
+                DB::connect($databaseConfig);
             }
         }
-        return \Member::currentUser();
+        return Security::getCurrentUser();
     }
 }

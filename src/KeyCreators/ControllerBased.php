@@ -2,11 +2,13 @@
 
 namespace Heyday\CacheInclude\KeyCreators;
 
-use Config;
-use Controller;
-use Member;
-use Versioned;
-use Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\Controller;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
+use SilverStripe\Versioned\Versioned;
+use Exception;
+use SilverStripe\Control\Director;
 
 /**
  * Class ControllerBased
@@ -15,12 +17,12 @@ use Director;
 class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInterface
 {
     /**
-     * @var \Controller
+     * @var Controller
      */
     protected $controller;
 
     /**
-     * @var \Config
+     * @var Config
      */
     protected $config;
 
@@ -50,21 +52,22 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     protected $memberID;
 
     /**
-     * @param  \Controller|void $controller
-     * @throws \Exception
+     * @param  Controller|void $controller
+     * @throws Exception
      */
     public function __construct(Controller $controller = null)
     {
         if (!$controller && !Controller::has_curr()) {
-            throw new \Exception("Controller based key creators must have a current controller");
+            throw new Exception("Controller based key creators must have a current controller");
         }
+        $member = Security::getCurrentUser();
         $this->controller = $controller ?: Controller::curr();
         $this->config = Config::inst();
         $this->environmentType = Director::get_environment_type();
-        $this->currentStage = Versioned::current_stage();
+        $this->currentStage = Versioned::get_stage();
         $this->theme = $this->config->get('SSViewer', 'theme');
         $this->ssl = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
-        $this->memberID = Member::currentUserID();
+        $this->memberID = $member instanceof Member ? $member->ID : null;
     }
 
     /**

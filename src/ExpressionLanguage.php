@@ -3,6 +3,7 @@
 namespace Heyday\CacheInclude;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as SymfonyExpressionLanguage;
+use SilverStripe\ORM\DataList;
 
 /**
  * Class ExpressionLanguage
@@ -20,7 +21,7 @@ class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializa
                 return sprintf('%s::get()', $arg);
             },
             function (array $variables, $value) {
-                return \DataList::create($value);
+                return DataList::create($value);
             }
         );
 

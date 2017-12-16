@@ -33,7 +33,8 @@ To  be able to invalidate caches from DataObject writes, add the `InvalidationEx
 1. Create a config file `mysite/_config/caching.yml`
 2. Add the following to the yml file
 
-```yml
+```
+
 ---
 After: 'silverstripe-cacheinclude/*'
 ---
@@ -66,7 +67,8 @@ The following is an example of a config for `SomeCacheBlock` and `AnotherCacheBl
 
 `mysite/_config/caching.yml`
 
-```yml
+```
+
 ---
 After: 'silverstripe-cacheinclude/*'
 ---

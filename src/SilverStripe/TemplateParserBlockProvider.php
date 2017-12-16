@@ -27,13 +27,13 @@ class TemplateParserBlockProvider
         $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
 
         return <<<PHP
-\$val .= \Injector::inst()->get($cacheInclude)->process(
+\$val .= \SilverStripe\Core\Injector\Injector::inst()->get($cacheInclude)->process(
    {$res['Arguments'][0]['text']},
    function () use (\$scope) {
         \$val = '';
         {$res['Template']['php']}        return \$val;
    },
-   \Injector::inst()->get($keyCreator)
+   \SilverStripe\Core\Injector\Injector::inst()->get($keyCreator)
 );
 PHP;
     }
@@ -58,13 +58,16 @@ PHP;
         $keyCreator = isset($res['Arguments'][1]) ? $res['Arguments'][1]['text'] : "'CacheIncludeKeyCreator'";
         $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
 
+        //[["type" => "Includes", 'Page_Environment'], 'Page_Environment']
+        // todo: this is for Includes, how will it handle namespaced templates?
+
         return <<<PHP
-\$val .= \Injector::inst()->get($cacheInclude)->process(
+\$val .= \SilverStripe\Core\Injector\Injector::inst()->get($cacheInclude)->process(
    {$res['Arguments'][0]['text']},
    function () use (\$scope) {
-       return SSViewer::execute_template({$res['Arguments'][0]['text']}, \$scope->getItem(), array(), \$scope);
+       return SilverStripe\View\SSViewer::execute_template([["type" => "Includes", {$res['Arguments'][0]['text']}], {$res['Arguments'][0]['text']}], \$scope->getItem(), array(), \$scope);
    },
-   \Injector::inst()->get($keyCreator)
+   \SilverStripe\Core\Injector\Injector::inst()->get($keyCreator)
 );
 PHP;
     }

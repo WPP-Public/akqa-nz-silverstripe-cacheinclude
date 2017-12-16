@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/../framework/core/Core.php';
 
-\Versioned::choose_site_stage();
+SilverStripe\Versioned\Versioned::choose_site_stage();
 
 // Only skip framework/main.php if live stage
 if (\Versioned::current_stage() == \Versioned::get_live_stage()) {
