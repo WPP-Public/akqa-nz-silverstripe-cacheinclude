@@ -1,5 +1,5 @@
 ---
-Name: config
+Name: cacheincludeconfig
 ---
 SilverStripe\Control\Director:
   rules:
