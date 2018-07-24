@@ -167,7 +167,7 @@ class RequestCache implements RequestFilter
     public function preRequest(SS_HTTPRequest $request, Session $session, DataModel $model)
     {
         if ($this->allowFetch($request)) {
-            \Versioned::choose_site_stage();
+            \Versioned::choose_site_stage($request);
             if ($request->getURL() == '') {
                 $request = clone $request;
                 $request->setUrl('home');
