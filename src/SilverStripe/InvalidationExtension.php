@@ -2,7 +2,7 @@
 
 namespace Heyday\CacheInclude\SilverStripe;
 
-use Extension;
+use SilverStripe\Core\Extension;
 use Heyday\CacheInclude\CacheInclude;
 use Heyday\CacheInclude\ExpressionLanguage;
 
