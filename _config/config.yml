@@ -16,6 +16,8 @@ SilverStripe\Core\Injector\Injector:
     
   SilverStripe\View\SSTemplateParser:
     properties:
+      closedBlocks:
+        cache: 'Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate'
       openBlocks:
         cache_include: 'Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheIncludeTemplate'
 
