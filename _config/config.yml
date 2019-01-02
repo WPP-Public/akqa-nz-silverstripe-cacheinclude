@@ -1,106 +1,73 @@
 ---
-Name: config
+Name: cacheinclude
 ---
-Director:
-  rules:
-    'cache-include//$Action': 'Heyday\CacheInclude\SilverStripe\Controller'
-
-Heyday\CacheInclude\SilverStripe\Controller:
-  allowed_actions:
-    - clearAll
-    - clearTemplate
-
-Injector:
-  ManyManyList:
-    class: Heyday\CacheInclude\SilverStripe\ManyManyList
-    
-  SSTemplateParser:
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\ORM\ManyManyList:
+    class: 'Heyday\CacheInclude\SilverStripe\ManyManyList'
+  SilverStripe\View\SSTemplateParser:
     properties:
       closedBlocks:
-        cache: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate"
+        cache: 'Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheTemplate'
       openBlocks:
-        cache_include: "Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheIncludeTemplate"
-
+        cache_include: 'Heyday\CacheInclude\SilverStripe\TemplateParserBlockProvider::cacheIncludeTemplate'
   CacheInclude:
-    class: Heyday\CacheInclude\CacheInclude
+    class: 'Heyday\CacheInclude\CacheInclude'
     constructor:
-      0: '%$DoctrineCache'
-      1: '%$CacheIncludeConfig'
-
-  CacheIncludeExpressionLanguageParserCache:
-    class: Heyday\CacheInclude\ExpressionLanguageParserCache
-    constructor:
-      0: '%$DoctrineCache'
-
+      0: '%$CacheIncludeConfig'
   CacheIncludeExpressionLanguage:
-    class: Heyday\CacheInclude\ExpressionLanguage
+    class: 'Heyday\CacheInclude\ExpressionLanguage'
     constructor:
-      0: '%$CacheIncludeExpressionLanguageParserCache'
-
+      0: '%$Heyday\CacheInclude\ExpressionLanguageParserCache'
   CacheIncludeConfig:
-    class: Heyday\CacheInclude\Configs\ArrayConfig
-
+    class: 'Heyday\CacheInclude\Configs\ArrayConfig'
   CacheIncludeViewableDataProcessor:
-    class: Heyday\CacheInclude\Processors\ViewableDataProcessor
-
+    class: 'Heyday\CacheInclude\Processors\ViewableDataProcessor'
   CacheIncludeKeyCreator:
-    class: Heyday\CacheInclude\KeyCreators\ControllerBased
-
-  DoctrineCache:
-      class: Doctrine\Common\Cache\FilesystemCache
-      constructor:
-        0: '../silverstripe-cacheinclude/cache'
-        1: '.cache'
-
-  CacheIncludeController:
-    class: Heyday\CacheInclude\SilverStripe\Controller
+    class: 'Heyday\CacheInclude\KeyCreators\ControllerBased'
+  Heyday\CacheInclude\SilverStripe\BuildTask:
+    class: 'Heyday\CacheInclude\SilverStripe\BuildTask'
     constructor:
       0: '%$CacheInclude'
-
-  Heyday\CacheInclude\SilverStripe\Controller:
-    class: Heyday\CacheInclude\SilverStripe\Controller
-    constructor:
-      0: '%$CacheInclude'
-
   Heyday\CacheInclude\SilverStripe\InvalidationExtension:
-    class: Heyday\CacheInclude\SilverStripe\InvalidationExtension
+    class: 'Heyday\CacheInclude\SilverStripe\InvalidationExtension'
     constructor:
       0: '%$CacheInclude'
       1: '%$CacheIncludeExpressionLanguage'
-
-  RequestCache:
-    class: Heyday\CacheInclude\RequestCache
+  RequestCacheMiddleware:
+    class: 'Heyday\CacheInclude\SilverStripe\RequestCacheMiddleware'
     constructor:
       0: '%$CacheInclude'
       1: '%$CacheIncludeExpressionLanguage'
-      2: Global
+      2: 'Global'
     properties:
       Tokens:
-        - '%$SecurityToken'
-
+        - '%$SilverStripe\Security\SecurityToken'
       SaveExcludeRules:
-        - 'request.getUrl() matches "/^\\/admin|dev/"'
-
+        - 'request.getUrl() matches "{^admin|dev}"'
       SaveIncludeRules:
         - "request.httpMethod() == 'GET'"
         - "response.getStatusCode() == 200"
-
       FetchExcludeRules:
-        - 'request.getUrl() matches "/^\\/admin|dev/"'
-
+        - 'request.getUrl() matches "{^admin|dev}"'
       FetchIncludeRules:
         - "request.httpMethod() == 'GET'"
-
+---
+Name: cacheinclude-cache
+---
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.CacheInclude:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: 'CacheInclude'
 ---
 Only:
-  CACHEINCLUDE_FORCE_EXPIRE: true
+  constantdefined: 'CACHEINCLUDE_FORCE_EXPIRE'
 Except:
   environment: live
 ---
-Injector:
+SilverStripe\Core\Injector\Injector:
   CacheInclude:
-    class: Heyday\CacheInclude\CacheInclude
+    class: 'Heyday\CacheInclude\CacheInclude'
     constructor:
-      0: '%$DoctrineCache'
-      1: '%$CacheIncludeConfig'
-      2: true
+      0: '%$CacheIncludeConfig'
+      1: true

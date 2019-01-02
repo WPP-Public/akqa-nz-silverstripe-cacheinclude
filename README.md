@@ -52,10 +52,16 @@ Cache a section of a template:
 <% end_cache %>
 ```
 
-Cache an included template:
+Cache an included template (assumes a cache block config name of `SomeTemplateName`):
 
 ```
 <% cache_include 'SomeTemplateName' %>
+```
+
+Cache an included template with a different cache block config name:
+
+```
+<% cache_include 'App\Includes\SomeTemplateName', 'CacheBlockConfigName' %>
 ```
 
 ### Cache block config
@@ -168,16 +174,35 @@ sites.
 
 ### Enabling
 
-To enable the full request cache the `RequestCache` service needs to be added to the `RequestProcessor` as a filter.
+To enable the full request cache, the `RequestCacheMiddleware` needs to be applied and a `Global` config block needs to be created:
 
 ```yml
-Injector:
-  RequestProcessor:
-    class: RequestProcessor
+---
+After: '#cacheinclude'
+---
+SilverStripe\Core\Injector\Injector:
+  CacheIncludeConfig:
+    class: Heyday\CacheInclude\Configs\ArrayConfig
     properties:
-      filters:
-        - '%$RequestCache'
+      Config:
+        Global:
+          contains:
+            - SilverStripe\CMS\Model\SiteTree
+          context: full
+          expires: '+ 1 hour'
+---
+After: '#coresecurity'
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Control\Director:
+    properties:
+      Middlewares:
+        RequestCacheMiddleware: '%$RequestCacheMiddleware'
 ```
+
+**Note:** the `After:` condition in the above example is important. Without it, the middleware that handles request caching will
+run before SilverStripe's authentication middleware - meaning that the current user (stored in the session) isn't available. This
+could result in cache contamination between users, or between guests & registered users.
 
 Full request caching increases performance substantially but it isn't without a cost. It can be hard to configure, as there
 are numerous cases where you don't want to either cache a request or alternatively serve a cached request.
@@ -188,34 +213,22 @@ The following gives some demonstration of how to configure things and what you c
 
 ```yml
 Injector:
-  RequestProcessor:
-    class: RequestProcessor
-    properties:
-      filters:
-        - '%$RequestCache'
-
-  RequestCache:
-    class: Heyday\CacheInclude\RequestCache
+  RequestCacheMiddleware:
+    class: 'Heyday\CacheInclude\SilverStripe\RequestCacheMiddleware'
     constructor:
       0: '%$CacheInclude'
       1: '%$CacheIncludeExpressionLanguage'
-      2: Global
+      2: 'Global'
     properties:
-      # Expression language rules:
-      # Add here any rules that should cause a request to not have a cache saved
+      Tokens:
+        - '%$SilverStripe\Security\SecurityToken'
       SaveExcludeRules:
-        - 'request.getUrl() matches "{^admin|dev|cache-manager}"'
-
-      # Add here any rules that must pass in order for a request to have a cache saved
+        - 'request.getUrl() matches "{^admin|dev}"'
       SaveIncludeRules:
         - "request.httpMethod() == 'GET'"
         - "response.getStatusCode() == 200"
-
-      # Add here any rules that should cause a request to not have a cache served
       FetchExcludeRules:
-        - 'request.getUrl() matches "{^admin|dev|cache-manager}"'
-
-      # Add here any rules that must pass in order for a request to have a cache served
+        - 'request.getUrl() matches "{^admin|dev}"'
       FetchIncludeRules:
         - "request.httpMethod() == 'GET'"
 ```
@@ -239,17 +252,11 @@ Additional variables can be provided through the injector system.
  
 ```yml
 Injector:
-  RequestCache:
+  RequestCacheMiddleware:
     properties:
       ExtraExpressionVars:
         'hello': 'Something'
 ```
-
-### Extra performance
-
-For even more performance from global caching, a new `main.php` file is provided which ensures database connections aren't made when a cache is available for the current request.
-
-If using apache, replace instances of `framework/main.php` with `silverstripe-cacheinclude/main.php` in your `.htaccess` file.
 
 ## Customisation
 

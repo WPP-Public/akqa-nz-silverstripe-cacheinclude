@@ -2,10 +2,6 @@
 
 namespace Heyday\CacheInclude\Configs;
 
-/**
- * Class ArrayConfig
- * @package Heyday\CacheInclude\Configs
- */
 class ArrayConfig implements ConfigInterface
 {
     /**
@@ -16,7 +12,7 @@ class ArrayConfig implements ConfigInterface
     /**
      * @param array|void $config
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         $this->config = $config;
     }
@@ -32,8 +28,8 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param  mixed      $id
-     * @param  mixed      $value
+     * @param mixed $id
+     * @param mixed $value
      * @throws \Exception
      */
     public function offsetSet($id, $value)
@@ -42,7 +38,7 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param  mixed                     $id
+     * @param mixed $id
      * @return mixed
      * @throws \InvalidArgumentException
      */
@@ -56,7 +52,7 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param  mixed $id
+     * @param mixed $id
      * @return bool
      */
     public function offsetExists($id)
@@ -65,7 +61,7 @@ class ArrayConfig implements ConfigInterface
     }
 
     /**
-     * @param  mixed      $id
+     * @param mixed $id
      * @throws \Exception
      */
     public function offsetUnset($id)

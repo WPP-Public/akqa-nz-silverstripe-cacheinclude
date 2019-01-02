@@ -2,33 +2,28 @@
 
 namespace Heyday\CacheInclude\SilverStripe;
 
-use Extension;
 use Heyday\CacheInclude\CacheInclude;
 use Heyday\CacheInclude\ExpressionLanguage;
+use SilverStripe\Core\Extension;
+use SilverStripe\Versioned\Versioned;
 
-/**
- * Class Extension
- * @package Heyday\CacheInclude\SilverStripe
- */
 class InvalidationExtension extends Extension
 {
     /**
      * @var \Heyday\CacheInclude\CacheInclude
      */
     protected $cache;
+
     /**
      * @var \Heyday\CacheInclude\ExpressionLanguage
      */
     protected $expressionLanguage;
 
     /**
-     * @param \Heyday\CacheInclude\CacheInclude       $cache
+     * @param \Heyday\CacheInclude\CacheInclude $cache
      * @param \Heyday\CacheInclude\ExpressionLanguage $expressionLanguage
      */
-    public function __construct(
-        CacheInclude $cache,
-        ExpressionLanguage $expressionLanguage
-    )
+    public function __construct(CacheInclude $cache, ExpressionLanguage $expressionLanguage)
     {
         $this->cache = $cache;
         $this->expressionLanguage = $expressionLanguage;
@@ -96,10 +91,10 @@ class InvalidationExtension extends Extension
      */
     protected function onChange($action)
     {
-        $vars = array(
+        $vars = [
             'item' => $this->owner,
             'action' => $action
-        );
+        ];
 
         $logger = $this->cache->getLogger();
 
@@ -164,22 +159,20 @@ class InvalidationExtension extends Extension
      * Invalidates a cache by a certain name, and logs if available
      * @param $name
      * @param $message
-     * @param null $logger
+     * @param \Psr\Log\LoggerInterface|null $logger
      */
     protected function invalidate($name, $message, $logger = null)
     {
-        $this->cache->flushByName($name);
+        // Flush in both draft + live
+        Versioned::withVersionedMode(function () use ($name) {
+            foreach ([Versioned::LIVE, Versioned::DRAFT] as $stage) {
+                Versioned::set_stage($stage);
+                $this->cache->flushByName($name);
+            }
+        });
+
         if ($logger) {
             $logger->info($message);
         }
-    }
-
-    /**
-     * @param null $class
-     * @param null $extension
-     */
-    public function extraStatics($class = null, $extension = null)
-    {
-
     }
 }

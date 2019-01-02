@@ -2,10 +2,6 @@
 
 namespace Heyday\CacheInclude\Processors;
 
-/**
- * Class ProcessorInterface
- * @package Heyday\CacheInclude\Processors
- */
 interface ProcessorInterface
 {
     /**

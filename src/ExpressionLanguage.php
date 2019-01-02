@@ -2,12 +2,9 @@
 
 namespace Heyday\CacheInclude;
 
+use SilverStripe\ORM\DataList;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as SymfonyExpressionLanguage;
 
-/**
- * Class ExpressionLanguage
- * @package Heyday\CacheInclude
- */
 class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializable
 {
     protected function registerFunctions()
@@ -20,7 +17,7 @@ class ExpressionLanguage extends SymfonyExpressionLanguage implements \Serializa
                 return sprintf('%s::get()', $arg);
             },
             function (array $variables, $value) {
-                return \DataList::create($value);
+                return DataList::create($value);
             }
         );
 

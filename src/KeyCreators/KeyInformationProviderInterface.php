@@ -2,9 +2,6 @@
 
 namespace Heyday\CacheInclude\KeyCreators;
 
-/**
- * @package Heyday\CacheInclude\KeyInformationProvider
- */
 interface KeyInformationProviderInterface
 {
     /**

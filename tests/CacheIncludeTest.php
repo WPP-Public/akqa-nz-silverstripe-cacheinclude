@@ -2,15 +2,15 @@
 
 namespace Heyday\CacheInclude;
 
-use Doctrine\Common\Cache\ArrayCache;
 use Heyday\CacheInclude\Configs\ArrayConfig;
+use Heyday\CacheInclude\KeyCreators\KeyCreatorInterface;
+use Psr\SimpleCache\CacheInterface;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Dev\SapphireTest;
+use Symfony\Component\Cache\Simple\ArrayCache;
 
-class CacheIncludeTest extends \PHPUnit_Framework_TestCase
+class CacheIncludeTest extends SapphireTest
 {
-    /**
-     * @var
-     */
-    protected $cacheMock;
     /**
      * @var \Heyday\CacheInclude\CacheInclude
      */
@@ -23,16 +23,18 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->cacheMock = new ArrayCache();
-        $this->keyCreatorMock = $this->getMock('Heyday\CacheInclude\KeyCreators\KeyCreatorInterface');
+        Injector::inst()->registerService(new ArrayCache(), CacheInterface::class . '.CacheInclude');
+        $this->keyCreatorMock = $this->getMockBuilder(KeyCreatorInterface::class)
+            ->getMock();
         $this->cacheinclude = new CacheInclude(
-            $this->cacheMock,
             new ArrayConfig(array(
                 'test' => array(
                     'expires' => '+1 week'
                 )
             ))
         );
+
+        parent::setUp();
     }
 
     public function testEnabled()
@@ -44,11 +46,11 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDefaultConfig()
     {
-        $config = array(
+        $config = [
             'context' => 'no',
             'member'  => true,
             'expires' => false
-        );
+        ];
         $this->cacheinclude->setDefaultConfig($config);
         $this->assertEquals($config, $this->cacheinclude->getDefaultConfig());
     }
@@ -56,21 +58,21 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
     public function testCombinedConfig()
     {
         $this->assertEquals(
-            array(
+            [
                 'context' => 'no',
                 'member'  => false,
                 'expires' => '+1 week'
-            ),
+            ],
             $this->cacheinclude->getCombinedConfig('test')
         );
     }
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The argument $processor must be an instance of ProcessorInterface or a callable
      */
     public function testProcessException()
     {
-        $this->cacheinclude->process('test', array(), $this->keyCreatorMock);
+        $this->cacheinclude->process('test', [], $this->keyCreatorMock);
     }
 
     public function testProcessDisabled()
@@ -93,7 +95,7 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
         $this->keyCreatorMock
             ->expects($this->any())
             ->method('getKey')
-            ->will($this->returnValue(array('testkey')));
+            ->will($this->returnValue(['testkey']));
 
         $i = 0;
 
@@ -101,24 +103,20 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
-
                 return $i;
             },
             $this->keyCreatorMock
         );
-
         $this->assertEquals(1, $i);
 
         $i = $this->cacheinclude->process(
             'test',
             function ($name) use ($i) {
                 $i++;
-
                 return $i;
             },
             $this->keyCreatorMock
         );
-
         $this->assertEquals(1, $i);
 
         $this->cacheinclude->setForceExpire(true);
@@ -127,24 +125,20 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
-
                 return $i;
             },
             $this->keyCreatorMock
         );
-
         $this->assertEquals(2, $i);
 
         $i = $this->cacheinclude->process(
             'test',
             function ($name) use ($i) {
                 $i++;
-
                 return $i;
             },
             $this->keyCreatorMock
         );
-
         $this->assertEquals(3, $i);
 
         $this->cacheinclude->setForceExpire(false);
@@ -153,26 +147,21 @@ class CacheIncludeTest extends \PHPUnit_Framework_TestCase
             'test',
             function ($name) use ($i) {
                 $i++;
-
                 return $i;
             },
             $this->keyCreatorMock
         );
-
         $this->assertEquals(4, $i);
 
         $i = $this->cacheinclude->process(
             'test',
             function ($name) use ($i) {
                 $i++;
-
                 return $i;
             },
             $this->keyCreatorMock
         );
-
         $this->assertEquals(4, $i);
-
     }
 
     public function testForceExpire()

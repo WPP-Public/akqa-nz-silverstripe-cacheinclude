@@ -3,8 +3,10 @@
 namespace Heyday\CacheInclude\Tests;
 
 use Heyday\CacheInclude\Processors\ViewableDataProcessor;
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\View\ViewableData;
 
-class ViewableDataProcessorTest extends \PHPUnit_Framework_TestCase
+class ViewableDataProcessorTest extends SapphireTest
 {
     protected $processor;
 
@@ -19,7 +21,7 @@ class ViewableDataProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testException()
     {
@@ -42,7 +44,7 @@ class ViewableDataProcessorTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestObject extends \ViewableData
+class TestObject extends ViewableData
 {
     public function hello()
     {

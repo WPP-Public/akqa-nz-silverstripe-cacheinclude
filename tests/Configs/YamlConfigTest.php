@@ -2,7 +2,7 @@
 
 namespace Heyday\CacheInclude\Configs;
 
-use org\bovigo\vfs\vfsStream;
+use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Yaml\Yaml;
 
 class YamlConfigTest extends \PHPUnit_Framework_TestCase
@@ -20,9 +20,8 @@ Something:
     - HomePage
 YAML;
         $this->invalidYamlData = <<<YAML
-s
-s
-s
+"missing colon"
+  foo: bar
 YAML;
     }
 
@@ -49,34 +48,25 @@ YAML;
 
     public function testYamlParseReadFile()
     {
-        vfsStream::setup(
-            'root',
-            null,
-            array(
-                'test.yml' => $this->validYamlData
-            )
-        );
-
+        $path = __DIR__ . '/test.yml';
+        file_put_contents($path, $this->validYamlData);
         $key = md5($this->validYamlData);
 
-        $cacheMock = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
-            ->setMethods(array('contains', 'fetch'))
-            ->getMockForAbstractClass();
+        $cacheMock = $this->getMockBuilder(ArrayCache::class)
+            ->setMethods(array('has', 'get'))
+            ->getMock();
 
         $cacheMock->expects($this->once())
-            ->method('contains')
+            ->method('has')
             ->with($key)
             ->will($this->returnValue(true));
 
         $cacheMock->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->with($key)
             ->will($this->returnValue(Yaml::parse($this->validYamlData)));
 
-        $config = new YamlConfig(
-            vfsStream::url('root/test.yml'),
-            $cacheMock
-        );
+        $config = new YamlConfig($path, $cacheMock);
 
         $this->assertEquals(
             array(
@@ -88,20 +78,22 @@ YAML;
             ),
             $config['Something']
         );
+
+        unlink($path);
     }
 
     public function testYamlCacheHit()
     {
-        $cacheMock = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
-            ->setMethods(array('contains', 'fetch'))
-            ->getMockForAbstractClass();
+        $cacheMock = $this->getMockBuilder(ArrayCache::class)
+            ->setMethods(array('has', 'get'))
+            ->getMock();
 
         $cacheMock->expects($this->once())
-            ->method('contains')
+            ->method('has')
             ->will($this->returnValue(true));
 
         $cacheMock->expects($this->once())
-            ->method('fetch')
+            ->method('get')
             ->will($this->returnValue(Yaml::parse($this->validYamlData)));
 
         new YamlConfig($this->validYamlData, $cacheMock);
@@ -109,16 +101,16 @@ YAML;
 
     public function testYamlCacheMiss()
     {
-        $cacheMock = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
-            ->setMethods(array('contains', 'save'))
-            ->getMockForAbstractClass();
+        $cacheMock = $this->getMockBuilder(ArrayCache::class)
+            ->setMethods(array('has', 'set'))
+            ->getMock();
 
         $cacheMock->expects($this->once())
-            ->method('contains')
+            ->method('has')
             ->will($this->returnValue(false));
 
         $cacheMock->expects($this->once())
-            ->method('save')
+            ->method('set')
             ->with(
                 md5($this->validYamlData),
                 array(

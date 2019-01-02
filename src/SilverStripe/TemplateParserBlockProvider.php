@@ -27,23 +27,25 @@ class TemplateParserBlockProvider
         $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
 
         return <<<PHP
-\$val .= \Injector::inst()->get($cacheInclude)->process(
+\$val .= \SilverStripe\Core\Injector\Injector::inst()->get({$cacheInclude})->process(
    {$res['Arguments'][0]['text']},
    function () use (\$scope) {
         \$val = '';
         {$res['Template']['php']}        return \$val;
    },
-   \Injector::inst()->get($keyCreator)
+   \SilverStripe\Core\Injector\Injector::inst()->get({$keyCreator})
 );
 PHP;
     }
     
     /**
-     * Allows the use of a <% cache_include 'ConfigName' %> syntax in templates
+     * Allows the use of a <% cache_include 'IncludeName' %> syntax in templates. Defaults to looking up a config
+     * that matches the include name, but can be specified separately as config names must not contain special
+     * characters whereras includes may (e.g. namespaces)
      *
      * Also supports the optional specification of a key creator and a cache include instance
      *
-     * <% cache_include 'ConfigName', 'KeyCreatorServiceName', 'CacheIncludeServiceName' %><% end_cache %>
+     * <% cache_include 'Include\Name', 'ConfigName', 'KeyCreatorServiceName', 'CacheIncludeServiceName' %><% end_cache %>
      *
      * @param $res
      * @throws \InvalidArgumentException
@@ -55,16 +57,18 @@ PHP;
             throw new InvalidArgumentException('A template name must be passed into <% cache_include %>');
         }
 
-        $keyCreator = isset($res['Arguments'][1]) ? $res['Arguments'][1]['text'] : "'CacheIncludeKeyCreator'";
-        $cacheInclude = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheInclude'";
+        $includeName = $res['Arguments'][0]['text'];
+        $configName = isset($res['Arguments'][1]) ? $res['Arguments'][1]['text'] : $includeName;
+        $keyCreator = isset($res['Arguments'][2]) ? $res['Arguments'][2]['text'] : "'CacheIncludeKeyCreator'";
+        $cacheInclude = isset($res['Arguments'][3]) ? $res['Arguments'][3]['text'] : "'CacheInclude'";
 
         return <<<PHP
-\$val .= \Injector::inst()->get($cacheInclude)->process(
-   {$res['Arguments'][0]['text']},
+\$val .= \SilverStripe\Core\Injector\Injector::inst()->get({$cacheInclude})->process(
+   {$configName},
    function () use (\$scope) {
-       return SSViewer::execute_template({$res['Arguments'][0]['text']}, \$scope->getItem(), array(), \$scope);
+       return \SilverStripe\View\SSViewer::execute_template({$res['Arguments'][0]['text']}, \$scope->getItem(), array(), \$scope);
    },
-   \Injector::inst()->get($keyCreator)
+   \SilverStripe\Core\Injector\Injector::inst()->get({$keyCreator})
 );
 PHP;
     }
