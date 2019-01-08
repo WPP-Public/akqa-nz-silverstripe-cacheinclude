@@ -3,21 +3,17 @@
 namespace Heyday\CacheInclude\Processors;
 
 use InvalidArgumentException;
-use ViewableData;
+use SilverStripe\View\ViewableData;
 
-/**
- * Class Processor
- * @package Heyday\CacheInclude\Processors
- */
 class ViewableDataProcessor implements ProcessorInterface
 {
     /**
-     * @var
+     * @var ViewableData
      */
     protected $context;
 
     /**
-     * @param  \ViewableData $context
+     * @param ViewableData $context
      * @return $this
      */
     public function setContext(ViewableData $context)
@@ -40,8 +36,11 @@ class ViewableDataProcessor implements ProcessorInterface
 
         if ($this->context->hasMethod($name)) {
             $result = $this->context->$name();
+            if ($result instanceof ViewableData && method_exists($result, 'forTemplate')) {
+                return $result->forTemplate();
+            }
 
-            return $result instanceof ViewableData ? $result->forTemplate() : $result;
+            return $result;
         }
 
         return $this->context->renderWith($name);

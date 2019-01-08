@@ -2,40 +2,36 @@
 
 namespace Heyday\CacheInclude\Configs;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Yaml\Yaml;
 
-/**
- * Class YamlConfig
- * @package Heyday\CacheInclude\Configs
- */
 class YamlConfig extends ArrayConfig
 {
     /**
-     * @param               $yaml
-     * @param CacheProvider $cache
+     * @param string $yaml
+     * @param CacheInterface $cache
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function __construct($yaml, CacheProvider $cache = null)
+    public function __construct($yaml, CacheInterface $cache = null)
     {
-        if ($cache instanceof CacheProvider) {
+        if ($cache instanceof CacheInterface) {
             if (strpos($yaml, "\n") === false && is_file($yaml)) {
                 $yaml = file_get_contents($yaml);
             }
 
             $key = md5($yaml);
-
-            if ($cache->contains($key)) {
-                $result = $cache->fetch($key);
+            if ($cache->has($key)) {
+                $result = $cache->get($key);
             } else {
                 $result = Yaml::parse($yaml);
-                $cache->save($key, $result);
+                $cache->set($key, $result);
             }
         } else {
             $result = Yaml::parse($yaml);
         }
 
-        if (!isset($result)) {
-            $result = array();
+        if (!$result) {
+            $result = [];
         }
 
         parent::__construct($result);

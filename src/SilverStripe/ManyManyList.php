@@ -2,11 +2,10 @@
 
 namespace Heyday\CacheInclude\SilverStripe;
 
-use ManyManyList as SilverStripeManyManyList;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ManyManyList as SilverStripeManyManyList;
 
-/**
- * @package Heyday\CacheInclude\SilverStripe
- */
 class ManyManyList extends SilverStripeManyManyList
 {
     /**
@@ -18,7 +17,7 @@ class ManyManyList extends SilverStripeManyManyList
     {
         parent::add($item, $extraFields);
 
-        if ($item instanceof \DataObject) {
+        if ($item instanceof DataObject) {
             $item->extend('onAfterManyManyRelationAdd');
         }
     }
@@ -29,8 +28,7 @@ class ManyManyList extends SilverStripeManyManyList
     public function removeByID($itemID)
     {
         $result = parent::removeByID($itemID);
-
-        $item = \DataList::create($this->dataClass)->byId($itemID);
+        $item = DataList::create($this->dataClass)->byID($itemID);
 
         if ($item instanceof $this->dataClass) {
             $item->extend('onAfterManyManyRelationRemove');

@@ -1,10 +1,25 @@
 language: php
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+
+env:
+  global:
+    - DB=MYSQL
 
 before_script:
-  - composer self-update
-  - composer install --dev --prefer-dist
+  # Init PHP
+  - phpenv rehash
+  - phpenv config-rm xdebug.ini
+  - export PATH=~/.composer/vendor/bin:$PATH
+  - echo 'memory_limit = 2G' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
+  # Install composer dependencies
+  - composer validate
+  - composer require silverstripe/recipe-core:4.3.x-dev --no-update
+  - composer install --prefer-source --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
+
+script:
+  - vendor/bin/phpunit

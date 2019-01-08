@@ -2,25 +2,21 @@
 
 namespace Heyday\CacheInclude\KeyCreators;
 
-use Config;
-use Controller;
-use Member;
-use Versioned;
-use Director;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Security;
+use SilverStripe\View\SSViewer;
 
-/**
- * Class ControllerBased
- * @package Heyday\CacheInclude\KeyCreators
- */
 class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInterface
 {
     /**
-     * @var \Controller
+     * @var Controller
      */
     protected $controller;
 
     /**
-     * @var \Config
+     * @var Config
      */
     protected $config;
 
@@ -32,17 +28,7 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     /**
      * @var string
      */
-    protected $currentStage;
-
-    /**
-     * @var string
-     */
-    protected $theme;
-
-    /**
-     * @var bool
-     */
-    protected $ssl;
+    protected $themes;
 
     /**
      * @var int
@@ -50,7 +36,7 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     protected $memberID;
 
     /**
-     * @param  \Controller|void $controller
+     * @param  Controller|void $controller
      * @throws \Exception
      */
     public function __construct(Controller $controller = null)
@@ -61,10 +47,8 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
         $this->controller = $controller ?: Controller::curr();
         $this->config = Config::inst();
         $this->environmentType = Director::get_environment_type();
-        $this->currentStage = Versioned::current_stage();
-        $this->theme = $this->config->get('SSViewer', 'theme');
-        $this->ssl = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
-        $this->memberID = Member::currentUserID();
+        $this->themes = $this->config->get(SSViewer::class, 'themes');
+        $this->memberID = Security::getCurrentUser() ? Security::getCurrentUser()->ID : 0;
     }
 
     /**
@@ -76,15 +60,11 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     {
         $request = $this->controller->getRequest();
 
-        $keyParts = array(
+        $keyParts = [
             $this->environmentType,
-            $this->currentStage,
-            $this->theme,
-        );
-
-        if ($this->ssl) {
-            $keyParts[] = 'ssl';
-        }
+            md5(json_encode($this->themes)),
+            $request->getScheme()
+        ];
 
         if ($request->isAjax()) {
             $keyParts[] = 'ajax';
@@ -128,16 +108,13 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     {
         $request = $this->controller->getRequest();
 
-        return array(
-            'url' => sprintf(
-                "/%s/",
-                trim($request->getURL(true), '/')
-            )
-        );
+        return [
+            'url' => sprintf('/%s/', trim($request->getURL(true), '/'))
+        ];
     }
 
     /**
-     * @param \Config $config
+     * @param Config $config
      */
     public function setConfig($config)
     {
@@ -145,19 +122,11 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     }
 
     /**
-     * @param \Controller $controller
+     * @param Controller $controller
      */
     public function setController($controller)
     {
         $this->controller = $controller;
-    }
-
-    /**
-     * @param string $currentStage
-     */
-    public function setCurrentStage($currentStage)
-    {
-        $this->currentStage = $currentStage;
     }
 
     /**
@@ -177,18 +146,10 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
     }
 
     /**
-     * @param boolean $ssl
+     * @param array $themes
      */
-    public function setSsl($ssl)
+    public function setThemes(array $themes)
     {
-        $this->ssl = $ssl;
-    }
-
-    /**
-     * @param string $theme
-     */
-    public function setTheme($theme)
-    {
-        $this->theme = $theme;
+        $this->themes = $themes;
     }
 }
