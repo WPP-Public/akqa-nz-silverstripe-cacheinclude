@@ -21,7 +21,7 @@ For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
 ## Installation
 
 ```bash
-$ composer require heyday/silverstripe-cacheinclude:~4.0
+$ composer require heyday/silverstripe-cacheinclude:~5.0
 ```
 
 ## How to use
