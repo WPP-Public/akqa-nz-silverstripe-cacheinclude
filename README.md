@@ -37,7 +37,7 @@ To  be able to invalidate caches from DataObject writes, add the `InvalidationEx
 ---
 After: 'silverstripe-cacheinclude/*'
 ---
-DataObject:
+SilverStripe\ORM\DataObject:
   extensions:
     - Heyday\CacheInclude\SilverStripe\InvalidationExtension
 ```
