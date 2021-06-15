@@ -59,7 +59,7 @@ class RequestCacheMiddleware implements HTTPMiddleware
     /**
      * @var array
      */
-    protected $tokens;
+    protected $tokens = [];
 
     /**
      * @var ExpressionLanguage
