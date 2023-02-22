@@ -72,7 +72,7 @@ class ArrayConfig implements ConfigInterface
     /**
      * @return \ArrayIterator
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->config);
     }
