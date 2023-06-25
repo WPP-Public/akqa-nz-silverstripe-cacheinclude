@@ -197,6 +197,7 @@ class RequestCacheMiddleware implements HTTPMiddleware
         }
 
         if ($this->allowFetch($request) && $response = $this->getCachedResponse($request)) {
+            header("X-HeydayCache: hit at " . @date('r'));
             return $response;
         }
 
