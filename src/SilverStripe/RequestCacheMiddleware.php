@@ -27,6 +27,11 @@ class RequestCacheMiddleware implements HTTPMiddleware
     const REPLACED_TOKEN_PREFIX = '!!ReplacedToken.';
 
     /**
+     * @var boolean
+     */
+    protected $sessionHasFormErrors = null;
+
+    /**
      * @var CacheInclude
      */
     protected $cache;
@@ -296,6 +301,10 @@ class RequestCacheMiddleware implements HTTPMiddleware
             'session' => $request->getSession()->getAll()
         ] + $this->extraExpressionVars;
 
+        if ($this->getSessionHasFormErrors($request->getSession())) {
+            return false;
+        }
+
         if (count($this->fetchExcludeRules)) {
             foreach ($this->fetchExcludeRules as $rule) {
                 if ($this->expressionLanguage->evaluate($rule, $vars)) {
@@ -329,6 +338,10 @@ class RequestCacheMiddleware implements HTTPMiddleware
             'session' => $request->getSession()->getAll()
         ] + $this->extraExpressionVars;
 
+        if ($this->getSessionHasFormErrors($request->getSession())) {
+            return false;
+        }
+
         if (count($this->saveExcludeRules)) {
             foreach ($this->saveExcludeRules as $rule) {
                 if ($this->expressionLanguage->evaluate($rule, $vars)) {
@@ -346,5 +359,47 @@ class RequestCacheMiddleware implements HTTPMiddleware
         }
 
         return true;
+    }
+
+    /**
+     * Store this value on the instance as the session gets cleared between
+     * allowFetch and allowSave when the request is processed.
+     * @param
+     * @param Session $session
+     * @return boolean
+     */
+    protected function getSessionHasFormErrors(Session $session)
+    {
+        if (isset($this->sessionHasFormErrors)) {
+            return $this->sessionHasFormErrors;
+        } else {
+            return $this->sessionHasFormErrors = $this->checkIfSessionHasFormErrors($session);
+        }
+    }
+
+    /**
+     * Are there any form errors in session?
+     * @param
+     * @param Session $session
+     * @return boolean
+     */
+    protected function checkIfSessionHasFormErrors(Session $session)
+    {
+        if ($session->getAll()) {
+            foreach ($session->getAll() as $field => $data) {
+                // Check for session details in the form FormInfo.{$FormName}.errors/FormInfo.{$FormName}.formError
+                if ($field === 'FormInfo') {
+                    foreach ($data as $formData) {
+                        if (isset($formData['result'])) {
+                            $resultData = unserialize($formData['result']);
+                            if (!$resultData->isValid()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
