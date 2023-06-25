@@ -9,6 +9,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPRequestBuilder;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\Middleware\HTTPMiddleware;
+use SilverStripe\Control\Session;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Startup\ErrorDirector;
 use SilverStripe\Security\Security;
@@ -196,7 +197,6 @@ class RequestCacheMiddleware implements HTTPMiddleware
         }
 
         if ($this->allowFetch($request) && $response = $this->getCachedResponse($request)) {
-            header("X-HeydayCache: hit at " . @date('r'));
             return $response;
         }
 
