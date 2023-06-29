@@ -43,11 +43,11 @@ class ExpressionLanguage extends SymfonyExpressionLanguage
     }
 
     /**
-     * @return null
+     * @return array
      */
     public function __serialize()
     {
-        return null;
+        return [];
     }
 
     /**
