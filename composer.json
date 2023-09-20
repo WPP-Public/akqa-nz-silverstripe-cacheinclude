@@ -3,8 +3,8 @@
   "type": "silverstripe-vendormodule",
   "description": "Fast Caching for SilverStripe",
   "require": {
-    "silverstripe/framework": "^4.12",
-    "symfony/expression-language": "^3.2"
+    "silverstripe/framework": "^5.0.0",
+    "symfony/expression-language": "^6.3.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5"
