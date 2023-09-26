@@ -17,7 +17,7 @@ SilverStripe\Core\Injector\Injector:
   CacheIncludeExpressionLanguage:
     class: 'Heyday\CacheInclude\ExpressionLanguage'
     constructor:
-      0: '%$Heyday\CacheInclude\ExpressionLanguageParserCache'
+      0: '%$Symfony\Component\Cache\Adapter\FilesystemAdapter'
   CacheIncludeConfig:
     class: 'Heyday\CacheInclude\Configs\ArrayConfig'
   CacheIncludeViewableDataProcessor:
