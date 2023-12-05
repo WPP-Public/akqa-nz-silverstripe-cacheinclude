@@ -3,17 +3,18 @@
 namespace Heyday\CacheInclude\Tests;
 
 use Heyday\CacheInclude\Configs\ArrayConfig;
+use PHPUnit\Framework\TestCase;
 
-class ArrayConfigTest extends \PHPUnit_Framework_TestCase
+class ArrayConfigTest extends TestCase
 {
     protected $testData;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->testData = array(
+        $this->testData = [
             'One',
             'Two'
-        );
+        ];
     }
 
     protected function tearDown()

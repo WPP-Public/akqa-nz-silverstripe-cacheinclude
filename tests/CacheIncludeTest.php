@@ -21,7 +21,7 @@ class CacheIncludeTest extends SapphireTest
      */
     protected $keyCreatorMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Injector::inst()->registerService(new ArrayCache(), CacheInterface::class . '.CacheInclude');
         $this->keyCreatorMock = $this->getMockBuilder(KeyCreatorInterface::class)
