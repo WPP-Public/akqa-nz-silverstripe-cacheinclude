@@ -43,12 +43,12 @@ SilverStripe\Core\Injector\Injector:
       Tokens:
         - '%$SilverStripe\Security\SecurityToken'
       SaveExcludeRules:
-        - 'request.getUrl() matches "{^admin|dev}"'
+        - 'request.getUrl() matches "{^admin|dev|Security|assets}"'
       SaveIncludeRules:
         - "request.httpMethod() == 'GET'"
         - "response.getStatusCode() == 200"
       FetchExcludeRules:
-        - 'request.getUrl() matches "{^admin|dev}"'
+        - 'request.getUrl() matches "{^admin|dev|Security|assets}"'
       FetchIncludeRules:
         - "request.httpMethod() == 'GET'"
 ---
