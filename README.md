@@ -6,18 +6,16 @@ Template caching based on urls not DB queries.
 
 ## Features
 
-* Cache keys are built from information available in request object (means no DB calls)
-* Invalidation hooks for when DataObject's are modified
-* Uses `doctrine/cache` library, providing many cache backends
-* Uses Symfony Expression language for fine-grained invalidation control
-* Support for `<% cache_include 'TemplateName' %>` syntax in templates
-* Support for `<% cache %><% end_cache %>` syntax in templates
-* A full request cache that includes the ability to substitute security tokens
-* Highly customisable
-* CacheInclude Manager for easy cache management https://github.com/heyday/silverstripe-cacheinclude-manager/
-* Sets request header when cache is hit for easier testing e.g hit at Thu, 03 Mar 2022 14:23:41 -0600
-
-For a SilverStripe `2.4` compatible version, see the `2.0.4` tag.
+- Cache keys are built from information available in request object (means no DB calls)
+- Invalidation hooks for when DataObject's are modified
+- Uses `doctrine/cache` library, providing many cache backends
+- Uses Symfony Expression language for fine-grained invalidation control
+- Support for `<% cache_include 'TemplateName' %>` syntax in templates
+- Support for `<% cache %><% end_cache %>` syntax in templates
+- A full request cache that includes the ability to substitute security tokens
+- Highly customisable
+- CacheInclude Manager for easy cache management https://github.com/heyday/silverstripe-cacheinclude-manager/
+- Sets request header when cache is hit for easier testing e.g hit at Thu, 03 Mar 2022 14:23:41 -0600
 
 ## Installation
 
@@ -29,9 +27,9 @@ $ composer require heyday/silverstripe-cacheinclude:~5.0
 
 ### Enabling
 
-To  be able to invalidate caches from DataObject writes, add the `InvalidationExtension`:
+To be able to invalidate caches from DataObject writes, add the `InvalidationExtension`:
 
-1. Create a config file `mysite/_config/caching.yml`
+1. C te a config file `mysite/_config/caching.yml`
 2. Add the following to the yml file
 
 ```yml
@@ -101,38 +99,40 @@ Context is a method to tell the key creator what information about the request t
 
 Possible values:
 
-* `no`
-  * Key created is independent of the request
-* `page`
-  * Key is created based on url, but not including GET variables
-* `full`
-  * Key is created based on url, including GET variables
+- `no`
+  - Key created is independent of the request
+- `host`
+  - Key created with the host name, useful for when using Subsites or multiple base domains
+- `page`
+  - Key is created based on url, but not including GET variables
+- `full`
+  - Key is created based on url, including GET variables
 
 #### `expires`
 
 Possible values:
 
-* (string)
-  * A string to pass into strtotime e.g. '+1 hour'
-* (int)
-  * A number of seconds
+- (string)
+  - A string to pass into strtotime e.g. '+1 hour'
+- (int)
+  - A number of seconds
 
 #### `member`
 
 Possible values:
 
-* `true`
-  * Will create a new cache per logged in member
-* `any`
-  * Will create a new cache members as a group (and another key when a person is not logged in)
+- `true`
+  - Will create a new cache per logged in member
+- `any`
+  - Will create a new cache members as a group (and another key when a person is not logged in)
 
 #### `versions`
 
 Possible values:
 
-* (int)
-  * Set this to an integer to make the specified number of versions of the cache
-  
+- (int)
+  - Set this to an integer to make the specified number of versions of the cache
+
 This is useful for when a cache block contains random content, but you still want caching.
 
 e.g. set to 20 to get 20 (potentially) different version of a cache block.
@@ -141,13 +141,13 @@ Cache invalidation options
 
 #### `contains`
 
-* (array)
-  * An array of class names that if a record saved matches the cache will invalidate
+- (array)
+  - An array of class names that if a record saved matches the cache will invalidate
 
 #### `invalidation_rules`
 
-* (array)
-  * An array of rules written in the available expression language. If a rule is matched the cache will invalidate
+- (array)
+  - An array of rules written in the available expression language. If a rule is matched the cache will invalidate
 
 The Expression Language is provided by Symfony, but also has the following available:
 
@@ -227,7 +227,7 @@ Injector:
         - 'request.getUrl() matches "{^admin|dev}"'
       SaveIncludeRules:
         - "request.httpMethod() == 'GET'"
-        - "response.getStatusCode() == 200"
+        - 'response.getStatusCode() == 200'
       FetchExcludeRules:
         - 'request.getUrl() matches "{^admin|dev}"'
       FetchIncludeRules:
@@ -238,19 +238,19 @@ As you can see above there are some variables made accessible to you in the expr
 
 The following is made available in the "Save" rules:
 
-* `request`
-* `response`
-* `member`
-* `session`
+- `request`
+- `response`
+- `member`
+- `session`
 
 The following is made available in the "Fetch" rules:
 
-* `request`
-* `member`
-* `session`
+- `request`
+- `member`
+- `session`
 
 Additional variables can be provided through the injector system.
- 
+
 ```yml
 Injector:
   RequestCacheMiddleware:
@@ -307,9 +307,9 @@ $ phpunit
 
 This project follows the standards defined in:
 
-* [PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md)
-* [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
-* [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)
+- [PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md)
+- [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
+- [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)
 
 Run the following before contributing:
 

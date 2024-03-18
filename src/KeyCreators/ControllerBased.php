@@ -47,6 +47,7 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
         $this->controller = $controller ?: Controller::curr();
         $this->config = Config::inst();
         $this->environmentType = Director::get_environment_type();
+
         $this->themes = $this->config->get(SSViewer::class, 'themes');
         $this->memberID = Security::getCurrentUser() ? Security::getCurrentUser()->ID : 0;
     }
@@ -83,13 +84,20 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
             switch ($config['context']) {
                 case 'no':
                     break;
+                case 'host':
+                    $keyParts[] = md5(Director::absoluteBaseURL());
+                    break;
                 case 'page':
-                    $keyParts[] = md5($request->getURL());
+                    $keyParts[] = md5(Director::absoluteBaseURL($request->getURL()));
                     break;
                 case 'full':
-                    $keyParts[] = md5($request->getURL(true));
+                    $keyParts[] = md5(Director::absoluteBaseURL($request->getURL(true)));
                     break;
             }
+        }
+
+        if (isset($config['subsite']) && $config['subsite']) {
+            $keyParts[] = 'subsite-' . $request->param('SubsiteID');
         }
 
         if (isset($config['versions'])) {
