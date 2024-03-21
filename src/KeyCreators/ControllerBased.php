@@ -88,10 +88,10 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
                     $keyParts[] = md5(Director::absoluteBaseURL());
                     break;
                 case 'page':
-                    $keyParts[] = md5(Director::absoluteBaseURL($request->getURL()));
+                    $keyParts[] = md5(Director::absoluteBaseURL().$request->getURL());
                     break;
                 case 'full':
-                    $keyParts[] = md5(Director::absoluteBaseURL($request->getURL(true)));
+                    $keyParts[] = md5(Director::absoluteBaseURL().$request->getURL(true));
                     break;
             }
         }
