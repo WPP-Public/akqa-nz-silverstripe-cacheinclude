@@ -5,11 +5,19 @@ namespace Heyday\CacheInclude\KeyCreators;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Security;
 use SilverStripe\View\SSViewer;
 
 class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInterface
 {
+    use Configurable;
+
+    /**
+     * @var array List of GET variables to ignore when generating cache keys
+     */
+    private static $ignored_get_vars = [];
+
     /**
      * @var Controller
      */
@@ -91,7 +99,19 @@ class ControllerBased implements KeyCreatorInterface, KeyInformationProviderInte
                     $keyParts[] = md5(Director::absoluteBaseURL($request->getURL()));
                     break;
                 case 'full':
-                    $keyParts[] = md5(Director::absoluteBaseURL($request->getURL(true)));
+                    $url = $request->getURL();
+                    $ignoredVars = static::config()->ignored_get_vars;
+                    $vars = $request->getVars();
+                    if (count($ignoredVars)) {
+                        foreach ($ignoredVars as $var) {
+                            unset($vars[$var]);
+                        }
+                    }
+                    if (count($vars)) {
+                        $url .= '?' . http_build_query($vars ?? []);
+                    }
+
+                    $keyParts[] = md5($url);
                     break;
             }
         }
