@@ -1,5 +1,8 @@
 /build
+.phpunit.result.cache
 /framework
 /vendor
 /.idea
 /cache.properties
+composer.lock
+/public

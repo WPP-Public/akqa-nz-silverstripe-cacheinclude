@@ -1,0 +1,5 @@
+Something:
+  expires: +1 week
+  contains:
+    - Page
+    - HomePage

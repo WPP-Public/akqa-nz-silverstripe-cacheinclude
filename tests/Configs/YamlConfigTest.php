@@ -5,12 +5,12 @@ namespace Heyday\CacheInclude\Configs;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Yaml\Yaml;
 
-class YamlConfigTest extends \PHPUnit_Framework_TestCase
+class YamlConfigTest extends \PHPUnit\Framework\TestCase
 {
     protected $validYamlData;
     protected $invalidYamlData;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validYamlData = <<<YAML
 Something:

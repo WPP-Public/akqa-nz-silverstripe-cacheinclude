@@ -4,10 +4,11 @@ namespace Heyday\CacheInclude;
 
 use Heyday\CacheInclude\Configs\ArrayConfig;
 use Heyday\CacheInclude\KeyCreators\KeyCreatorInterface;
+use InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
-use Symfony\Component\Cache\Simple\ArrayCache;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class CacheIncludeTest extends SapphireTest
 {
@@ -23,9 +24,11 @@ class CacheIncludeTest extends SapphireTest
 
     protected function setUp(): void
     {
-        Injector::inst()->registerService(new ArrayCache(), CacheInterface::class . '.CacheInclude');
-        $this->keyCreatorMock = $this->getMockBuilder(KeyCreatorInterface::class)
+        Injector::inst()->registerService(new ArrayAdapter(), CacheInterface::class . '.CacheInclude');
+
+		$this->keyCreatorMock = $this->getMockBuilder(KeyCreatorInterface::class)
             ->getMock();
+
         $this->cacheinclude = new CacheInclude(
             new ArrayConfig(array(
                 'test' => array(
@@ -66,14 +69,16 @@ class CacheIncludeTest extends SapphireTest
             $this->cacheinclude->getCombinedConfig('test')
         );
     }
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The argument $processor must be an instance of ProcessorInterface or a callable
-     */
+
+
     public function testProcessException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The argument $processor must be an instance of ProcessorInterface or a callable');
+
         $this->cacheinclude->process('test', [], $this->keyCreatorMock);
     }
+
 
     public function testProcessDisabled()
     {
@@ -89,6 +94,7 @@ class CacheIncludeTest extends SapphireTest
             )
         );
     }
+
 
     public function testProcess()
     {

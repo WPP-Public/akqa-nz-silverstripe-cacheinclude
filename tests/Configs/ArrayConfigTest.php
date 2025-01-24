@@ -17,7 +17,7 @@ class ArrayConfigTest extends TestCase
         ];
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->testData = null;
     }
@@ -29,24 +29,27 @@ class ArrayConfigTest extends TestCase
             $this->assertEquals($this->testData[$key], $val);
         }
     }
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Configs are immutable
-     */
+
+
     public function testSet()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Configs are immutable');
+
         $config = new ArrayConfig($this->testData);
         $config[2] = 'Three';
     }
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Configs are immutable
-     */
+
+
     public function testUnset()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Configs are immutable');
+
         $config = new ArrayConfig($this->testData);
         unset($config[1]);
     }
+
 
     public function testGet()
     {
@@ -54,6 +57,7 @@ class ArrayConfigTest extends TestCase
         $this->assertEquals('One', $config[0]);
         $this->assertEquals('Two', $config[1]);
     }
+
 
     public function testExists()
     {

@@ -10,12 +10,12 @@ class ViewableDataProcessorTest extends SapphireTest
 {
     protected $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processor = new ViewableDataProcessor;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->processor = null;
     }

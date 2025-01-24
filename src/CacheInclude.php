@@ -196,13 +196,23 @@ class CacheInclude
 
             $result = $processor($name);
             $type = 'EXPIRE';
-        } elseif ($this->cache->has($key)) {
+        } elseif (method_exists($this->cache, 'has') && $this->cache->has($key)) {
+            $result = $this->cache->get($key);
+            $type = 'HIT';
+        } elseif (method_exists($this->cache, 'hasItem') && $this->cache->hasItem($key)) {
             $result = $this->cache->get($key);
             $type = 'HIT';
         } else {
             $result = $processor($name);
             $this->runIfCacheLockIsFree(function () use ($key, $name, $result, $keyCreator, $config) {
-                $this->cache->set($key, $result, $this->getExpiry($config));
+                if (method_exists($this->cache, 'set')) {
+                    $this->cache->set($key, $result, $this->getExpiry($config));
+                } else if (method_exists($this->cache, 'save')) {
+                    $this->cache->save($key, $result, $this->getExpiry($config));
+                } else {
+                    throw new RuntimeException('Cache object does not implement set or save method');
+                }
+
                 $this->addStoredKey($name, $key, $keyCreator);
             });
             $type = 'MISS';

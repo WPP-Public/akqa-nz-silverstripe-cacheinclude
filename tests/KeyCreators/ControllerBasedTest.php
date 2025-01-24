@@ -28,7 +28,7 @@ class ControllerBasedTest extends SapphireTest
      */
     protected $requestMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $kernel = Injector::inst()->get(Kernel::class);
         $kernel->setEnvironment(Kernel::DEV);
@@ -39,7 +39,7 @@ class ControllerBasedTest extends SapphireTest
         $this->keyCreator = new ControllerBased($this->controllerMock);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->keyCreator = null;
     }
